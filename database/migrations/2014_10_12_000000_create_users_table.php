@@ -44,6 +44,7 @@ return new class extends Migration
             
             $table->timestamps();
             $table->softDeletes();
+            $table->index(['user_id','email','mobile', 'account_id','created_at']);
         });
     }
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Auth;
 
+use App\Http\Controllers\Api\Helper\apiFilter;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Api\Helper\ApiResponse;
@@ -13,11 +14,11 @@ use Illuminate\Support\Facades\DB;
 
 class RegistrationController extends Controller
 {
-    use ApiResponse;
+    use ApiResponse, apiFilter;
 
     public function register(Request $request){
    // return $request;
-        $validator= Validator::make($request->all(), User::$rules);
+        $validator= Validator::make($request->all(), User::rules());
         if ($validator->fails()) {
             return $this->error($validator->errors(),200);
         }else{
@@ -38,5 +39,12 @@ class RegistrationController extends Controller
                 
             }
       }
+    }
+
+    public function users(){
+
+            $users=User::with('accounts')->get();
+            return $this->success($users);
+
     }
 }

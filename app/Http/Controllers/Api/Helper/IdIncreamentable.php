@@ -28,4 +28,6 @@ trait IdIncreamentable
         $generatedId = $prefix . str_pad($maxNumber, 0, '0', STR_PAD_LEFT);
         return $generatedId;
     }
+
+    
 }

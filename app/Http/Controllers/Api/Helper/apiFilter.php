@@ -2,7 +2,7 @@
 namespace App\Http\Controllers\Api\Helper;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
-trait apiFilter{
+trait ApiFilter{
 
     public $column_name='id';
     public $sort = "desc";
