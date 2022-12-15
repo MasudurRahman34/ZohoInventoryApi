@@ -1,5 +1,5 @@
 <?php
-namespace App\Http\Controllers\Api\Helper;
+namespace App\Http\Controllers\Api\V1\Helper;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 trait ApiFilter{

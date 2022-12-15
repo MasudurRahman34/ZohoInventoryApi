@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Api\V1;
 
-use App\Http\Controllers\Api\Helper\ApiFilter;
+use App\Http\Controllers\Api\V1\Helper\ApiFilter;
 use App\Http\Controllers\Controller;
 use App\Models\Accounts;
 use Illuminate\Http\Request;
@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use App\Http\Controllers\Api\Helper\ApiResponse;
+use App\Http\Controllers\Api\V1\Helper\ApiResponse;
 use App\Models\User;
 
 class AccountController extends Controller

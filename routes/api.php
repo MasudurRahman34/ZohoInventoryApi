@@ -1,9 +1,10 @@
 <?php
 
-use App\Http\Controllers\Api\AccountController;
-use App\Http\Controllers\Api\Auth\LoginController;
-use App\Http\Controllers\Api\Auth\RegistrationController;
-use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\V1\AccountController;
+use App\Http\Controllers\Api\V1\Auth\LoginController;
+use App\Http\Controllers\Api\V1\Auth\RegistrationController;
+use App\Http\Controllers\Api\V1\SuppliersController;
+use App\Http\Controllers\Api\V1\UserController;
 use App\Models\Accounts;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -35,6 +36,12 @@ Route::middleware('auth:api')->group(function() {
     //Route::post('user/create', [UserController::class,'updateOrCreate'])->name('user.create');
     Route::post('user/{id}', [UserController::class,'update'])->name('user.update');
     Route::get('users', [UserController::class,'users'])->name('users');
+    Route::get('user', [UserController::class,'user'])->name('user');
+
+    //supplier
+    Route::post('supplier/create', [SuppliersController::class,'updateOrCreate'])->name('account.create');
+    Route::get('suppliers', [AccountController::class,'accounts'])->name('accounts');
+
 });
    
 

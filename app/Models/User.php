@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use DateTimeInterface;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rules\Password;
-use App\Http\Controllers\Api\Helper\IdIncreamentable;
+use App\Http\Controllers\Api\V1\Helper\IdIncreamentable;
 
 class User extends Authenticatable
 {
@@ -102,7 +102,7 @@ class User extends Authenticatable
     }
 
     public function account(){
-        $this->belongsTo(Accounts::class,'account_id','id');
+       return $this->belongsTo(Accounts::class,'account_id');
     }
 
     // protected static function boot()

@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Api\V1;
 
-use App\Http\Controllers\Api\Helper\ApiFilter;
-use App\Http\Controllers\Api\Helper\ApiResponse;
+use App\Http\Controllers\Api\V1\Helper\ApiFilter;
+use App\Http\Controllers\Api\V1\Helper\ApiResponse;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
@@ -66,5 +66,11 @@ class UserController extends Controller
         
         $users=User::orderBy($this->column_name,$this->sort)->paginate($this->show_per_page)->withQueryString();
         return $this->success($users);
+    }
+
+    public function user($id=''){
+        return Auth::user()->account->account_id;
+        $user=User::find($id);
+
     }
 }

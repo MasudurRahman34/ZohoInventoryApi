@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Api\Auth;
+namespace App\Http\Controllers\Api\V1\Auth;
 
-use App\Http\Controllers\Api\Helper\apiFilter;
+use App\Http\Controllers\Api\V1\Helper\ApiFilter;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Api\Helper\ApiResponse;
+use App\Http\Controllers\Api\V1\Helper\ApiResponse;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\DB;
 
 class RegistrationController extends Controller
 {
-    use ApiResponse, apiFilter;
+    use ApiResponse, ApiFilter;
 
     public function register(Request $request){
    // return $request;

@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Http\Controllers\Api\Helper\IdIncreamentable;
+use App\Http\Controllers\Api\V1\Helper\IdIncreamentable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\Helper;
+namespace App\Http\Controllers\Api\V1\Helper;
 
 trait IdIncreamentable
 {
