@@ -31,7 +31,7 @@ class User extends Authenticatable
         return $date->format('Y-m-d H:i:s');
     }
     protected $fillable = [
-        'user_id',
+        'user_number',
         'first_name',
         'last_name',
         'email',
@@ -96,8 +96,8 @@ class User extends Authenticatable
     public function IdIncreamentable():array{
         return [
             'source'=>'id',
-            'prefix'=>'BE'.date("y").date("m").date('d')."-",
-            'attribute'=>'user_id',
+            'prefix'=>'BE'.date("y").date("m").date('d'),
+            'attribute'=>'user_number',
         ];
     }
 

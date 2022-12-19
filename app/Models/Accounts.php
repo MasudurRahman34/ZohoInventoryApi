@@ -23,7 +23,7 @@ class Accounts extends Model
     }
  
      protected $fillable=[
-            'account_id','account_uri','company_name','slug','compnay_logo','module_name','dashboard_blocks','language','ip_address_access','domain','host','database_name','database_user','database_password','account_super_admin','user_id','created_by','modified_by'
+            'account_number','account_uri','company_name','slug','compnay_logo','module_name','dashboard_blocks','language','ip_address_access','domain','host','database_name','database_user','database_password','account_super_admin','user_id','created_by','modified_by'
      ];
 
      public static $rules = [
@@ -34,8 +34,8 @@ class Accounts extends Model
     public function IdIncreamentable():array{
         return [
             'source'=>'id',
-            'prefix'=>'BDERP'.date("y").date("m").date('d')."-",
-            'attribute'=>'account_id',
+            'prefix'=>'BDERP'.date("y").date("m").date('d'),
+            'attribute'=>'account_number',
         ];
     }
     protected static function boot()

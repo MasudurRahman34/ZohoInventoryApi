@@ -1,11 +1,14 @@
 <?php
 
 use App\Http\Controllers\Api\V1\AccountController;
+use App\Http\Controllers\Api\V1\AddressController;
 use App\Http\Controllers\Api\V1\Auth\LoginController;
 use App\Http\Controllers\Api\V1\Auth\RegistrationController;
+use App\Http\Controllers\Api\V1\CustomerController;
 use App\Http\Controllers\Api\V1\SuppliersController;
 use App\Http\Controllers\Api\V1\UserController;
 use App\Models\Accounts;
+use App\Models\Address;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -36,11 +39,22 @@ Route::middleware('auth:api')->group(function() {
     //Route::post('user/create', [UserController::class,'updateOrCreate'])->name('user.create');
     Route::post('user/{id}', [UserController::class,'update'])->name('user.update');
     Route::get('users', [UserController::class,'users'])->name('users');
-    Route::get('user', [UserController::class,'user'])->name('user');
+    Route::get('user/{id}', [UserController::class,'user'])->name('user');
 
     //supplier
-    Route::post('supplier/create', [SuppliersController::class,'updateOrCreate'])->name('account.create');
-    Route::get('suppliers', [AccountController::class,'accounts'])->name('accounts');
+    Route::post('supplier/create', [SuppliersController::class,'updateOrCreate'])->name('supplier.create');
+    Route::get('suppliers', [SuppliersController::class,'suppliers'])->name('suppliers');
+    Route::get('supplier/{id}', [SuppliersController::class,'supplier'])->name('supplier');
+
+    //customer
+    Route::post('customer/create', [CustomerController::class,'updateOrCreate'])->name('customer.create');
+    Route::get('customers', [CustomerController::class,'customers'])->name('customers');
+    Route::get('customer/{id}', [CustomerController::class,'customer'])->name('customer');
+    
+    //address
+    Route::post('set/address', [AddressController::class,'setAddress'])->name('setaddress');
+    Route::post('address', [AddressController::class,'updateOrCreate'])->name('address.create');
+    Route::post('address/{address_id}', [AddressController::class,'updateOrCreate'])->name('address.update');
 
 });
    

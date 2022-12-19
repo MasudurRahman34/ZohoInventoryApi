@@ -46,7 +46,7 @@ class UserController extends Controller
                         //$request['first_name'] =$request['first_name'];
                         ]
                 );
-                
+                $user=User::find($user_id);
                 // $response = ['token' => $token]
                 DB::commit();
                 return $this->success($user);
@@ -64,13 +64,14 @@ class UserController extends Controller
         $this->setFilterProperty($request);
         //$accounts=Accounts::with('user')->get();
         
-        $users=User::orderBy($this->column_name,$this->sort)->paginate($this->show_per_page)->withQueryString();
+        $users=User::where('account_id',Auth::user()->account_id)->orderBy($this->column_name,$this->sort)->paginate($this->show_per_page)->withQueryString();
         return $this->success($users);
     }
 
-    public function user($id=''){
-        return Auth::user()->account->account_id;
-        $user=User::find($id);
+    public function user($user_id){
+        //return Auth::user()->account->account_id;
+        $user=User::find($user_id);
+        return $this->success($user);
 
     }
 }

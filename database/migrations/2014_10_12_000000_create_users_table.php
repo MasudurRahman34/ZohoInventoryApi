@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('user_id',50)->nullable()->comment('generate');
+            $table->string('user_number',50)->nullable()->comment('generate');
             $table->string('first_name',100);
             $table->string('last_name',100)->nullable();
             $table->string('email')->unique();
@@ -44,7 +44,7 @@ return new class extends Migration
             
             $table->timestamps();
             $table->softDeletes();
-            $table->index(['user_id','email','mobile', 'account_id','created_at']);
+            $table->index(['user_number','email','mobile', 'account_id','created_at']);
         });
     }
 

@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('accounts', function (Blueprint $table) {
             $table->id();
-            $table->string('account_id',20)->comment('generate');
+            $table->string('account_number',20)->comment('generate');
             $table->string('account_uri',100);
             $table->string('company_name');
             $table->string('slug');
@@ -35,7 +35,7 @@ return new class extends Migration
             $table->unsignedBigInteger('modified_by')->default(0);
             $table->timestamps();
             $table->softDeletes();
-            $table->index(['account_id','user_id', 'created_at']);
+            $table->index(['account_number','user_id', 'created_at']);
         });
     }
 

@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
 
-class Suppliers extends Model
+class Customers extends Model
 {
 
     use HasFactory,SoftDeletes;
@@ -26,7 +26,7 @@ class Suppliers extends Model
     }
  
      protected $fillable=[
-            'supplier_number','contactId','supplier_type','display_name','company_name','website','tax_rate','currency','image','payment_terms','account_id','created_by','modified_by'
+            'customer_number','contactId','customer_type','display_name','company_name','website','tax_rate','currency','image','payment_terms','account_id','created_by','modified_by'
      ];
 
      public static $rules = [
@@ -38,9 +38,9 @@ class Suppliers extends Model
         //return substr("BDERP221214-1",5); //221214-1
         return substr(Auth::user()->account->account_number,5); //221214-1
      }
-     public static function totalSupplier(){
-         $totalSupplier= Suppliers::where('account_id',Auth::user()->account_id)->count();
-         return $totalSupplier+1;
+     public static function totalCustomer(){
+         $totalCustomer= Customers::where('account_id',Auth::user()->account_id)->count();
+         return $totalCustomer+1;
      }
 
     // public function IdIncreamentable():array{
@@ -58,7 +58,7 @@ class Suppliers extends Model
 
         // auto-sets account values on creation
         static::creating(function ($model) {
-            $model->supplier_number="SACC".static::SplitAccountNumber()."-".static::totalSupplier();
+            $model->customer_number="CACC".static::SplitAccountNumber()."-".static::totalCustomer();
             $model->created_by = Auth::user()->id;
             $model->account_id = Auth::user()->account_id;
         });
@@ -68,6 +68,6 @@ class Suppliers extends Model
    
 
     public function addresses(){
-        return $this->hasMany(Address::class,'ref_id')->where('ref_object_key',Address::$ref_supplier_key);
+        return $this->hasMany(Address::class,'ref_id')->where('ref_object_key',Address::$ref_customer_key);
     }
 }
