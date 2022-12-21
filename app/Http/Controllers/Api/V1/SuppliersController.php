@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Api\V1\Helper\ApiFilter;
 use App\Http\Controllers\Api\V1\Helper\ApiResponse;
+use App\Models\Address;
+use App\Models\Contact;
 use App\Models\Suppliers;
 use Illuminate\Support\Facades\Validator;
 
@@ -16,7 +18,7 @@ class SuppliersController extends Controller
    
     use ApiResponse, ApiFilter;
     
-    public function updateOrCreate(Request $request, $supplier_id=''){
+    public function create(Request $request){
         //return $request;
         $validator= Validator::make($request->all(), Suppliers::$rules);
         if ($validator->fails()) {
@@ -24,11 +26,9 @@ class SuppliersController extends Controller
         }else{
             DB::beginTransaction();
             try {
-                $supplier = Suppliers::updateOrCreate(
-                    ['id' => $supplier_id],
+                $supplier = Suppliers::create(
+
                     [
-                        
-                        'contactId' => $request['contactId'],
                         'supplier_type' => $request['supplier_type'],
                         'display_name' => $request['display_name'],
                         'company_name' => $request['company_name'],
@@ -36,7 +36,8 @@ class SuppliersController extends Controller
                         'tax_rate' => $request['tax_rate'],
                         'currency' => $request['currency'],
                         'payment_terms' => $request['payment_terms'],
-                        'modified_by' => Auth::user()->id,
+                        'copy_bill_address' => isset($request['copy_bill_address']) ? $request['copy_bill_address']:0,
+                       
                     ]
                 );
                 DB::commit();
@@ -68,5 +69,131 @@ class SuppliersController extends Controller
         $supplier=Suppliers::find($id);
         return $this->success($supplier);
         
+    }
+
+    public function store(Request $request){
+       
+        //return $request['primary_contact']['salutation'];
+        //$request['bill_country']=$request->has(['bill_country']) ? ($request['bill_country'] !=null ? $request['bill_country']: 0) : 0;
+    //    foreach ($request['other_contact'] as $key => $value) {
+    //     return $value['salutation'];
+    //    }
+        //return count($request['other_contact']);
+        //return $request;
+        $return_data=[];
+        $validator= Validator::make($request->all(), Suppliers::$rules);
+        if ($validator->fails()) {
+            return $this->error($validator->errors(),200);
+        }else{
+            DB::beginTransaction();
+            try {
+
+                $supplier =new Suppliers();
+                $supplier->supplier_type=$request['supplier_type'];
+                $supplier->display_name=$request['display_name'];
+                $supplier->company_name=isset($request['company_name']) ? $request['company_name']:null;
+                $supplier->website=isset($request['website']) ? $request['website']: null;
+                $supplier->tax_rate=isset($request['tax_rate'])  ? $request['tax_rate'] : null;
+                $supplier->currency=isset($request['currency']) ? $request['currency'] : null;
+                $supplier->image=isset($request['image']) ? $request['image']: null;
+                $supplier->payment_terms=isset($request['payment_terms']) ? : 0;
+                $supplier->copy_bill_address=isset($request['copy_bill_address']) ? : 0;
+                $supplier->save();
+       
+                $supplier_id=$supplier->id;
+                //store primary address
+                $return_data['supplier']=$supplier;
+              if($supplier_id > 0){ 
+                if($request->has('primary_contact')){
+                    if(!empty($request['primary_contact'])){
+
+                        $primary_contact= new Contact();
+                            $primary_contact= $primary_contact->create($request['primary_contact'], $supplier_id, Address::$ref_supplier_key); 
+                        $return_data['primary_contact']=$primary_contact;
+                        }
+                    
+                }
+                //store other address
+                if($request->has(['other_contact'])){
+                    if(count($request['other_contact'])>0){
+                        foreach ($request['other_contact'] as $key => $item) {
+                            $other_contact= new Contact();
+                            $other_contact= $other_contact->create($item, $supplier_id, Address::$ref_supplier_key); 
+                            $return_data['other_contact']=$other_contact;
+                        };
+                    };
+            
+                }
+                    $address=[];
+                    $address_data=[];
+                    if(!empty($request['bill_attention'])){
+                        $address_data['bill']=[
+                        'ref_object_key' => Address::$ref_supplier_key,
+                        'ref_id' => $supplier_id,
+                        'attention' =>$request->bill_attention,
+                        'country_id' =>$request->bill_country,
+                        'state_id' => $request->bill_state,
+                        'district_id' => $request->bill_district,
+                        'thana_id' => $request->bill_thana,
+                        'union_id' => $request->bill_union,
+                        'zipcode_id' => $request->bill_zipcode,
+                        'street_address_id' => $request->bill_street_address,
+                        'house' => $request->bill_house,
+                        'phone' => $request->bill_phone,
+                        'fax' => $request->bill_fax,
+                        'is_bill_address' => 1
+                    ];
+                    
+                    //store bill address
+                    $address=new Address();
+                    $address['bill']= $address->create($address_data['bill']);
+                    $return_data['bill_address']=$address['bill'];
+                    
+                    //copy bill address to ship
+                    if($request['copy_bill_address']==1){
+                        $address_data['bill']['is_bill_address']=0;
+                        $address_data['bill']['is_ship_address']=1;
+                        $address_data['ship_address']= $address->create($address_data['bill']);
+                        $return_data['ship_address']=$address_data['ship_address'];
+                        }
+                    }
+            
+                //store ship address
+                if(!empty($request['ship_attention'])){
+                    $address_data['ship']=[
+                        'ref_object_key' => Address::$ref_supplier_key,
+                        'ref_id' => $supplier_id,
+                        'attention' =>$request->ship_attention,
+                        'country_id' =>$request->ship_country,
+                        'state_id' => $request->ship_state,
+                        'district_id' => $request->ship_district,
+                        'thana_id' => $request->ship_thana,
+                        'union_id' => $request->ship_union,
+                        'zipcode_id' => $request->ship_zipcode,
+                        'street_address_id' => $request->ship_street_address,
+                        'house' => $request->ship_house,
+                        'phone' => $request->ship_phone,
+                        'fax' => $request->ship_fax,
+                        'is_ship_address' => 1
+                    
+                    ];
+                    $address=new Address();
+                    $address['ship_address']= $address->create($address_data['ship']);
+                    $return_data['ship_address']=$address['ship_address'];
+                }
+              }
+
+            DB::commit();
+            return $this->success($return_data);
+            //return $this->success($address_data);
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            //return $this->error($e->getMessage(), 200);
+           return throw $e;
+        }
+    }
+        
+
+
     }
 }

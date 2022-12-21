@@ -13,6 +13,7 @@ class Suppliers extends Model
 {
 
     use HasFactory,SoftDeletes;
+    protected $table='portal_suppliers';
     protected $dates=[
         'creadted_at',
         'updated_at',
@@ -26,7 +27,7 @@ class Suppliers extends Model
     }
  
      protected $fillable=[
-            'supplier_number','contactId','supplier_type','display_name','company_name','website','tax_rate','currency','image','payment_terms','account_id','created_by','modified_by'
+            'supplier_number','supplier_type','display_name','copy_bill_address','company_name','website','tax_rate','currency','image','payment_terms','account_id','created_by','modified_by'
      ];
 
      public static $rules = [

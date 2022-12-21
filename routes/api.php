@@ -42,15 +42,16 @@ Route::middleware('auth:api')->group(function() {
     Route::get('user/{id}', [UserController::class,'user'])->name('user');
 
     //supplier
-    Route::post('supplier/create', [SuppliersController::class,'updateOrCreate'])->name('supplier.create');
+    Route::post('supplier/create', [SuppliersController::class,'create'])->name('supplier.create');
     Route::get('suppliers', [SuppliersController::class,'suppliers'])->name('suppliers');
     Route::get('supplier/{id}', [SuppliersController::class,'supplier'])->name('supplier');
+    Route::post('supplier/store', [SuppliersController::class,'store'])->name('supplier.store');
 
     //customer
-    Route::post('customer/create', [CustomerController::class,'updateOrCreate'])->name('customer.create');
+    Route::post('customer/create', [CustomerController::class,'create'])->name('customer.create');
     Route::get('customers', [CustomerController::class,'customers'])->name('customers');
     Route::get('customer/{id}', [CustomerController::class,'customer'])->name('customer');
-    Route::post('customer/create/all', [CustomerController::class,'createCustomerWithAddressContact'])->name('customer.create.all');
+    Route::post('customer/store', [CustomerController::class,'store'])->name('customer.store');
     
     //address
     Route::post('set/address', [AddressController::class,'setAddress'])->name('setaddress');
