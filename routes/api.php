@@ -50,6 +50,7 @@ Route::middleware('auth:api')->group(function() {
     Route::post('customer/create', [CustomerController::class,'updateOrCreate'])->name('customer.create');
     Route::get('customers', [CustomerController::class,'customers'])->name('customers');
     Route::get('customer/{id}', [CustomerController::class,'customer'])->name('customer');
+    Route::post('customer/create/all', [CustomerController::class,'createCustomerWithAddressContact'])->name('customer.create.all');
     
     //address
     Route::post('set/address', [AddressController::class,'setAddress'])->name('setaddress');

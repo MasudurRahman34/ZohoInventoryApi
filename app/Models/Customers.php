@@ -26,7 +26,7 @@ class Customers extends Model
     }
  
      protected $fillable=[
-            'customer_number','contactId','customer_type','display_name','company_name','website','tax_rate','currency','image','payment_terms','account_id','created_by','modified_by'
+            'customer_number','customer_type','display_name','company_name','website','tax_rate','currency','image','payment_terms','account_id','created_by','modified_by'
      ];
 
      public static $rules = [

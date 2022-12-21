@@ -27,7 +27,7 @@ return new class extends Migration
                 $table->unsignedBigInteger('union_id')->default(0)->comment('The id value union table');
                 $table->unsignedBigInteger('zipcode_id')->default(0)->comment('The id value zipcodes table');
                 $table->unsignedBigInteger('street_address_id')->default(0)->comment('The id value street_address table');
-                $table->string('house')->comment('House/suite/apartment number');
+                $table->string('house')->comment('House/suite/apartment number')->nullable();
                 $table->string('phone',20)->comment('Phone number')->nullable();
                 $table->string('fax',20)->comment('fax number')->nullable();
                 $table->tinyInteger('is_bill_address')->comment('this field is used for bill address 0=no 1=yes')->default(0)->nullable();

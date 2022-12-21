@@ -12,9 +12,9 @@ class Address extends Model
 {
     use HasFactory,SoftDeletes;
 
-    public static $ref_supplier_key="PORTAL_SUPPLIERS_TBL";
-    public static $ref_customer_key="PORTAL_CUSTOMERs_TBL";
-    public static $ref_user_key="PORTAL_USERS_TBL";
+    public static $ref_supplier_key="App\Models\Suppliers";
+    public static $ref_customer_key="App\Models\Customers";
+    public static $ref_user_key="App\Models\Users";
     
     protected $table='lara_portal_address';
     protected $dates=[
@@ -34,6 +34,7 @@ class Address extends Model
 
      public static function rules(){ 
      return[
+        'attention'=>'required|string',
         'house' => 'required|string',
         'ref_id' => 'required|integer',
         'country_id' => 'required|integer',
