@@ -90,4 +90,10 @@ class AddressController extends Controller
         return $address;
 
     }
+
+    public function getAll(Request $request){
+        $this->setFilterProperty($request);
+        $address = Address::where('account_id', Auth::user()->account_id)->orderBy($this->column_name, $this->sort)->paginate($this->show_per_page)->withQueryString();
+        return $this->success($address);
+    }
 }

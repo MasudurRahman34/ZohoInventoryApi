@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
 
-class Suppliers extends Model
+class Supplier extends Model
 {
 
     use HasFactory,SoftDeletes;
@@ -30,17 +30,17 @@ class Suppliers extends Model
             'supplier_number','supplier_type','display_name','copy_bill_address','company_name','website','tax_rate','currency','image','payment_terms','account_id','created_by','modified_by'
      ];
 
-     public static $rules = [
-        'display_name' => 'required|string|max:100',
-       // 'company_name' => 'required|string|max:255',
-    ];
+    //  public static $rules = [
+    //     'display_name' => 'required|string|max:100',
+    //    // 'company_name' => 'required|string|max:255',
+    // ];
 
     public static function SplitAccountNumber(){
         //return substr("BDERP221214-1",5); //221214-1
         return substr(Auth::user()->account->account_number,5); //221214-1
      }
      public static function totalSupplier(){
-         $totalSupplier= Suppliers::where('account_id',Auth::user()->account_id)->count();
+         $totalSupplier= Supplier::where('account_id',Auth::user()->account_id)->withTrashed()->count();
          return $totalSupplier+1;
      }
 
@@ -70,5 +70,9 @@ class Suppliers extends Model
 
     public function addresses(){
         return $this->hasMany(Address::class,'ref_id')->where('ref_object_key',Address::$ref_supplier_key);
+    }
+
+    public function contacts(){
+        return $this->hasMany(Contact::class,'ref_id')->where('ref_object_key',Address::$ref_supplier_key);
     }
 }

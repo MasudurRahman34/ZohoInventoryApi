@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\V1\AddressController;
 use App\Http\Controllers\Api\V1\Auth\LoginController;
 use App\Http\Controllers\Api\V1\Auth\RegistrationController;
 use App\Http\Controllers\Api\V1\CustomerController;
+use App\Http\Controllers\Api\V1\SupplierController;
 use App\Http\Controllers\Api\V1\SuppliersController;
 use App\Http\Controllers\Api\V1\UserController;
 use App\Models\Accounts;
@@ -42,10 +43,12 @@ Route::middleware('auth:api')->group(function() {
     Route::get('user/{id}', [UserController::class,'user'])->name('user');
 
     //supplier
-    Route::post('supplier/create', [SuppliersController::class,'create'])->name('supplier.create');
-    Route::get('suppliers', [SuppliersController::class,'suppliers'])->name('suppliers');
-    Route::get('supplier/{id}', [SuppliersController::class,'supplier'])->name('supplier');
-    Route::post('supplier/store', [SuppliersController::class,'store'])->name('supplier.store');
+    Route::post('supplier/create', [SupplierController::class,'create'])->name('supplier.create');
+    Route::get('suppliers', [SupplierController::class,'getAll'])->name('suppliers');
+    Route::get('supplier/{id}', [SupplierController::class,'show'])->name('supplier');
+    Route::delete('supplier/{id}', [SupplierController::class,'delete'])->name('supplier.delete');
+    Route::post('supplier/store', [SupplierController::class,'store'])->name('supplier.store');
+    Route::post('supplier/{id}/update', [SupplierController::class,'update'])->name('supplier.update');
 
     //customer
     Route::post('customer/create', [CustomerController::class,'create'])->name('customer.create');

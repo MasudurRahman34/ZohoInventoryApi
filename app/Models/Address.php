@@ -63,7 +63,7 @@ class Address extends Model
         
         //return $item;
         $address=new Address();
-        $address->ref_object_key ==$item['ref_object_key'];
+        $address->ref_object_key =$item['ref_object_key'];
         $address->ref_id =$item['ref_id'];
         $address->attention =isset($item['attention']) ?$item['attention'] : null;
         $address->country_id =isset($item['country_id']) ? $item['country_id'] : 0;

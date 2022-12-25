@@ -41,7 +41,7 @@ class Customers extends Model
         return substr(Auth::user()->account->account_number,5); //221214-1
      }
      public static function totalCustomer(){
-         $totalCustomer= Customers::where('account_id',Auth::user()->account_id)->count();
+         $totalCustomer= Customers::where('account_id',Auth::user()->account_id)->withTrashed()->count();
          return $totalCustomer+1;
      }
 
