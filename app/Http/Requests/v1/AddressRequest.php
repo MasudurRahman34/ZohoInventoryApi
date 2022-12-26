@@ -2,15 +2,12 @@
 
 namespace App\Http\Requests\v1;
 
+use App\Http\Controllers\Api\V1\Helper\ApiResponse;
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
-use Illuminate\Contracts\Validation\Validator as contractsValidator;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
-use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\Api\V1\Helper\ApiResponse;
 
-class CustomerRequest extends FormRequest
+class AddressRequest extends FormRequest
 {
     use ApiResponse;
     /**
@@ -31,12 +28,12 @@ class CustomerRequest extends FormRequest
     public function rules()
     {
         return [
-            'display_name' => 'required|string|max:100',
-            'customer_type' => 'required|integer|min:0',
-            'customer_number'=>'unique:portal_customers,customer_number,'.$this->customer,
+            //'attention'=>'required|string',
+            'ref_id' => 'required|integer',
+            'source' => 'required|string', //customer, supplier, user
         ];
     }
-    public function failedValidation(contractsValidator $validator){
+    public function failedValidation(Validator $validator){
        
         throw new HttpResponseException(
            

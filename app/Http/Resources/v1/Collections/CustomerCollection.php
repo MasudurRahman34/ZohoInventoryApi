@@ -4,7 +4,7 @@ namespace App\Http\Resources\v1\Collections;
 
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
-class ContactCollection extends ResourceCollection
+class CustomerCollection extends ResourceCollection
 {
     /**
      * Transform the resource collection into an array.
@@ -15,8 +15,13 @@ class ContactCollection extends ResourceCollection
     public function toArray($request)
     {
         return parent::toArray($request);
-    //    return [
-    //     'data' => $this->collection,
-    //    ];
+        // return [
+        //     // "message"=> "Operation Successful",
+        //     // "error"=>false,
+        //     'data' => $this->collection,
+        //     // 'links' => [
+        //     //     'self' => 'link-value',
+        //     // ],
+        // ];
     }
 }

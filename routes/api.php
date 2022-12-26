@@ -43,23 +43,28 @@ Route::middleware('auth:api')->group(function() {
     Route::get('user/{id}', [UserController::class,'user'])->name('user');
 
     //supplier
-    Route::post('supplier/create', [SupplierController::class,'create'])->name('supplier.create');
-    Route::get('suppliers', [SupplierController::class,'getAll'])->name('suppliers');
-    Route::get('supplier/{id}', [SupplierController::class,'show'])->name('supplier');
-    Route::delete('supplier/{id}', [SupplierController::class,'delete'])->name('supplier.delete');
-    Route::post('supplier/store', [SupplierController::class,'store'])->name('supplier.store');
-    Route::post('supplier/{id}/update', [SupplierController::class,'update'])->name('supplier.update');
+    Route::post('suppliers/create', [SupplierController::class,'create'])->name('suppliers.create');
+    Route::get('suppliers', [SupplierController::class,'index'])->name('suppliers.index');
+    Route::get('suppliers/{supplier}', [SupplierController::class,'show'])->name('suppliers.show');
+    Route::delete('suppliers/{supplier}', [SupplierController::class,'delete'])->name('suppliers.delete');
+    Route::post('suppliers/store', [SupplierController::class,'store'])->name('suppliers.store');
+    Route::post('suppliers/{supplier}', [SupplierController::class,'update'])->name('suppliers.update');
 
     //customer
-    Route::post('customer/create', [CustomerController::class,'create'])->name('customer.create');
-    Route::get('customers', [CustomerController::class,'customers'])->name('customers');
-    Route::get('customer/{id}', [CustomerController::class,'customer'])->name('customer');
-    Route::post('customer/store', [CustomerController::class,'store'])->name('customer.store');
+    Route::post('customers/create', [CustomerController::class,'create'])->name('customer.create');
+    Route::get('customers', [CustomerController::class,'index'])->name('customers.index');
+    Route::get('customers/{customer}', [CustomerController::class,'show'])->name('customer.show');
+    Route::delete('customers/{customers}', [CustomerController::class,'delete'])->name('customers.delete');
+    Route::post('customers/store', [CustomerController::class,'store'])->name('customer.store');
+    Route::post('customers/{customer}', [CustomerController::class,'update'])->name('customer.update');
     
     //address
-    Route::post('set/address', [AddressController::class,'setAddress'])->name('setaddress');
-    Route::post('address', [AddressController::class,'updateOrCreate'])->name('address.create');
-    Route::post('address/{address_id}', [AddressController::class,'updateOrCreate'])->name('address.update');
+    //Route::post('set/address', [AddressController::class,'setAddress'])->name('setaddress');
+    Route::post('addresses/create', [AddressController::class,'create'])->name('addresses.create');
+    Route::post('addresses/{address}', [AddressController::class,'update'])->name('addresses.update');
+    Route::get('addresses', [AddressController::class,'index'])->name('addresses.index');
+    Route::get('addresses/{address}', [AddressController::class,'show'])->name('addresses.show');
+    Route::delete('addresses/{address}', [AddressController::class,'delete'])->name('addresses.delete');
 
 });
    

@@ -27,7 +27,7 @@ class Supplier extends Model
     }
  
      protected $fillable=[
-            'supplier_number','supplier_type','display_name','copy_bill_address','company_name','website','tax_rate','currency','image','payment_terms','account_id','created_by','modified_by'
+            'supplier_number','supplier_type','display_name','copy_bill_address','company_name','website','tax_rate','tax_name','currency','image','payment_terms','account_id','created_by','modified_by'
      ];
 
     //  public static $rules = [
@@ -68,11 +68,25 @@ class Supplier extends Model
     //ADDRESS
    
 
-    public function addresses(){
-        return $this->hasMany(Address::class,'ref_id')->where('ref_object_key',Address::$ref_supplier_key);
+    public function otherAddresses(){
+        return $this->hasMany(Address::class,'ref_id')->where('ref_object_key',Address::$ref_supplier_key)->where('is_ship_address',0)->where('is_bill_address',0);
     }
 
     public function contacts(){
         return $this->hasMany(Contact::class,'ref_id')->where('ref_object_key',Address::$ref_supplier_key);
     }
+    public function primaryContact(){
+        return $this->hasOne(Contact::class,'ref_id')->where('ref_object_key',Address::$ref_supplier_key)->where('is_primary_contact',1);
+    }
+    public function otherContacts(){
+        return $this->hasMany(Contact::class,'ref_id')->where('ref_object_key',Address::$ref_supplier_key)->where('is_primary_contact',0);
+    }
+    public function shipAddress(){
+        return $this->hasOne(Address::class,'ref_id')->where('ref_object_key',Address::$ref_supplier_key)->where('is_ship_address',1);
+    }
+    public function billAddress(){
+        return $this->hasOne(Address::class,'ref_id')->where('ref_object_key',Address::$ref_supplier_key)->where('is_bill_address',1);
+    }
+
 }
+  

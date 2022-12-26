@@ -35,7 +35,7 @@ class Address extends Model
  
 
      protected $fillable=[
-            'ref_object_key','ref_id','attention','country_id','state_id','district_id','thana_id','union_id','zipcode_id','street_address_id','house','phone','fax','is_bill_address','is_ship_address','full_address','created_by','modified_by','account_id'
+            'ref_object_key','ref_id','attention','country_id','state_id','district_id','thana_id','union_id','zipcode_id','street_address_id','house','phone','fax','is_bill_address','is_ship_address','full_address','status','created_by','modified_by','account_id'
      ];
 
      public static function rules(){ 
@@ -65,7 +65,7 @@ class Address extends Model
         $address=new Address();
         $address->ref_object_key =$item['ref_object_key'];
         $address->ref_id =$item['ref_id'];
-        $address->attention =isset($item['attention']) ?$item['attention'] : null;
+        $address->attention =isset($item['attention']) ? $item['attention'] : null;
         $address->country_id =isset($item['country_id']) ? $item['country_id'] : 0;
         $address->state_id =isset($item['state_id'])? $item['state_id'] : 0;
         $address->district_id =isset($item['district_id'])? $item['district_id'] : 0;

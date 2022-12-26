@@ -4,7 +4,7 @@ namespace App\Http\Resources\v1;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ContactResouce extends JsonResource
+class ContactResource extends JsonResource
 {
     /**
      * Transform the resource into an array.

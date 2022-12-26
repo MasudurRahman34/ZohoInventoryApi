@@ -14,11 +14,9 @@ class AddressCollection extends ResourceCollection
      */
     public function toArray($request)
     {
-       //return parent::toArray($request);
-       return[
-    //    "message"=> "Operation Successful",
-    //    "error"=>false,
-       'data' => $this->collection,
-       ];
+       return parent::toArray($request);
+      //  return[
+      //  'data' => $this->collection,
+      //  ];
     }
 }

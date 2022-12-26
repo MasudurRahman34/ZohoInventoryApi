@@ -1,10 +1,9 @@
 <?php
 
 namespace App\Providers;
-
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Http\Resources\Json\Resource;
-use ResourceBundle;
+
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -27,5 +26,6 @@ class AppServiceProvider extends ServiceProvider
     {
         //
         //Resource::withoutWrapping();
+        //JsonResource::withoutWrapping();
     }
 }

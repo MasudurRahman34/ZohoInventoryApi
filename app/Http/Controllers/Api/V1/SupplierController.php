@@ -14,13 +14,32 @@ use App\Http\Resources\v1\SupplierResource;
 use App\Models\Address;
 use App\Models\Contact;
 use App\Models\Supplier;
-use Illuminate\Support\Facades\Validator;
 
 class SupplierController extends Controller
 {
 
     use ApiResponse, ApiFilter;
 
+    //get supplier list
+    public function index(Request $request)
+    {
+        $this->setFilterProperty($request);
+        $suppliers = Supplier::where('account_id', $this->account_id)->with('primaryContact')->with('otherContacts')->with('shipAddress')->with('billAddress')->with('otherAddresses')->orderBy($this->column_name, $this->sort)->paginate($this->show_per_page)->withQueryString();
+        return (new SupplierCollection($suppliers));
+    }
+
+    //get single supplier
+    public function show($id)
+    {
+        $supplier = Supplier::with('PrimaryContact')->with('otherContacts')->with('shipAddress')->with('billAddress')->with('otherAddresses')->where('account_id', Auth::user()->account_id)->find($id);
+        if($supplier){
+            return $this->success(new SupplierResource($supplier));
+        }else{
+            return $this->error('Data Not Found',404);
+        } 
+    }
+
+    //create supplier
     public function create(SupplierRequest $request)
     {
         //return $request;
@@ -52,40 +71,44 @@ class SupplierController extends Controller
                 return $this->error($e->getMessage(), 200);
             }
     }
-    
 
-    public function delete($id)
-    {
-        $supplier=Supplier::find($id);
-        // ->delete();
-       
-        if($supplier){
-            $supplier->destroy($id);
-            return $this->success(null,200);
-        }else{
-            return $this->error('Data Not Found',201);
-        };
-
-    }
-    public function getAll(Request $request)
-    {
-        $this->setFilterProperty($request);
-        $supplier = Supplier::where('account_id', Auth::user()->account_id)->with('addresses')->with('contacts')->orderBy($this->column_name, $this->sort)->paginate($this->show_per_page)->withQueryString();
-        return (new SupplierCollection($supplier));
-    }
-    public function show($id)
-    {
-
-        //$this->setFilterProperty($request);
-        $supplier = Supplier::with('addresses')->with('contacts')->find($id);
-        if($supplier){
-            return $this->success(new SupplierResource($supplier));
-        }else{
-            return $this->error('Data Not Found',404);
+    //update supplier
+    public function update(SupplierRequest $request,$id)
+        {
+            //return $request;
+            $supplier=Supplier::find($id);
+            if($supplier){
+                DB::beginTransaction();
+                try {
+                    $supplier->update([
+                        'supplier_number'=>isset($request['supplier_number']) ? $request['supplier_number'] : $supplier->supplier_number,
+                        'display_name'=>isset($request['display_name']) ? $request['display_name'] : $supplier->display_name,
+                        'supplier_type'=>isset($request['supplier_type']) ? $request['supplier_type'] : $supplier->supplier_type,
+                        'copy_bill_address'=>isset($request['copy_bill_address']) ? $request['copy_bill_address'] : $supplier->copy_bill_address,
+                        'company_name'=>isset($request['company_name']) ? $request['company_name'] : $supplier->company_name,
+                        'website'=>isset($request['website']) ? $request['website'] : $supplier->website,
+                        'tax_rate'=>isset($request['tax_rate']) ? $request['tax_rate'] : $supplier->tax_rate,
+                        'currency'=>isset($request['currency']) ? $request['currency'] : $supplier->currency,
+                        'image'=>isset($request['image']) ? $request['image'] : $supplier->image,
+                        'payment_terms'=>isset($request['payment_terms']) ? $request['payment_terms'] : $supplier->payment_terms,
+                        'modified_by'=>Auth::user()->id,
+                      
+                    ]);
+                    DB::commit();
+                   return $this->success(new SupplierResource($supplier),200);
+                } catch (\Exception $e) {
+                    DB::rollBack();
+                    return $this->error($e->getMessage(), 200);
+                }
+                
+            }else{
+                return $this->error('Data Not Found',200);
+            }
+            
+                
         }
-        
-    }
 
+    //store supplier with contact and addresss
     public function store(SupplierRequest $request)
     {
         $return_data = [];
@@ -108,13 +131,15 @@ class SupplierController extends Controller
 
                 $supplier=supplier::create($supplierData);
                 $supplier_id = $supplier->id;
+
                 //store primary address
-                $return_data['supplier'] = $supplier;
+                $return_data= $supplier;
                 if ($supplier_id > 0) {
                     if ($request->has('primary_contact')) {
                         if (!empty($request['primary_contact'])) {
+                            $item =$request['primary_contact'];
                             $primaryContactData=[
-                            'salutation'=>isset($item['salutation']) ?$item['salutation'] : null,
+                            'salutation'=>isset($item['salutation']) ? $item['salutation'] : null,
                             'first_name'=>isset($item['first_name']) ? $item['first_name'] : null,
                             'last_name'=>isset($item['last_name'])? $item['last_name'] : null,
                             'display_name'=>isset($item['display_name'])? $item['display_name'] : '',
@@ -170,9 +195,11 @@ class SupplierController extends Controller
                                 $return_data['other_contact'] = $other_contact;
                             };
                         };
-                    }
+                    } //end contact
+
                     $address = [];
                     $address_data = [];
+                    //store bill address
                     if (!empty($request['bill_attention'])) {
                         $address_data['bill'] = [
                             'ref_object_key' => Address::$ref_supplier_key,
@@ -191,7 +218,6 @@ class SupplierController extends Controller
                             'is_bill_address' => 1
                         ];
 
-                        //store bill address
                         $address = new Address();
                         $address['bill'] = $address->create($address_data['bill']);
                         $return_data['bill_address'] = $address['bill'];
@@ -231,65 +257,31 @@ class SupplierController extends Controller
                 }
 
                 DB::commit();
-                $supplier = Supplier::with('addresses')->with('contacts')->find($supplier_id);
+               
+                $supplier = Supplier::with('PrimaryContact')->with('otherContacts')->with('shipAddress')->with('billAddress')->with('otherAddresses')->find($supplier_id);
                 return $this->success(new SupplierResource($supplier),201);
-                //return $this->show($supplier_id);
-                //return $this->success($address_data);
-            } catch (\Throwable $e) {
+                //return $this->success($return_data);
+            } catch (\Exception $e) {
                 DB::rollBack();
-                //return $this->error($e->getMessage(), 200);
-                return throw $e;
+                return $this->error($e->getMessage(), 200);
+                //return throw $e; 
             }
         }
 
-        public function update(SupplierRequest $request,$id)
-        {
-            //return $request;
-            $supplier=Supplier::find($id);
-            if($supplier){
-                DB::beginTransaction();
-                try {
-                    $supplier->update([
-                        'supplier_number'=>isset($request['supplier_number']) ? $request['supplier_number'] : $supplier->supplier_number,
-                        'display_name'=>isset($request['display_name']) ? $request['display_name'] : $supplier->display_name,
-                        'supplier_type'=>isset($request['supplier_type']) ? $request['supplier_type'] : $supplier->supplier_type,
-                        'copy_bill_address'=>isset($request['copy_bill_address']) ? $request['copy_bill_address'] : $supplier->copy_bill_address,
-                        'company_name'=>isset($request['company_name']) ? $request['company_name'] : $supplier->company_name,
-                        'website'=>isset($request['website']) ? $request['website'] : $supplier->website,
-                        'tax_rate'=>isset($request['tax_rate']) ? $request['tax_rate'] : $supplier->tax_rate,
-                        'currency'=>isset($request['currency']) ? $request['currency'] : $supplier->currency,
-                        'image'=>isset($request['image']) ? $request['image'] : $supplier->image,
-                        'payment_terms'=>isset($request['payment_terms']) ? $request['payment_terms'] : $supplier->payment_terms,
-                        'modified_by'=>Auth::user()->id,
-                      
-                    ]);
-                    DB::commit();
-                   return $this->success(new SupplierResource($supplier),200);
-                    //return new SupplierCollection(Supplier::paginate(10));
-                } catch (\Exception $e) {
-                    DB::rollBack();
-                    return $this->error($e->getMessage(), 200);
-                }
-                
-            }
-            // $supplierData = [
-            //     'supplier_number'=>$request['supplier_number'],
-            //     'supplier_type' => isset($request['supplier_type']) ? $request['supplier_type'] : 1,
-            //     'display_name' => isset($request['display_name']) ? $request['display_name'] : null,
-            //     'company_name' => isset($request['company_name']) ? $request['company_name'] : null,
-            //     'website' => isset($request['website']) ? $request['website'] : null,
-            //     'tax_name' => isset($request['tax_name']) ? $request['tax_name'] : 0,
-            //     'tax_rate' => isset($request['tax_rate']) ? $request['tax_rate'] : 0,
-            //     'currency' => isset($request['currency']) ? $request['currency'] : 0,
-            //     'image' => isset($request['image']) ? $request['image'] : null,
-            //     'payment_terms' => isset($request['payment_terms']) ? $request['payment_terms'] : 0,
-            //     'copy_bill_address' => isset($request['copy_bill_address']) ? $request['copy_bill_address'] : 0,
-            //     'created_by' => Auth::user()->id,
-            //     'account_id' => Auth::user()->account_id
-            // ];
-            
-                
-        }
+
+        
+    //soft delete supplier
+    public function delete($id)
+    {
+        $supplier=Supplier::where('account_id', Auth::user()->account_id)->find($id);
+        if($supplier){
+            $supplier->destroy($id);
+            return $this->success(null,200);
+        }else{
+            return $this->error('Data Not Found',201);
+        };
+
+    }
 
 
     

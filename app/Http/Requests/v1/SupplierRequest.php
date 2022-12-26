@@ -3,7 +3,7 @@
 namespace App\Http\Requests\v1;
 
 use App\Http\Controllers\Api\V1\Helper\ApiResponse;
-// use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Contracts\Validation\Validator as contractsValidator;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -36,19 +36,19 @@ class SupplierRequest extends FormRequest
            
                 'display_name' => 'required|string|max:100',
                'supplier_type' => 'required|integer|min:0',
-               'supplier_number'=>'unique:portal_suppliers,supplier_number,'.$this->id,
+               'supplier_number'=>'unique:portal_suppliers,supplier_number,'.$this->supplier,
             // 'supplier_number'=>Rule::unique('portal_suppliers','supplier_number')->where(function ($query) {
             //     return $query->where('portal_suppliers.account_id', Auth::user()->account_id)->where('portal_suppliers.id',$this->id);
             // })
         ];
     }
 
-    // public function failedValidation(Validator $validator){
+    public function failedValidation(contractsValidator $validator){
        
-    //     throw new HttpResponseException(
+        throw new HttpResponseException(
            
-    //            $this->error($validator->errors(),422)
+               $this->error($validator->errors(),422)
             
-    //     );
-    // }
+        );
+    }
 }

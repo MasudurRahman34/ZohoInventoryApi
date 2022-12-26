@@ -3,16 +3,14 @@
 namespace App\Http\Resources\v1;
 
 use App\Http\Resources\v1\Collections\AddressCollection;
+use App\Http\Resources\v1\Collections\ContactCollection;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class SupplierResource extends JsonResource
 {
-    /**
-     * Transform the resource into an array.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
-     */
+  
+    // public $preserveKeys = true;
+    public static $wrap='supplier';
     public function toArray($request)
     {
         //return parent::toArray($request);
@@ -37,8 +35,16 @@ class SupplierResource extends JsonResource
         'modified_by' => $this->modified_by,
         'updated_at' => $this->updated_at,
         'deleted_at' => $this->deleted_at,
-        'addresses' => new AddressCollection($this->whenLoaded('addresses')),
-        'contacts' => new AddressCollection($this->whenLoaded('contacts')),
+       
+        // 'addresses' => new AddressCollection($this->whenLoaded('addresses')),
+        // 'contacts' => new ContactCollection($this->whenLoaded('contacts')),
+        'primary_contact' => new ContactResource($this->whenLoaded('PrimaryContact')),
+        'other_contacts' => new ContactCollection($this->whenLoaded('otherContacts')),
+        'ship_address' => new AddressResource($this->whenLoaded('shipAddress')),
+        'bill_address' => new AddressResource($this->whenLoaded('billAddress')),
+        'other_addresses' => new AddressCollection($this->whenLoaded('otherAddresses')),
+        
+        
         ];
     }
     // public function with($request)
