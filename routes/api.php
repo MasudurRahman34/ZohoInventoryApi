@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\V1\AccountController;
 use App\Http\Controllers\Api\V1\AddressController;
 use App\Http\Controllers\Api\V1\Auth\LoginController;
 use App\Http\Controllers\Api\V1\Auth\RegistrationController;
+use App\Http\Controllers\Api\V1\ContactController;
 use App\Http\Controllers\Api\V1\CustomerController;
 use App\Http\Controllers\Api\V1\SupplierController;
 use App\Http\Controllers\Api\V1\SuppliersController;
@@ -66,6 +67,12 @@ Route::middleware('auth:api')->group(function() {
     Route::get('addresses/{address}', [AddressController::class,'show'])->name('addresses.show');
     Route::delete('addresses/{address}', [AddressController::class,'delete'])->name('addresses.delete');
 
+    //contacts
+    Route::post('contacts/create', [ContactController::class,'create'])->name('contacts.create');
+    Route::post('contacts/{contact}', [ContactController::class,'update'])->name('contacts.update');
+    Route::get('contacts', [ContactController::class,'index'])->name('contacts.index');
+    Route::get('contacts/{contact}', [ContactController::class,'show'])->name('contacts.show');
+    Route::delete('contacts/{contact}', [ContactController::class,'delete'])->name('contacts.delete');
 });
    
 

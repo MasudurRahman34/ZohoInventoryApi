@@ -23,8 +23,12 @@ class SupplierController extends Controller
     //get supplier list
     public function index(Request $request)
     {
+       
         $this->setFilterProperty($request);
-        $suppliers = Supplier::where('account_id', $this->account_id)->with('primaryContact')->with('otherContacts')->with('shipAddress')->with('billAddress')->with('otherAddresses')->orderBy($this->column_name, $this->sort)->paginate($this->show_per_page)->withQueryString();
+        $query = Supplier::where('account_id', $this->account_id)->with('primaryContact')->with('otherContacts')->with('shipAddress')->with('billAddress')->with('otherAddresses');
+        $this->dateRangeQuery($request, $query, 'portal_suppliers.created_at');
+        $this->filterBy($request,$this->query);
+        $suppliers = $this->query->orderBy($this->column_name, $this->sort)->paginate($this->show_per_page)->withQueryString();
         return (new SupplierCollection($suppliers));
     }
 
@@ -40,12 +44,12 @@ class SupplierController extends Controller
     }
 
     //create supplier
-    public function create(SupplierRequest $request)
+    public function create(SupplierRequest $request) 
     {
         //return $request;
         
         $supplierData = [
-            //'supplier_number'=>$request['supplier_number'],
+            'supplier_number'=>$request['supplier_number'],
             'supplier_type' => isset($request['supplier_type']) ? $request['supplier_type'] : 1,
             'display_name' => isset($request['display_name']) ? $request['display_name'] : null,
             'company_name' => isset($request['company_name']) ? $request['company_name'] : null,
@@ -160,7 +164,7 @@ class SupplierController extends Controller
                             ];
 
                             $primary_contact = new Contact();
-                            $primary_contact = $primary_contact->create($primaryContactData, $supplier_id, Address::$ref_supplier_key);
+                            $primary_contact = $primary_contact->store($primaryContactData, $supplier_id, Address::$ref_supplier_key);
                             $return_data['primary_contact'] = $primary_contact;
                         }
                     }
@@ -191,7 +195,7 @@ class SupplierController extends Controller
                                     ];
         
                                 $other_contact = new Contact();
-                                $other_contact = $other_contact->create($otherContactData, $supplier_id, Address::$ref_supplier_key);
+                                $other_contact = $other_contact->store($otherContactData, $supplier_id, Address::$ref_supplier_key);
                                 $return_data['other_contact'] = $other_contact;
                             };
                         };
@@ -219,14 +223,14 @@ class SupplierController extends Controller
                         ];
 
                         $address = new Address();
-                        $address['bill'] = $address->create($address_data['bill']);
+                        $address['bill'] = $address->store($address_data['bill']);
                         $return_data['bill_address'] = $address['bill'];
 
                         //copy bill address to ship
                         if ($request['copy_bill_address'] == 1) {
                             $address_data['bill']['is_bill_address'] = 0;
                             $address_data['bill']['is_ship_address'] = 1;
-                            $address_data['ship_address'] = $address->create($address_data['bill']);
+                            $address_data['ship_address'] = $address->store($address_data['bill']);
                             $return_data['ship_address'] = $address_data['ship_address'];
                         }
                     }
@@ -251,7 +255,7 @@ class SupplierController extends Controller
 
                         ];
                         $address = new Address();
-                        $address['ship_address'] = $address->create($address_data['ship']);
+                        $address['ship_address'] = $address->store($address_data['ship']);
                         $return_data['ship_address'] = $address['ship_address'];
                     }
                 }

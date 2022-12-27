@@ -60,4 +60,14 @@ trait ApiFilter{
         }
         $this->query=$query;
     }
+
+    public function filterBy($request,$query){
+        if($request->has('filter')){
+            foreach ($request->filter as $columnName => $value) {
+                $query= $query->where($columnName, 'LIKE', '%' . $value . '%');
+                $this->query=$query;
+            }
+        }
+        $this->query=$query;
+    }
 }

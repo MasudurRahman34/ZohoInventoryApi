@@ -26,7 +26,9 @@ class CustomerController extends Controller
     public function index(Request $request)
     {
         $this->setFilterProperty($request);
-        $customers = Customer::where('account_id', $this->account_id)->with('primaryContact')->with('otherContacts')->with('shipAddress')->with('billAddress')->with('otherAddresses')->orderBy($this->column_name, $this->sort)->paginate($this->show_per_page)->withQueryString();
+        $query = Customer::where('account_id', $this->account_id)->with('primaryContact')->with('otherContacts')->with('shipAddress')->with('billAddress')->with('otherAddresses');
+        $this->dateRangeQuery($request, $query, 'portal_customers.created_at');
+        $customers=$this->query->orderBy($this->column_name, $this->sort)->paginate($this->show_per_page)->withQueryString();
         return (new CustomerCollection($customers));
     }
 
@@ -156,7 +158,7 @@ class CustomerController extends Controller
                         ];
 
                         $primary_contact = new Contact();
-                        $primary_contact = $primary_contact->create($primaryContactData, $customer_id, Address::$ref_customer_key);
+                        $primary_contact = $primary_contact->store($primaryContactData, $customer_id, Address::$ref_customer_key);
                         $return_data['primary_contact'] = $primary_contact;
                     }
                 } //end primary contact
@@ -187,7 +189,7 @@ class CustomerController extends Controller
                                 ];
     
                             $other_contact = new Contact();
-                            $other_contact = $other_contact->create($otherContactData, $customer_id, Address::$ref_customer_key);
+                            $other_contact = $other_contact->store($otherContactData, $customer_id, Address::$ref_customer_key);
                             $return_data['other_contact'] = $other_contact;
                         };
                     };
@@ -214,14 +216,14 @@ class CustomerController extends Controller
                         ];
 
                         $address = new Address();
-                        $address['bill'] = $address->create($address_data['bill']);
+                        $address['bill'] = $address->store($address_data['bill']);
                         $return_data['bill_address'] = $address['bill'];
 
                         //copy bill address to ship
                         if ($request['copy_bill_address'] == 1) {
                             $address_data['bill']['is_bill_address'] = 0;
                             $address_data['bill']['is_ship_address'] = 1;
-                            $address_data['ship_address'] = $address->create($address_data['bill']);
+                            $address_data['ship_address'] = $address->store($address_data['bill']);
                             $return_data['ship_address'] = $address_data['ship_address'];
                         }
                     }//end bill address
@@ -246,7 +248,7 @@ class CustomerController extends Controller
 
                         ];
                         $address = new Address();
-                        $address['ship_address'] = $address->create($address_data['ship']);
+                        $address['ship_address'] = $address->store($address_data['ship']);
                         $return_data['ship_address'] = $address['ship_address'];
                     }
             }

@@ -23,7 +23,7 @@ class Contact extends Model
     }
  
      protected $fillable=[
-            'ref_object_key','ref_id','salutation','first_name','last_name','display_name','company_name','contact_work_phone','phone_number_country_code','contact_mobile',
+            'ref_object_key','ref_id','salutation','first_name','last_name','display_name','company_name','contact_work_phone','phone_number_country_code','contact_mobile','contact_email',
             'skype','facebook','twitter','designation','department','website','is_primary_contact','contact_type_id',
             'account_id','created_by','modified_by'
      ];
@@ -45,7 +45,7 @@ class Contact extends Model
         });
     }
 
-    public function create($item, $ref_id,$ref_object_key){
+    public function store($item, $ref_id,$ref_object_key){
             $contact=new Contact();
             $contact->ref_object_key =$ref_object_key;
             // $contact->ref_id =$customer->id;

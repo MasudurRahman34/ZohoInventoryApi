@@ -28,7 +28,9 @@ class AddressController extends Controller
 
     public function index(Request $request){
         $this->setFilterProperty($request);
-        $addresses = Address::where('account_id', Auth::user()->account_id)->orderBy($this->column_name, $this->sort)->paginate($this->show_per_page)->withQueryString();
+        $query = Address::where('account_id', Auth::user()->account_id);
+        $this->dateRangeQuery($request, $query, 'created_at');
+        $addresses=$this->query->orderBy($this->column_name, $this->sort)->paginate($this->show_per_page)->withQueryString();
         return new AddressCollection($addresses);
     }
     public function show($id){
@@ -42,17 +44,18 @@ class AddressController extends Controller
     public function create(AddressRequest $request){
      
             
-            if($request['source']=='supplier'){
+            if($request['source']==='supplier'){
                 $ref_object_key=Address::$ref_supplier_key;
             }
-            elseif($request['source']=='customer'){
+            elseif($request['source']==='customer'){
                 $ref_object_key=Address::$ref_customer_key;
             }
-            elseif($request['source']=='user'){
+            elseif($request['source']==='user'){
                 $ref_object_key=Address::$ref_user_key;
             }
             else{
-                $ref_object_key='unknown';
+                $message['source'][]="The source value deos not match.";
+                return $this->error($message,422);
             }
             DB::beginTransaction();
             try {
@@ -77,7 +80,7 @@ class AddressController extends Controller
                 ];
 
                 $address = new Address();
-                $addressResponse= $address->create($address_data);
+                $addressResponse= $address->store($address_data);
                 
                 DB::commit();
                 return $this->success(new AddressResource($addressResponse));
@@ -103,7 +106,8 @@ class AddressController extends Controller
                 $ref_object_key=Address::$ref_user_key;
             }
             else{
-                $ref_object_key='unknown';
+                $message['source'][]="The source value deos not match.";
+                return $this->error($message,422);
             }
             $setaddress = new Address();
             $address_data=[
@@ -123,10 +127,11 @@ class AddressController extends Controller
                 'is_bill_address' =>isset($request->is_bill_address) ? $request->is_bill_address :$address->is_bill_address,
                 'is_ship_address' =>isset($request->is_ship_address) ? $request->is_ship_address :$address->is_ship_address,
                 'status' =>isset($request->status) ? $request->status :$address->status,
+                'modified_by' =>Auth::user()->id,
             
             ];
             
-            $address_data['full_address']=json_encode($setaddress->setAddress($address_data));
+            $address_data['full_address']=$setaddress->setAddress($address_data);
             
 
            // return $address_data;
@@ -155,7 +160,7 @@ class AddressController extends Controller
             $address->destroy($id);
             return $this->success(null,200);
         }else{
-            return $this->error('Data Not Found',201);
+            return $this->error('Data Not Found',200);
         };
 
     }

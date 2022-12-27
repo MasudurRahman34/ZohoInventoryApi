@@ -15,5 +15,9 @@ class AddressResource extends JsonResource
     public function toArray($request)
     {
         return parent::toArray($request);
+
+        // return [
+        //     'full_address'=>json_decode($this->full_address,true),
+        // ];
     }
 }
