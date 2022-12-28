@@ -16,12 +16,13 @@ use App\Models\User;
 class AccountController extends Controller
 {
     use ApiResponse, ApiFilter;
-    public function updateOrCreate(Request $request, $account_id=''){
+    public function updateOrCreate(Request $request, $account_id = '')
+    {
         //return $request;
-        $validator= Validator::make($request->all(), Accounts::$rules);
+        $validator = Validator::make($request->all(), Accounts::$rules);
         if ($validator->fails()) {
-            return $this->error($validator->errors(),200);
-        }else{
+            return $this->error($validator->errors(), 200);
+        } else {
             DB::beginTransaction();
             try {
                 $account = Accounts::updateOrCreate(
@@ -29,7 +30,7 @@ class AccountController extends Controller
                     [
                         'account_uri' => $this->generateAccountUri(),
                         'company_name' => $request['company_name'],
-                        'slug' =>$this->generateSlug($request),
+                        'slug' => $this->generateSlug($request),
                         'module_name' => json_encode($request['module_name']),
                         'dashboard_blocks' => @$request['dashboard_blocks'],
                         'language' => $request['language'],
@@ -42,53 +43,54 @@ class AccountController extends Controller
                         'modified_by' => Auth::user()->id,
                     ]
                 );
-                $updateUserAccount=User::Find(Auth::user()->id)->update(['account_id'=>$account->id]);
+                $updateUserAccount = User::Find(Auth::user()->id)->update(['account_id' => $account->id]);
                 DB::commit();
                 return $this->success($account);
-               
             } catch (\Exception $e) {
                 DB::rollBack();
                 return $this->error($e->getMessage(), 200);
-                
             }
-      }
+        }
     }
 
-    public function generateAccountUri(){
+    public function generateAccountUri()
+    {
+
+        $requestedAccountUri = strtolower(Auth::user()->first_name) . '-' . strtolower(Auth::user()->last_name);
+
         $checkAccountUri = DB::table('accounts')
-                            ->select('account_uri')
-                            ->where('account_uri',Auth::user()->first_name.'-'.Auth::user()->last_name)
-                            ->get();
+            ->select('account_uri')
+            ->where('account_uri', $requestedAccountUri)
+            ->get();
 
-            // return $checkAccountUri;
-            if (count($checkAccountUri)>0){
-                $account_uri=Auth::user()->first_name.'-'.Auth::user()->last_name.'-'.count($checkAccountUri)+1;
-                }else{
-                    $account_uri= Auth::user()->first_name.'-'.Auth::user()->last_name;
-                }
-                return $account_uri;
+        if (count($checkAccountUri) > 0) {
+            $accountUri = $requestedAccountUri . '-' . count($checkAccountUri) + 1;
+        } else {
+            $accountUri = $requestedAccountUri;
+        }
+        return $accountUri;
     }
 
-    public function generateSlug($request){
+    public function generateSlug($request)
+    {
         $checkSlug = DB::table('accounts')
-                            ->select('slug')
-                            ->where('slug',Str::slug($request->company_name))
-                            ->get();
-                if (count($checkSlug)>0){
-                    $slug=Str::slug($request->company_name).'-'.count($checkSlug)+1;
-                    }
-                else{
-                        $slug= Str::slug($request->company_name);
-                    }
-                return $slug;
+            ->select('slug')
+            ->where('slug', Str::slug($request->company_name))
+            ->get();
+        if (count($checkSlug) > 0) {
+            $slug = Str::slug($request->company_name) . '-' . count($checkSlug) + 1;
+        } else {
+            $slug = Str::slug($request->company_name);
+        }
+        return $slug;
     }
 
-    public function accounts(Request $request){
+    public function accounts(Request $request)
+    {
         $this->setFilterProperty($request);
         //$accounts=Accounts::with('user')->get();
-        
-        $accounts=Accounts::orderBy($this->column_name,$this->sort)->paginate($this->show_per_page)->withQueryString();
+
+        $accounts = Accounts::orderBy($this->column_name, $this->sort)->paginate($this->show_per_page)->withQueryString();
         return $this->success($accounts);
     }
-
 }
