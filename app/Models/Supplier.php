@@ -14,6 +14,9 @@ class Supplier extends Model
 
     use HasFactory,SoftDeletes;
     protected $table='portal_suppliers';
+    protected $hidden = [
+        'account_id'
+    ];
     protected $dates=[
         'creadted_at',
         'updated_at',

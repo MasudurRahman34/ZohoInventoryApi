@@ -15,6 +15,9 @@ class Customer extends Model
     use HasFactory,SoftDeletes;
 
     protected $table='portal_customers';
+    protected $hidden = [
+        'account_id'
+    ];
     protected $dates=[
         'creadted_at',
         'updated_at',

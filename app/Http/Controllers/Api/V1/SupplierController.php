@@ -9,7 +9,11 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Api\V1\Helper\ApiFilter;
 use App\Http\Controllers\Api\V1\Helper\ApiResponse;
 use App\Http\Requests\v1\SupplierRequest;
+use App\Http\Resources\v1\AddressResource;
+use App\Http\Resources\v1\Collections\AddressCollection;
+use App\Http\Resources\v1\Collections\ContactCollection;
 use App\Http\Resources\v1\Collections\SupplierCollection;
+use App\Http\Resources\v1\ContactResource;
 use App\Http\Resources\v1\SupplierResource;
 use App\Models\Address;
 use App\Models\Contact;
@@ -42,12 +46,41 @@ class SupplierController extends Controller
             return $this->error('Data Not Found',404);
         } 
     }
-
+    //get addresses by id
+    public function getAddresses($supplier_id){
+        //return $id;
+        //$supplierAddresses = Supplier::with('shipAddress')->with('billAddress')->with('otherAddresses')->where('account_id', Auth::user()->account_id)->find($id);
+        
+        $addresses['ship_address']=Address::where('ref_object_key',Address::$ref_supplier_key)->where('ref_id',$supplier_id)->where('is_ship_address',1)->where('account_id', Auth::user()->account_id)->first();
+        $addresses['bill_address']=Address::where('ref_object_key',Address::$ref_supplier_key)->where('ref_id',$supplier_id)->where('is_bill_address',1)->where('account_id', Auth::user()->account_id)->first();
+        $addresses['other_addresses']=Address::where('ref_object_key',Address::$ref_supplier_key)->where('ref_id',$supplier_id)->where('is_bill_address',0)->where('account_id', Auth::user()->account_id)->where('is_ship_address',0)->get();
+        if((empty($addresses['ship_address']))  && (empty($addresses['bill_address'])) && (count($addresses['other_addresses'])==0 )){
+            return $this->error('Data Not Found',404);
+        }else{
+            return $this->success($addresses);
+           
+        } 
+    }
+    //get contacts by id
+    public function getContacts($supplier_id){
+        //return $supplier_id;
+        $contacts['primary_contact']=Contact::where('ref_object_key',Address::$ref_supplier_key)->where('ref_id',$supplier_id)->where('is_primary_contact',1)->where('account_id', Auth::user()->account_id)->first();
+        $contacts['other_contacts']=Contact::where('ref_object_key',Address::$ref_supplier_key)->where('ref_id',$supplier_id)->where('is_primary_contact',0)->where('account_id', Auth::user()->account_id)->get();
+        //contact
+       //return ($contacts['other_contacts']);
+      
+        if(empty($contacts['primary_contact']) && (count($contacts['other_contacts'])==0)){
+            return $this->error('Data Not Found',404);
+        }else{
+            return $this->success($contacts);
+           
+        } 
+    }
     //create supplier
     public function create(SupplierRequest $request) 
     {
         //return $request;
-        
+       
         $supplierData = [
             'supplier_number'=>$request['supplier_number'],
             'supplier_type' => isset($request['supplier_type']) ? $request['supplier_type'] : 1,
@@ -115,6 +148,7 @@ class SupplierController extends Controller
     //store supplier with contact and addresss
     public function store(SupplierRequest $request)
     {
+        //return $request->global_address_edit;
         $return_data = [];
         $supplierData = [
             'supplier_type' => isset($request['supplier_type']) ? $request['supplier_type'] : 1,
@@ -219,10 +253,12 @@ class SupplierController extends Controller
                             'house' => $request->bill_house,
                             'phone' => $request->bill_phone,
                             'fax' => $request->bill_fax,
-                            'is_bill_address' => 1
+                            'is_bill_address' => 1,
+                            //'global_address_edit'=> $request->global_address_edit
                         ];
-
+                       
                         $address = new Address();
+                        //return $address->store($address_data['bill']);
                         $address['bill'] = $address->store($address_data['bill']);
                         $return_data['bill_address'] = $address['bill'];
 
@@ -251,7 +287,8 @@ class SupplierController extends Controller
                             'house' => $request->ship_house,
                             'phone' => $request->ship_phone,
                             'fax' => $request->ship_fax,
-                            'is_ship_address' => 1
+                            'is_ship_address' => 1,
+                            //'global_address_edit'=> $request->global_address_edit
 
                         ];
                         $address = new Address();

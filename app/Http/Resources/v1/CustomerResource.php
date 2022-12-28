@@ -33,7 +33,7 @@ class CustomerResource extends JsonResource
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'created_by' => $this->created_by,
-            'account_id ' => $this->account_id,
+            //'account_id ' => $this->account_id,
             'modified_by' => $this->modified_by,
             'updated_at' => $this->updated_at,
             'deleted_at' => $this->deleted_at,

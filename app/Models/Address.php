@@ -23,6 +23,9 @@ class Address extends Model
     public static $ref_user_key = "App\Models\Users";
 
     protected $table = 'portal_address';
+    protected $hidden = [
+        'account_id',
+    ];
     protected $dates = [
         'creadted_at',
         'updated_at',
@@ -66,8 +69,11 @@ class Address extends Model
 
     public function store($item)
     {
-
         //return $item;
+        $globalAddresess = GlobalAddress::get();
+
+        
+        //return  $globalAddresess;
         $address = new Address();
         $address->ref_object_key = $item['ref_object_key'];
         $address->ref_id = $item['ref_id'];
@@ -87,7 +93,47 @@ class Address extends Model
         $address->status = isset($item['status']) ? $item['status'] : 0;
         $address->full_address = $this->setAddress($item);
 
-        $address->save();
+        //insert global address
+        $is_find_global_address=FALSE;
+        if (count($globalAddresess) == 0) { //first insert
+                $globalAddresess = GlobalAddress::get();
+                foreach ($globalAddresess as $key => $value) {
+                    if ($value->full_address != $address->full_address) {
+                            $is_find_global_address=FALSE;
+                    }else{
+                        return $is_find_global_address=TRUE;
+                    }
+                }
+        } else {
+
+            foreach ($globalAddresess as $key => $value) {
+                if ($value->full_address != $address->full_address) {
+                        $is_find_global_address=FALSE;
+                }else{
+                    $is_find_global_address=TRUE;
+                    return $address;
+                }
+            }
+        };
+    //    if($is_find_global_address==TRUE){
+    //     return $address;
+    //    }
+        //if $is_find_global_address=false then insert 
+        if($is_find_global_address==FALSE){
+            $globalAddress = new GlobalAddress();
+            $globalAddress->country_id = $address->country_id;
+            $globalAddress->state_id = $address->state_id;
+            $globalAddress->district_id = $address->district_id;
+            $globalAddress->thana_id = $address->thana_id;
+            $globalAddress->union_id = $address->union_id;
+            $globalAddress->zipcode_id = $address->zipcode_id;
+            $globalAddress->street_address_id = $address->street_address_id;
+            $globalAddress->full_address = $address->full_address;
+            $globalAddress->plain_address = $this->setPlainAddress($address->full_address);
+            $globalAddress->status = 1;
+            $globalAddress->save();
+        }
+
         return $address;
     }
 
@@ -104,5 +150,15 @@ class Address extends Model
         $address['street_address'] = StreetAddress::where('id', $request['street_address_id'])->select('id', 'street_address_value')->first();
         //dd($address);
         return $address;
+    }
+
+    public function storeGlobalAddress($address){
+
+    }
+
+    public function setPlainAddress($fullAddress){
+        $plainAddress=$fullAddress['street_address']['street_address_value'].'-'.$fullAddress['zipcode']['zip_code'].', '.$fullAddress['union']['union_name'].', '.$fullAddress['thana']['thana_name'].', '.$fullAddress['district']['district_name'].', '.$fullAddress['country']['countryName'] ;
+       return  $plainAddress;
+
     }
 }

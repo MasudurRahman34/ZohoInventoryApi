@@ -10,6 +10,7 @@ use App\Http\Resources\v1\AddressResource;
 use App\Http\Resources\v1\Collections\AddressCollection;
 use App\Models\Address;
 use App\Models\Country;
+use App\Models\GlobalAddress;
 use App\Models\Location\District;
 use App\Models\Location\State;
 use App\Models\Location\StreetAddress;
@@ -43,7 +44,8 @@ class AddressController extends Controller
     }
     public function create(AddressRequest $request){
      
-            
+           
+           
             if($request['source']==='supplier'){
                 $ref_object_key=Address::$ref_supplier_key;
             }
@@ -76,6 +78,7 @@ class AddressController extends Controller
                     'is_bill_address' =>$request->is_bill_address,
                     'is_ship_address' =>$request->is_ship_address,
                     'status' =>$request->status,
+                    //'global_address_edit'=>1
                    
                 ];
 
@@ -83,8 +86,8 @@ class AddressController extends Controller
                 $addressResponse= $address->store($address_data);
                 
                 DB::commit();
-                return $this->success(new AddressResource($addressResponse));
-               
+                //return $this->success(new AddressResource($addressResponse));
+               return $addressResponse;
             } catch (\Exception $e) {
                 DB::rollBack();
                 return $this->error($e->getMessage(), 200);
@@ -139,9 +142,40 @@ class AddressController extends Controller
                 DB::beginTransaction();
                 $address->update($address_data);
                 //$addressResponse= $address->create($address_data);
+                $globalAddresess = GlobalAddress::get();
+                $is_find_global_address=FALSE;
+
+               
+                //$address=Address::where('account_id', Auth::user()->account_id)->find($address_id);
+                foreach ($globalAddresess as $key => $value) {
+                    if ($value->full_address != $address->full_address) {
+                            $is_find_global_address=FALSE;
+                    }else{
+                        DB::commit();
+                        return $this->success(new AddressResource($address));
+                        //return $is_find_global_address=TRUE;
+                    }
+                }
+                if($is_find_global_address==FALSE){
+                    $globalAddress = new GlobalAddress();
+                    $globalAddress->country_id = $address->country_id;
+                    $globalAddress->state_id = $address->state_id;
+                    $globalAddress->district_id = $address->district_id;
+                    $globalAddress->thana_id = $address->thana_id;
+                    $globalAddress->union_id = $address->union_id;
+                    $globalAddress->zipcode_id = $address->zipcode_id;
+                    $globalAddress->street_address_id = $address->street_address_id;
+                    $globalAddress->full_address = $address->full_address;
+                    $globalAddress->plain_address = $setaddress->setPlainAddress($address->full_address);
+                    $globalAddress->status = 1;
+                    $globalAddress->save();
+                    $is_find_global_address=TRUE;
+                    DB::commit();
+                    return $this->success(new AddressResource($address));
+                }
                 
-                DB::commit();
-                return $this->success(new AddressResource($address));
+               
+              
             
             } catch (\Exception $e) {
                 DB::rollBack();

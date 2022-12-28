@@ -50,7 +50,8 @@ Route::middleware('auth:api')->group(function() {
     Route::delete('suppliers/{supplier}', [SupplierController::class,'delete'])->name('suppliers.delete');
     Route::post('suppliers/store', [SupplierController::class,'store'])->name('suppliers.store');
     Route::post('suppliers/{supplier}', [SupplierController::class,'update'])->name('suppliers.update');
-
+    Route::get('suppliers/{supplier}/addresses', [SupplierController::class,'getAddresses'])->name('suppliers.addresses');
+    Route::get('suppliers/{supplier}/contacts', [SupplierController::class,'getContacts'])->name('suppliers.contacts');
     //customer
     Route::post('customers/create', [CustomerController::class,'create'])->name('customer.create');
     Route::get('customers', [CustomerController::class,'index'])->name('customers.index');
@@ -58,7 +59,8 @@ Route::middleware('auth:api')->group(function() {
     Route::delete('customers/{customers}', [CustomerController::class,'delete'])->name('customers.delete');
     Route::post('customers/store', [CustomerController::class,'store'])->name('customer.store');
     Route::post('customers/{customer}', [CustomerController::class,'update'])->name('customer.update');
-    
+    Route::get('customers/{customer}/addresses', [CustomerController::class,'getAddresses'])->name('customers.addresses');
+    Route::get('customers/{customer}/contacts', [CustomerController::class,'getContacts'])->name('customers.contacts');
     //address
     //Route::post('set/address', [AddressController::class,'setAddress'])->name('setaddress');
     Route::post('addresses/create', [AddressController::class,'create'])->name('addresses.create');

@@ -10,7 +10,11 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\v1\CustomerRequest;
 use App\Http\Controllers\Api\V1\Helper\ApiFilter;
 use App\Http\Controllers\Api\V1\Helper\ApiResponse;
+use App\Http\Resources\v1\AddressResource;
+use App\Http\Resources\v1\Collections\AddressCollection;
+use App\Http\Resources\v1\Collections\ContactCollection;
 use App\Http\Resources\v1\Collections\CustomerCollection;
+use App\Http\Resources\v1\ContactResource;
 use App\Http\Resources\v1\CustomerResource;
 use App\Models\Address;
 use App\Models\Contact;
@@ -42,6 +46,37 @@ class CustomerController extends Controller
              return $this->error('Data Not Found',404);
          } 
      }
+
+     //get addresses by id
+     public function getAddresses($customer_id){
+       // return $customer_id;
+        
+        $addresses['ship_address']=Address::where('ref_object_key',Address::$ref_customer_key)->where('ref_id',$customer_id)->where('is_ship_address',1)->where('account_id', Auth::user()->account_id)->first();
+        $addresses['bill_address']=Address::where('ref_object_key',Address::$ref_customer_key)->where('ref_id',$customer_id)->where('is_bill_address',1)->where('account_id', Auth::user()->account_id)->first();
+        $addresses['other_addresses']=Address::where('ref_object_key',Address::$ref_customer_key)->where('ref_id',$customer_id)->where('is_bill_address',0)->where('account_id', Auth::user()->account_id)->where('is_ship_address',0)->get();
+        
+        if((empty($addresses['ship_address']))  && (empty($addresses['bill_address'])) && (count($addresses['other_addresses'])==0 )){
+            return $this->error('Data Not Found',404);
+        }else{
+            return $this->success($addresses);
+           
+        } 
+    }
+    //get contacts by id
+    public function getContacts($customer_id){
+        //return $customer_id;
+        $contacts['primary_contact']=Contact::where('ref_object_key',Address::$ref_customer_key)->where('ref_id',$customer_id)->where('is_primary_contact',1)->where('account_id', Auth::user()->account_id)->first();
+        $contacts['other_contacts']=Contact::where('ref_object_key',Address::$ref_customer_key)->where('ref_id',$customer_id)->where('is_primary_contact',0)->where('account_id', Auth::user()->account_id)->get();
+        //contact
+       //return ($contacts['other_contacts']);
+      
+        if(empty($contacts['primary_contact']) && (count($contacts['other_contacts'])==0)){
+            return $this->error('Data Not Found',404);
+        }else{
+            return $this->success($contacts);
+           
+        } 
+    }
 
  //create customer
     public function create(CustomerRequest $request, $customer_id = '')

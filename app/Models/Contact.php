@@ -12,6 +12,9 @@ use GuzzleHttp\Psr7\Request;
 class Contact extends Model
 {
     use HasFactory,SoftDeletes;
+    protected $hidden = [
+        'account_id'
+    ];
     protected $dates=[
         'creadted_at',
         'updated_at',
