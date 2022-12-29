@@ -6,6 +6,8 @@ use App\Http\Controllers\Api\V1\Auth\LoginController;
 use App\Http\Controllers\Api\V1\Auth\RegistrationController;
 use App\Http\Controllers\Api\V1\ContactController;
 use App\Http\Controllers\Api\V1\CustomerController;
+use App\Http\Controllers\Api\V1\GlobalAddressController;
+use App\Http\Controllers\Api\V1\PurchaseController;
 use App\Http\Controllers\Api\V1\SupplierController;
 use App\Http\Controllers\Api\V1\SuppliersController;
 use App\Http\Controllers\Api\V1\UserController;
@@ -75,15 +77,27 @@ Route::middleware('auth:api')->group(function() {
     Route::get('contacts', [ContactController::class,'index'])->name('contacts.index');
     Route::get('contacts/{contact}', [ContactController::class,'show'])->name('contacts.show');
     Route::delete('contacts/{contact}', [ContactController::class,'delete'])->name('contacts.delete');
+
+    //global Address
+    Route::get('global/addresses', [GlobalAddressController::class,'index'])->name('global.addresses.index');
+
+    //
+     //contacts
+     Route::post('purchases/store', [PurchaseController::class,'store'])->name('purchases.store');
+     Route::post('purchases/{purchase}', [PurchaseController::class,'update'])->name('purchases.update');
+     Route::get('purchases', [PurchaseController::class,'index'])->name('purchases.index');
+     Route::get('purchases/{purchase}', [PurchaseController::class,'show'])->name('purchases.show');
+     Route::delete('purchases/{purchase}', [PurchaseController::class,'delete'])->name('purchases.delete');
+
 });
    
 
 });
 
 //public route
-Route::group(['middleware' => ['cors']], function () {
+// Route::group(['middleware' => ['cors']], function () {
     Route::post('/login', [LoginController::class, 'login'])->name('login.api');
     Route::post ('/register',[RegistrationController::class,'register'])->name('register.api');
-});
+// });
 
 

@@ -7,10 +7,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
-class GlobalAddress extends Model
+class Purchase extends Model
 {
     use HasFactory;
-    protected $table = 'global_address';
+    protected $table = 'purchases';
     protected $hidden=[
         'account_id'
     ];
@@ -23,11 +23,13 @@ class GlobalAddress extends Model
     {
         return $date->format('Y-m-d H:i:s');
     }
-    protected $casts = [
-        'full_address' => 'array'
-    ];
+    // protected $casts = [
+    //     'full_address' => 'array'
+    // ];
     protected $fillable = [
-        'country_id', 'state_id', 'district_id', 'thana_id', 'union_id', 'zipcode_id', 'street_address_id', 'plain_address','full_address', 'status', 'created_by', 'modified_by', 'account_id'
+        'supplier_id', 'warehouse_id', 'invoice_no', 'reference', 'total_amount', 'due_amount', 'paid_amount', 'grand_total_amount','order_discount', 'discount_currency', 'order_tax', 
+        'order_tax_amount', 'shipping_charge','order_adjustment','last_paid_amount','adjustment_text','purchase_date',
+        'delivery_date','attachment_file','image','status','payment_status','account_id','created_by','modified_by'
     ];
     protected static function boot()
     {
@@ -40,4 +42,13 @@ class GlobalAddress extends Model
         });
     }
 
+    public function purchaseItems(){
+        return $this->hasMany(PurchaseItem::class,'purchase_id','id');
+
+    }
+    public function supplier(){
+        return $this->belongsTo(Supplier::class,'supplier_id','id');
+    }
+
+    
 }

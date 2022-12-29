@@ -92,6 +92,7 @@ class Address extends Model
         $address->is_ship_address = isset($item['is_ship_address']) ? $item['is_ship_address'] : 0;
         $address->status = isset($item['status']) ? $item['status'] : 0;
         $address->full_address = $this->setAddress($item);
+        $address->save();
 
         //insert global address
         $is_find_global_address=FALSE;

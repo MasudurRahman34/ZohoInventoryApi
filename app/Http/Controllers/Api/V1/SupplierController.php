@@ -27,11 +27,21 @@ class SupplierController extends Controller
     //get supplier list
     public function index(Request $request)
     {
-       
+
+        //return $request->filter['display_name'];
         $this->setFilterProperty($request);
-        $query = Supplier::where('account_id', $this->account_id)->with('primaryContact')->with('otherContacts')->with('shipAddress')->with('billAddress')->with('otherAddresses');
+        $query = Supplier::where('account_id', $this->account_id)
+                // ->with(['primaryContact'=>fn($query)=>$query
+                //     ->where('display_name', 'LIKE', '%' . $request->filter['display_name'] . '%')
+                //    ])
+                ->with((['primaryContact'=>function($query){
+                //$query->where('display_name', 'LIKE', '%' . 'chonchol chowdhuri' . '%');
+                //$filter['display_name']='chonchol chowdhuri'
+                //$this->filterBy($request,$query);
+                }]))
+                ->with('otherContacts')->with('shipAddress')->with('billAddress')->with('otherAddresses');
         $this->dateRangeQuery($request, $query, 'portal_suppliers.created_at');
-        $this->filterBy($request,$this->query);
+        //$this->filterBy($request, $this->query);
         $suppliers = $this->query->orderBy($this->column_name, $this->sort)->paginate($this->show_per_page)->withQueryString();
         return (new SupplierCollection($suppliers));
     }
@@ -40,49 +50,49 @@ class SupplierController extends Controller
     public function show($id)
     {
         $supplier = Supplier::with('PrimaryContact')->with('otherContacts')->with('shipAddress')->with('billAddress')->with('otherAddresses')->where('account_id', Auth::user()->account_id)->find($id);
-        if($supplier){
+        if ($supplier) {
             return $this->success(new SupplierResource($supplier));
-        }else{
-            return $this->error('Data Not Found',404);
-        } 
+        } else {
+            return $this->error('Data Not Found', 404);
+        }
     }
     //get addresses by id
-    public function getAddresses($supplier_id){
+    public function getAddresses($supplier_id)
+    {
         //return $id;
         //$supplierAddresses = Supplier::with('shipAddress')->with('billAddress')->with('otherAddresses')->where('account_id', Auth::user()->account_id)->find($id);
-        
-        $addresses['ship_address']=Address::where('ref_object_key',Address::$ref_supplier_key)->where('ref_id',$supplier_id)->where('is_ship_address',1)->where('account_id', Auth::user()->account_id)->first();
-        $addresses['bill_address']=Address::where('ref_object_key',Address::$ref_supplier_key)->where('ref_id',$supplier_id)->where('is_bill_address',1)->where('account_id', Auth::user()->account_id)->first();
-        $addresses['other_addresses']=Address::where('ref_object_key',Address::$ref_supplier_key)->where('ref_id',$supplier_id)->where('is_bill_address',0)->where('account_id', Auth::user()->account_id)->where('is_ship_address',0)->get();
-        if((empty($addresses['ship_address']))  && (empty($addresses['bill_address'])) && (count($addresses['other_addresses'])==0 )){
-            return $this->error('Data Not Found',404);
-        }else{
+
+        $addresses['ship_address'] = Address::where('ref_object_key', Address::$ref_supplier_key)->where('ref_id', $supplier_id)->where('is_ship_address', 1)->where('account_id', Auth::user()->account_id)->first();
+        $addresses['bill_address'] = Address::where('ref_object_key', Address::$ref_supplier_key)->where('ref_id', $supplier_id)->where('is_bill_address', 1)->where('account_id', Auth::user()->account_id)->first();
+        $addresses['other_addresses'] = Address::where('ref_object_key', Address::$ref_supplier_key)->where('ref_id', $supplier_id)->where('is_bill_address', 0)->where('account_id', Auth::user()->account_id)->where('is_ship_address', 0)->get();
+        if ((empty($addresses['ship_address']))  && (empty($addresses['bill_address'])) && (count($addresses['other_addresses']) == 0)) {
+            return $this->error('Data Not Found', 404);
+        } else {
             return $this->success($addresses);
-           
-        } 
+        }
     }
     //get contacts by id
-    public function getContacts($supplier_id){
+    public function getContacts($supplier_id)
+    {
         //return $supplier_id;
-        $contacts['primary_contact']=Contact::where('ref_object_key',Address::$ref_supplier_key)->where('ref_id',$supplier_id)->where('is_primary_contact',1)->where('account_id', Auth::user()->account_id)->first();
-        $contacts['other_contacts']=Contact::where('ref_object_key',Address::$ref_supplier_key)->where('ref_id',$supplier_id)->where('is_primary_contact',0)->where('account_id', Auth::user()->account_id)->get();
+        $contacts['primary_contact'] = Contact::where('ref_object_key', Address::$ref_supplier_key)->where('ref_id', $supplier_id)->where('is_primary_contact', 1)->where('account_id', Auth::user()->account_id)->first();
+        $contacts['other_contacts'] = Contact::where('ref_object_key', Address::$ref_supplier_key)->where('ref_id', $supplier_id)->where('is_primary_contact', 0)->where('account_id', Auth::user()->account_id)->get();
         //contact
-       //return ($contacts['other_contacts']);
-      
-        if(empty($contacts['primary_contact']) && (count($contacts['other_contacts'])==0)){
-            return $this->error('Data Not Found',404);
-        }else{
+        //return ($contacts['other_contacts']);
+
+        if (empty($contacts['primary_contact']) && (count($contacts['other_contacts']) == 0)) {
+            return $this->error('Data Not Found', 404);
+        } else {
             return $this->success($contacts);
-           
-        } 
+        }
     }
     //create supplier
-    public function create(SupplierRequest $request) 
+    public function create(SupplierRequest $request)
     {
         //return $request;
-       
+
         $supplierData = [
-            'supplier_number'=>$request['supplier_number'],
+            'supplier_number' => $request['supplier_number'],
             'supplier_type' => isset($request['supplier_type']) ? $request['supplier_type'] : 1,
             'display_name' => isset($request['display_name']) ? $request['display_name'] : null,
             'company_name' => isset($request['company_name']) ? $request['company_name'] : null,
@@ -96,54 +106,51 @@ class SupplierController extends Controller
             'created_by' => Auth::user()->id,
             'account_id' => Auth::user()->account_id
         ];
-        
+
+        DB::beginTransaction();
+        try {
+            $supplier = supplier::create($supplierData);
+            DB::commit();
+            return $this->success(new SupplierResource($supplier), 201);
+            //return new SupplierCollection(Supplier::paginate(10));
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+
+    //update supplier
+    public function update(SupplierRequest $request, $id)
+    {
+        //return $request;
+        $supplier = Supplier::find($id);
+        if ($supplier) {
             DB::beginTransaction();
             try {
-                $supplier=supplier::create($supplierData);
+                $supplier->update([
+                    'supplier_number' => isset($request['supplier_number']) ? $request['supplier_number'] : $supplier->supplier_number,
+                    'display_name' => isset($request['display_name']) ? $request['display_name'] : $supplier->display_name,
+                    'supplier_type' => isset($request['supplier_type']) ? $request['supplier_type'] : $supplier->supplier_type,
+                    'copy_bill_address' => isset($request['copy_bill_address']) ? $request['copy_bill_address'] : $supplier->copy_bill_address,
+                    'company_name' => isset($request['company_name']) ? $request['company_name'] : $supplier->company_name,
+                    'website' => isset($request['website']) ? $request['website'] : $supplier->website,
+                    'tax_rate' => isset($request['tax_rate']) ? $request['tax_rate'] : $supplier->tax_rate,
+                    'currency' => isset($request['currency']) ? $request['currency'] : $supplier->currency,
+                    'image' => isset($request['image']) ? $request['image'] : $supplier->image,
+                    'payment_terms' => isset($request['payment_terms']) ? $request['payment_terms'] : $supplier->payment_terms,
+                    'modified_by' => Auth::user()->id,
+
+                ]);
                 DB::commit();
-               return $this->success(new SupplierResource($supplier),201);
-                //return new SupplierCollection(Supplier::paginate(10));
+                return $this->success(new SupplierResource($supplier), 200);
             } catch (\Exception $e) {
                 DB::rollBack();
                 return $this->error($e->getMessage(), 200);
             }
-    }
-
-    //update supplier
-    public function update(SupplierRequest $request,$id)
-        {
-            //return $request;
-            $supplier=Supplier::find($id);
-            if($supplier){
-                DB::beginTransaction();
-                try {
-                    $supplier->update([
-                        'supplier_number'=>isset($request['supplier_number']) ? $request['supplier_number'] : $supplier->supplier_number,
-                        'display_name'=>isset($request['display_name']) ? $request['display_name'] : $supplier->display_name,
-                        'supplier_type'=>isset($request['supplier_type']) ? $request['supplier_type'] : $supplier->supplier_type,
-                        'copy_bill_address'=>isset($request['copy_bill_address']) ? $request['copy_bill_address'] : $supplier->copy_bill_address,
-                        'company_name'=>isset($request['company_name']) ? $request['company_name'] : $supplier->company_name,
-                        'website'=>isset($request['website']) ? $request['website'] : $supplier->website,
-                        'tax_rate'=>isset($request['tax_rate']) ? $request['tax_rate'] : $supplier->tax_rate,
-                        'currency'=>isset($request['currency']) ? $request['currency'] : $supplier->currency,
-                        'image'=>isset($request['image']) ? $request['image'] : $supplier->image,
-                        'payment_terms'=>isset($request['payment_terms']) ? $request['payment_terms'] : $supplier->payment_terms,
-                        'modified_by'=>Auth::user()->id,
-                      
-                    ]);
-                    DB::commit();
-                   return $this->success(new SupplierResource($supplier),200);
-                } catch (\Exception $e) {
-                    DB::rollBack();
-                    return $this->error($e->getMessage(), 200);
-                }
-                
-            }else{
-                return $this->error('Data Not Found',200);
-            }
-            
-                
+        } else {
+            return $this->error('Data Not Found', 200);
         }
+    }
 
     //store supplier with contact and addresss
     public function store(SupplierRequest $request)
@@ -164,166 +171,162 @@ class SupplierController extends Controller
             'created_by' => Auth::user()->id,
             'account_id' => Auth::user()->account_id
         ];
-            DB::beginTransaction();
-            try {
+        DB::beginTransaction();
+        try {
 
-                $supplier=supplier::create($supplierData);
-                $supplier_id = $supplier->id;
+            $supplier = supplier::create($supplierData);
+            $supplier_id = $supplier->id;
 
-                //store primary address
-                $return_data= $supplier;
-                if ($supplier_id > 0) {
-                    if ($request->has('primary_contact')) {
-                        if (!empty($request['primary_contact'])) {
-                            $item =$request['primary_contact'];
-                            $primaryContactData=[
-                            'salutation'=>isset($item['salutation']) ? $item['salutation'] : null,
-                            'first_name'=>isset($item['first_name']) ? $item['first_name'] : null,
-                            'last_name'=>isset($item['last_name'])? $item['last_name'] : null,
-                            'display_name'=>isset($item['display_name'])? $item['display_name'] : '',
-                            'company_name'=>isset($item['company_name']) ? $item['company_name'] : null,
-                            'contact_email'=>isset($item['contact_email'])? $item['contact_email'] : null,
-                            'contact_work_phone'=>isset($item['contact_work_phone'])? $item['contact_work_phone'] : null,
-                            'phone_number_country_code'=>isset($item['phone_number_country_code']) ? $item['phone_number_country_code'] : null,
-                            'contact_mobile'=> isset($item['contact_mobile']) ? $item['contact_mobile'] : null,
-                            'skype'=> isset($item['skype']) ? $item['skype'] : null,
-                            'facebook'=> isset($item['facebook']) ? $item['facebook'] : null,
-                            'twitter'=> isset($item['twitter']) ? $item['twitter'] : null,
-                            'website'=> isset($item['website']) ? $item['website'] : null,
-                            
-                            'designation'=> isset($item['designation']) ? $item['designation'] : null,
-                            'department'=> isset( $item['department']) ? $item['department'] : null,
-                            'is_primary_contact'=> isset($item['is_primary_contact']) ? $item['is_primary_contact']:1,
-                            'contact_type_id'=> isset($item['contact_type_id']) ? $item['contact_type_id']:0,
+            //store primary address
+            $return_data = $supplier;
+            if ($supplier_id > 0) {
+                if ($request->has('primary_contact')) {
+                    if (!empty($request['primary_contact'])) {
+                        $item = $request['primary_contact'];
+                        $primaryContactData = [
+                            'salutation' => isset($item['salutation']) ? $item['salutation'] : null,
+                            'first_name' => isset($item['first_name']) ? $item['first_name'] : null,
+                            'last_name' => isset($item['last_name']) ? $item['last_name'] : null,
+                            'display_name' => isset($item['display_name']) ? $item['display_name'] : '',
+                            'company_name' => isset($item['company_name']) ? $item['company_name'] : null,
+                            'contact_email' => isset($item['contact_email']) ? $item['contact_email'] : null,
+                            'contact_work_phone' => isset($item['contact_work_phone']) ? $item['contact_work_phone'] : null,
+                            'phone_number_country_code' => isset($item['phone_number_country_code']) ? $item['phone_number_country_code'] : null,
+                            'contact_mobile' => isset($item['contact_mobile']) ? $item['contact_mobile'] : null,
+                            'skype' => isset($item['skype']) ? $item['skype'] : null,
+                            'facebook' => isset($item['facebook']) ? $item['facebook'] : null,
+                            'twitter' => isset($item['twitter']) ? $item['twitter'] : null,
+                            'website' => isset($item['website']) ? $item['website'] : null,
+
+                            'designation' => isset($item['designation']) ? $item['designation'] : null,
+                            'department' => isset($item['department']) ? $item['department'] : null,
+                            'is_primary_contact' => isset($item['is_primary_contact']) ? $item['is_primary_contact'] : 1,
+                            'contact_type_id' => isset($item['contact_type_id']) ? $item['contact_type_id'] : 0,
+                        ];
+
+                        $primary_contact = new Contact();
+                        $primary_contact = $primary_contact->store($primaryContactData, $supplier_id, Address::$ref_supplier_key);
+                        $return_data['primary_contact'] = $primary_contact;
+                    }
+                }
+                //store other address
+                if ($request->has(['other_contact'])) {
+                    if (count($request['other_contact']) > 0) {
+                        foreach ($request['other_contact'] as $key => $item) {
+                            $otherContactData = [
+
+                                'salutation' => isset($item['salutation']) ? $item['salutation'] : null,
+                                'first_name' => isset($item['first_name']) ? $item['first_name'] : null,
+                                'last_name' => isset($item['last_name']) ? $item['last_name'] : null,
+                                'display_name' => isset($item['display_name']) ? $item['display_name'] : '',
+                                'company_name' => isset($item['company_name']) ? $item['company_name'] : null,
+                                'contact_email' => isset($item['contact_email']) ? $item['contact_email'] : null,
+                                'contact_work_phone' => isset($item['contact_work_phone']) ? $item['contact_work_phone'] : null,
+                                'phone_number_country_code' => isset($item['phone_number_country_code']) ? $item['phone_number_country_code'] : null,
+                                'contact_mobile' => isset($item['contact_mobile']) ? $item['contact_mobile'] : null,
+                                'skype' => isset($item['skype']) ? $item['skype'] : null,
+                                'facebook' => isset($item['facebook']) ? $item['facebook'] : null,
+                                'twitter' => isset($item['twitter']) ? $item['twitter'] : null,
+                                'website' => isset($item['website']) ? $item['website'] : null,
+
+                                'designation' => isset($item['designation']) ? $item['designation'] : null,
+                                'department' => isset($item['department']) ? $item['department'] : null,
+                                'is_primary_contact' => isset($item['is_primary_contact']) ? $item['is_primary_contact'] : 0,
+                                'contact_type_id' => isset($item['contact_type_id']) ? $item['contact_type_id'] : 0,
                             ];
 
-                            $primary_contact = new Contact();
-                            $primary_contact = $primary_contact->store($primaryContactData, $supplier_id, Address::$ref_supplier_key);
-                            $return_data['primary_contact'] = $primary_contact;
-                        }
-                    }
-                    //store other address
-                    if ($request->has(['other_contact'])) {
-                        if (count($request['other_contact']) > 0) {
-                            foreach ($request['other_contact'] as $key => $item) {
-                                $otherContactData=[
-                                    
-                                    'salutation'=>isset($item['salutation']) ?$item['salutation'] : null,
-                                    'first_name'=>isset($item['first_name']) ? $item['first_name'] : null,
-                                    'last_name'=>isset($item['last_name'])? $item['last_name'] : null,
-                                    'display_name'=>isset($item['display_name'])? $item['display_name'] : '',
-                                    'company_name'=>isset($item['company_name']) ? $item['company_name'] : null,
-                                    'contact_email'=>isset($item['contact_email'])? $item['contact_email'] : null,
-                                    'contact_work_phone'=>isset($item['contact_work_phone'])? $item['contact_work_phone'] : null,
-                                    'phone_number_country_code'=>isset($item['phone_number_country_code']) ? $item['phone_number_country_code'] : null,
-                                    'contact_mobile'=> isset($item['contact_mobile']) ? $item['contact_mobile'] : null,
-                                    'skype'=> isset($item['skype']) ? $item['skype'] : null,
-                                    'facebook'=> isset($item['facebook']) ? $item['facebook'] : null,
-                                    'twitter'=> isset($item['twitter']) ? $item['twitter'] : null,
-                                    'website'=> isset($item['website']) ? $item['website'] : null,
-                                    
-                                    'designation'=> isset($item['designation']) ? $item['designation'] : null,
-                                    'department'=> isset( $item['department']) ? $item['department'] : null,
-                                    'is_primary_contact'=> isset($item['is_primary_contact']) ? $item['is_primary_contact']:0,
-                                    'contact_type_id'=> isset($item['contact_type_id']) ? $item['contact_type_id']:0,
-                                    ];
-        
-                                $other_contact = new Contact();
-                                $other_contact = $other_contact->store($otherContactData, $supplier_id, Address::$ref_supplier_key);
-                                $return_data['other_contact'] = $other_contact;
-                            };
+                            $other_contact = new Contact();
+                            $other_contact = $other_contact->store($otherContactData, $supplier_id, Address::$ref_supplier_key);
+                            $return_data['other_contact'] = $other_contact;
                         };
-                    } //end contact
+                    };
+                } //end contact
 
-                    $address = [];
-                    $address_data = [];
-                    //store bill address
-                    if (!empty($request['bill_attention'])) {
-                        $address_data['bill'] = [
-                            'ref_object_key' => Address::$ref_supplier_key,
-                            'ref_id' => $supplier_id,
-                            'attention' => $request->bill_attention,
-                            'country_id' => $request->bill_country,
-                            'state_id' => $request->bill_state,
-                            'district_id' => $request->bill_district,
-                            'thana_id' => $request->bill_thana,
-                            'union_id' => $request->bill_union,
-                            'zipcode_id' => $request->bill_zipcode,
-                            'street_address_id' => $request->bill_street_address,
-                            'house' => $request->bill_house,
-                            'phone' => $request->bill_phone,
-                            'fax' => $request->bill_fax,
-                            'is_bill_address' => 1,
-                            //'global_address_edit'=> $request->global_address_edit
-                        ];
-                       
-                        $address = new Address();
-                        //return $address->store($address_data['bill']);
-                        $address['bill'] = $address->store($address_data['bill']);
-                        $return_data['bill_address'] = $address['bill'];
+                $address = [];
+                $address_data = [];
+                //store bill address
+                if (!empty($request['bill_attention'])) {
+                    $address_data['bill'] = [
+                        'ref_object_key' => Address::$ref_supplier_key,
+                        'ref_id' => $supplier_id,
+                        'attention' => $request->bill_attention,
+                        'country_id' => $request->bill_country,
+                        'state_id' => $request->bill_state,
+                        'district_id' => $request->bill_district,
+                        'thana_id' => $request->bill_thana,
+                        'union_id' => $request->bill_union,
+                        'zipcode_id' => $request->bill_zipcode,
+                        'street_address_id' => $request->bill_street_address,
+                        'house' => $request->bill_house,
+                        'phone' => $request->bill_phone,
+                        'fax' => $request->bill_fax,
+                        'is_bill_address' => 1,
+                        //'global_address_edit'=> $request->global_address_edit
+                    ];
 
-                        //copy bill address to ship
-                        if ($request['copy_bill_address'] == 1) {
-                            $address_data['bill']['is_bill_address'] = 0;
-                            $address_data['bill']['is_ship_address'] = 1;
-                            $address_data['ship_address'] = $address->store($address_data['bill']);
-                            $return_data['ship_address'] = $address_data['ship_address'];
-                        }
-                    }
+                    $address = new Address();
+                    //return $address->store($address_data['bill']);
+                    $address['bill'] = $address->store($address_data['bill']);
+                    $return_data['bill_address'] = $address['bill'];
 
-                    //store ship address
-                    if (!empty($request['ship_attention'])) {
-                        $address_data['ship'] = [
-                            'ref_object_key' => Address::$ref_supplier_key,
-                            'ref_id' => $supplier_id,
-                            'attention' => $request->ship_attention,
-                            'country_id' => $request->ship_country,
-                            'state_id' => $request->ship_state,
-                            'district_id' => $request->ship_district,
-                            'thana_id' => $request->ship_thana,
-                            'union_id' => $request->ship_union,
-                            'zipcode_id' => $request->ship_zipcode,
-                            'street_address_id' => $request->ship_street_address,
-                            'house' => $request->ship_house,
-                            'phone' => $request->ship_phone,
-                            'fax' => $request->ship_fax,
-                            'is_ship_address' => 1,
-                            //'global_address_edit'=> $request->global_address_edit
-
-                        ];
-                        $address = new Address();
-                        $address['ship_address'] = $address->store($address_data['ship']);
-                        $return_data['ship_address'] = $address['ship_address'];
+                    //copy bill address to ship
+                    if ($request['copy_bill_address'] == 1) {
+                        $address_data['bill']['is_bill_address'] = 0;
+                        $address_data['bill']['is_ship_address'] = 1;
+                        $address_data['ship_address'] = $address->store($address_data['bill']);
+                        $return_data['ship_address'] = $address_data['ship_address'];
                     }
                 }
 
-                DB::commit();
-               
-                $supplier = Supplier::with('PrimaryContact')->with('otherContacts')->with('shipAddress')->with('billAddress')->with('otherAddresses')->find($supplier_id);
-                return $this->success(new SupplierResource($supplier),201);
-                //return $this->success($return_data);
-            } catch (\Exception $e) {
-                DB::rollBack();
-                return $this->error($e->getMessage(), 200);
-                //return throw $e; 
+                //store ship address
+                if (!empty($request['ship_attention'])) {
+                    $address_data['ship'] = [
+                        'ref_object_key' => Address::$ref_supplier_key,
+                        'ref_id' => $supplier_id,
+                        'attention' => $request->ship_attention,
+                        'country_id' => $request->ship_country,
+                        'state_id' => $request->ship_state,
+                        'district_id' => $request->ship_district,
+                        'thana_id' => $request->ship_thana,
+                        'union_id' => $request->ship_union,
+                        'zipcode_id' => $request->ship_zipcode,
+                        'street_address_id' => $request->ship_street_address,
+                        'house' => $request->ship_house,
+                        'phone' => $request->ship_phone,
+                        'fax' => $request->ship_fax,
+                        'is_ship_address' => 1,
+                        //'global_address_edit'=> $request->global_address_edit
+
+                    ];
+                    $address = new Address();
+                    $address['ship_address'] = $address->store($address_data['ship']);
+                    $return_data['ship_address'] = $address['ship_address'];
+                }
             }
+
+            DB::commit();
+
+            $supplier = Supplier::with('PrimaryContact')->with('otherContacts')->with('shipAddress')->with('billAddress')->with('otherAddresses')->find($supplier_id);
+            return $this->success(new SupplierResource($supplier), 201);
+            //return $this->success($return_data);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $this->error($e->getMessage(), 200);
+            //return throw $e; 
         }
-
-
-        
-    //soft delete supplier
-    public function delete($id)
-    {
-        $supplier=Supplier::where('account_id', Auth::user()->account_id)->find($id);
-        if($supplier){
-            $supplier->destroy($id);
-            return $this->success(null,200);
-        }else{
-            return $this->error('Data Not Found',201);
-        };
-
     }
 
 
-    
+
+    //soft delete supplier
+    public function delete($id)
+    {
+        $supplier = Supplier::where('account_id', Auth::user()->account_id)->find($id);
+        if ($supplier) {
+            $supplier->destroy($id);
+            return $this->success(null, 200);
+        } else {
+            return $this->error('Data Not Found', 201);
+        };
+    }
 }
