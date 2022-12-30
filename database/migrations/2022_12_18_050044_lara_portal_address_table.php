@@ -32,7 +32,7 @@ return new class extends Migration
                 $table->string('fax', 20)->nullable()->defalut(NULL)->comment('fax number');
                 $table->tinyInteger('is_bill_address')->default(0)->nullable()->comment('this field is used for bill address 0=no 1=yes');
                 $table->tinyInteger('is_ship_address')->default(0)->nullable()->comment('this field is used for bill address 0=no 1=yes');
-                $table->tinyInteger('status')->default(0)->comment('0 = Invalid Address; 1 = Valid Address');
+                $table->tinyInteger('status')->default(1)->comment('0 = Invalid Address; 1 = Valid Address');
                 $table->json('full_address')->nullable()->default(NULL)->comment('Keep full address as json format, as key/value pair. key is the reference id');
 
 

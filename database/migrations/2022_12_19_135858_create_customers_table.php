@@ -21,7 +21,7 @@ return new class extends Migration
                 $table->string('display_name', 100)->comment('Required, Alfa numeric');
                 $table->string('company_name')->nullable()->comment('Alfa nuemeric');
                 $table->string('website')->nullable()->default(NULL);
-                $table->integer('tax_name')->nullable()->default(NULL);
+                $table->integer('tax_name')->nullable()->default(NULL)->comment('Reference of taxes');
                 $table->float('tax_rate')->nullable()->default(0);
                 $table->integer('currency')->nullable()->default(0);
                 $table->string('image')->nullable()->default(NULL);

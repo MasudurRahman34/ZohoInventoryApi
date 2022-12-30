@@ -50,7 +50,7 @@ Route::middleware('auth:api')->group(function () {
         Route::get('suppliers', [SupplierController::class, 'index'])->name('suppliers.index');
         Route::get('suppliers/{supplier}', [SupplierController::class, 'show'])->name('suppliers.show');
         Route::delete('suppliers/{supplier}', [SupplierController::class, 'delete'])->name('suppliers.delete');
-        Route::post('suppliers/store', [SupplierController::class, 'store'])->name('suppliers.store');
+        Route::POST('suppliers', [SupplierController::class, 'store'])->name('suppliers.store');
         Route::post('suppliers/{supplier}', [SupplierController::class, 'update'])->name('suppliers.update');
         Route::get('suppliers/{supplier}/addresses', [SupplierController::class, 'getAddresses'])->name('suppliers.addresses');
         Route::get('suppliers/{supplier}/contacts', [SupplierController::class, 'getContacts'])->name('suppliers.contacts');
@@ -82,9 +82,9 @@ Route::middleware('auth:api')->group(function () {
         Route::get('global/addresses', [GlobalAddressController::class, 'index'])->name('global.addresses.index');
 
         //Purchase
+        Route::GET('purchases', [PurchaseController::class, 'index'])->name('purchases.index');
         Route::POST('purchases', [PurchaseController::class, 'store'])->name('purchases.store');
         Route::PUT('purchases/{purchase}', [PurchaseController::class, 'update'])->name('purchases.update');
-        Route::GET('purchases', [PurchaseController::class, 'index'])->name('purchases.index');
         Route::GET('purchases/{purchase}', [PurchaseController::class, 'show'])->name('purchases.show');
         Route::DELETE('purchases/{purchase}', [PurchaseController::class, 'delete'])->name('purchases.delete');
     });

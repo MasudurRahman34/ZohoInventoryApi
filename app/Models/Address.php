@@ -69,11 +69,9 @@ class Address extends Model
 
     public function store($item)
     {
-        //return $item;
-        $globalAddresess = GlobalAddress::get();
 
-        
-        //return  $globalAddresess;
+        //$globalAddresess = GlobalAddress::get();
+
         $address = new Address();
         $address->ref_object_key = $item['ref_object_key'];
         $address->ref_id = $item['ref_id'];
@@ -90,37 +88,34 @@ class Address extends Model
         $address->fax = isset($item['fax']) ? $item['fax'] : 0;
         $address->is_bill_address = isset($item['is_bill_address']) ? $item['is_bill_address'] : 0;
         $address->is_ship_address = isset($item['is_ship_address']) ? $item['is_ship_address'] : 0;
-        $address->status = isset($item['status']) ? $item['status'] : 0;
+        $address->status = isset($item['status']) ? $item['status'] : 1;
         $address->full_address = $this->setAddress($item);
         $address->save();
 
         //insert global address
-        $is_find_global_address=FALSE;
+        /*$is_find_global_address = FALSE;
         if (count($globalAddresess) == 0) { //first insert
-                $globalAddresess = GlobalAddress::get();
-                foreach ($globalAddresess as $key => $value) {
-                    if ($value->full_address != $address->full_address) {
-                            $is_find_global_address=FALSE;
-                    }else{
-                        return $is_find_global_address=TRUE;
-                    }
-                }
-        } else {
-
+            $globalAddresess = GlobalAddress::get();
             foreach ($globalAddresess as $key => $value) {
                 if ($value->full_address != $address->full_address) {
-                        $is_find_global_address=FALSE;
-                }else{
-                    $is_find_global_address=TRUE;
+                    $is_find_global_address = FALSE;
+                } else {
+                    return $is_find_global_address = TRUE;
+                }
+            }
+        } else {
+            foreach ($globalAddresess as $key => $value) {
+                if ($value->full_address != $address->full_address) {
+                    $is_find_global_address = FALSE;
+                } else {
+                    $is_find_global_address = TRUE;
                     return $address;
                 }
             }
-        };
-    //    if($is_find_global_address==TRUE){
-    //     return $address;
-    //    }
+        };*/
+
         //if $is_find_global_address=false then insert 
-        if($is_find_global_address==FALSE){
+        /*if ($is_find_global_address == FALSE) {
             $globalAddress = new GlobalAddress();
             $globalAddress->country_id = $address->country_id;
             $globalAddress->state_id = $address->state_id;
@@ -133,7 +128,7 @@ class Address extends Model
             $globalAddress->plain_address = $this->setPlainAddress($address->full_address);
             $globalAddress->status = 1;
             $globalAddress->save();
-        }
+        }*/
 
         return $address;
     }
@@ -153,13 +148,13 @@ class Address extends Model
         return $address;
     }
 
-    public function storeGlobalAddress($address){
-
+    public function storeGlobalAddress($address)
+    {
     }
 
-    public function setPlainAddress($fullAddress){
-        $plainAddress=$fullAddress['street_address']['street_address_value'].'-'.$fullAddress['zipcode']['zip_code'].', '.$fullAddress['union']['union_name'].', '.$fullAddress['thana']['thana_name'].', '.$fullAddress['district']['district_name'].', '.$fullAddress['country']['countryName'] ;
-       return  $plainAddress;
-
+    public function setPlainAddress($fullAddress)
+    {
+        $plainAddress = $fullAddress['street_address']['street_address_value'] . '-' . $fullAddress['zipcode']['zip_code'] . ', ' . $fullAddress['union']['union_name'] . ', ' . $fullAddress['thana']['thana_name'] . ', ' . $fullAddress['district']['district_name'] . ', ' . $fullAddress['country']['countryName'];
+        return  $plainAddress;
     }
 }

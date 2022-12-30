@@ -31,15 +31,15 @@ class SupplierController extends Controller
         //return $request->filter['display_name'];
         $this->setFilterProperty($request);
         $query = Supplier::where('account_id', $this->account_id)
-                // ->with(['primaryContact'=>fn($query)=>$query
-                //     ->where('display_name', 'LIKE', '%' . $request->filter['display_name'] . '%')
-                //    ])
-                ->with((['primaryContact'=>function($query){
+            // ->with(['primaryContact'=>fn($query)=>$query
+            //     ->where('display_name', 'LIKE', '%' . $request->filter['display_name'] . '%')
+            //    ])
+            ->with((['primaryContact' => function ($query) {
                 //$query->where('display_name', 'LIKE', '%' . 'chonchol chowdhuri' . '%');
                 //$filter['display_name']='chonchol chowdhuri'
                 //$this->filterBy($request,$query);
-                }]))
-                ->with('otherContacts')->with('shipAddress')->with('billAddress')->with('otherAddresses');
+            }]))
+            ->with('otherContacts')->with('shipAddress')->with('billAddress')->with('otherAddresses');
         $this->dateRangeQuery($request, $query, 'portal_suppliers.created_at');
         //$this->filterBy($request, $this->query);
         $suppliers = $this->query->orderBy($this->column_name, $this->sort)->paginate($this->show_per_page)->withQueryString();
@@ -155,7 +155,7 @@ class SupplierController extends Controller
     //store supplier with contact and addresss
     public function store(SupplierRequest $request)
     {
-        //return $request->global_address_edit;
+
         $return_data = [];
         $supplierData = [
             'supplier_type' => isset($request['supplier_type']) ? $request['supplier_type'] : 1,
@@ -209,6 +209,7 @@ class SupplierController extends Controller
                         $return_data['primary_contact'] = $primary_contact;
                     }
                 }
+
                 //store other address
                 if ($request->has(['other_contact'])) {
                     if (count($request['other_contact']) > 0) {
@@ -246,6 +247,7 @@ class SupplierController extends Controller
                 $address_data = [];
                 //store bill address
                 if (!empty($request['bill_attention'])) {
+
                     $address_data['bill'] = [
                         'ref_object_key' => Address::$ref_supplier_key,
                         'ref_id' => $supplier_id,
@@ -261,12 +263,12 @@ class SupplierController extends Controller
                         'phone' => $request->bill_phone,
                         'fax' => $request->bill_fax,
                         'is_bill_address' => 1,
-                        //'global_address_edit'=> $request->global_address_edit
+                        'is_ship_address' => 0
                     ];
 
                     $address = new Address();
-                    //return $address->store($address_data['bill']);
                     $address['bill'] = $address->store($address_data['bill']);
+
                     $return_data['bill_address'] = $address['bill'];
 
                     //copy bill address to ship
