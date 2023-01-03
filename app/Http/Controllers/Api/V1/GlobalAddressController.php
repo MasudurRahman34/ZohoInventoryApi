@@ -13,6 +13,7 @@ class GlobalAddressController extends Controller
 {
     use ApiFilter, ApiResponse;
     public function index(Request $request){
+        return $request;
         $this->setFilterProperty($request);
         $query = GlobalAddress::where('deleted_at', NULL);
         if($request->has('plain_address')){

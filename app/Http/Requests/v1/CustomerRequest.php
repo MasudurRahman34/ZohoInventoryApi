@@ -32,7 +32,9 @@ class CustomerRequest extends FormRequest
     {
         return [
             'display_name' => 'required|string|max:100',
-            'customer_type' => 'required|integer|min:0',
+            'company_name' => 'string',
+            'customer_type' => 'required|integer|in:1,2',
+            'copy_bill_address' => 'integer|in:0,1',
             'customer_number'=>'unique:portal_customers,customer_number,'.$this->customer,
         ];
     }

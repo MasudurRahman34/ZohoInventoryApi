@@ -19,6 +19,7 @@ class UserController extends Controller
     public function update(Request $request, $user_id)
     {
 
+
         DB::beginTransaction();
         try {
 

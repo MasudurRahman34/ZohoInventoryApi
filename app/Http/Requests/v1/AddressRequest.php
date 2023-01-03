@@ -30,7 +30,16 @@ class AddressRequest extends FormRequest
         return [
             //'attention'=>'required|string',
             'ref_id' => 'required|integer',
-            'source' => 'required|string', //customer, supplier, user
+            'source' => 'required|string|in:customer,supplier,user', //customer, supplier, user
+            'country_id'=>'integer|min:0|nullable',
+            'state_id'=>'integer|min:0|nullable',
+            'district_id'=>'integer|min:0|nullable',
+            'thana_id'=>'integer|min:0|nullable',
+            'union_id'=>'integer|min:0|nullable',
+            'street_address_id'=>'integer|min:0|nullable',
+            'is_bill_address'=>'integer|in:0,1|nullable', //1=yes, 0=no
+            'is_ship_address'=>'integer|in:0|nullable', //1=yes, 0=no
+            'status'=>'integer|in:0,1'|'nullable', //0=invalid, 1=valid
         ];
     }
     public function failedValidation(Validator $validator){

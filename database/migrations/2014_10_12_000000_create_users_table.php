@@ -21,17 +21,17 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('password');
             $table->string('user_role', 100)->default('web-user');
-            $table->string('mobile', 20)->unique()->nullable();
-            $table->string('mobile_country_code', 20)->nullable();
+            $table->integer('mobile', 15)->unique()->nullable()->default(NULL);
+            $table->string('mobile_country_code', 20)->nullable()->default(NULL);
 
-            $table->date('date_of_birth')->nullable();
-            $table->string('gender', 20)->nullable();
-            $table->string('image')->nullable();
-            $table->string('language', 100)->nullable();
-            $table->string('interests')->nullable();
-            $table->string('occupation', 50)->nullable();
-            $table->string('about')->nullable();
-            $table->integer('country')->nullable();
+            $table->date('date_of_birth')->nullable()->default(NULL);
+            $table->string('gender', 20)->nullable()->default(NULL);
+            $table->string('image')->nullable()->default(NULL);
+            $table->string('language', 100)->nullable()->default(NULL);
+            $table->string('interests')->nullable()->default(NULL);
+            $table->string('occupation', 50)->nullable()->default(NULL);
+            $table->string('about')->nullable()->default(NULL);
+            $table->integer('country')->nullable()->default(NULL);
             $table->tinyInteger('notify_new_user')->nullable()->comment('0 = New User Notification sent; 1 = New User Notification will sent');
             $table->rememberToken();
             $table->tinyInteger('status')->default(0)->comment('0 = Inactive; 1 = Active; 2 = Partially Active; 3 = On hold;');

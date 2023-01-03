@@ -59,9 +59,9 @@ class PurchaseController extends Controller
                 'last_paid_amount' => isset($request['last_paid_amount']) ? $request['last_paid_amount'] : 0,
                 'adjustment_text' => isset($request['adjustment_text']) ? $request['adjustment_text'] : NULL,
                 'purchase_date' => isset($request['purchase_date']) ? $request['purchase_date'] : NULL,
-                'delivery_date' => isset($request['delivery_date']) ? $request['delivery_date'] : 0,
-                'attachment_file' => isset($request['attachment_file']) ? $request['attachment_file'] : 0,
-                'image' => isset($request['image']) ? $request['image'] : 0,
+                'delivery_date' => isset($request['delivery_date']) ? $request['delivery_date'] : NULL,
+                'attachment_file' => isset($request['attachment_file']) ? $request['attachment_file'] : NULL,
+                'image' => isset($request['image']) ? $request['image'] : NULL,
                 'status' => isset($request['status']) ? $request['status'] : '0',
                 'payment_status' => isset($request['payment_status']) ? $request['payment_status'] : '0',
 

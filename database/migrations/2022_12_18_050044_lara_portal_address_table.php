@@ -16,7 +16,7 @@ return new class extends Migration
         if (!Schema::hasTable('portal_address')) {
             Schema::create('portal_address', function (Blueprint $table) {
                 $table->bigIncrements('id');
-                $table->string('ref_object_key', 100)->comment('Required, The reference table for the address. i.e. users | customers | supplires etc.')->default('CUSTOMERS');
+                $table->string('ref_object_key', 100)->comment('Required, The reference table for the address. i.e. users | customers | supplires etc.')->default('App\Models\Customers');
                 $table->unsignedBigInteger('ref_id')->comment('The id value reference table i.e. users | customers | supplires -  for the address.');
 
                 $table->string('attention')->nullable()->comment('Contact person name for this address');

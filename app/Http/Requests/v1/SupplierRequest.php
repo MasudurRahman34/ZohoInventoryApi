@@ -35,7 +35,9 @@ class SupplierRequest extends FormRequest
         return [
            
                 'display_name' => 'required|string|max:100',
-               'supplier_type' => 'required|integer|min:0',
+                'company_name' => 'string',
+               'supplier_type' => 'required|integer|in:1,2',
+               'copy_bill_address' => 'integer|in:0,1',
                'supplier_number'=>'unique:portal_suppliers,supplier_number,'.$this->supplier,
             // 'supplier_number'=>Rule::unique('portal_suppliers','supplier_number')->where(function ($query) {
             //     return $query->where('portal_suppliers.account_id', Auth::user()->account_id)->where('portal_suppliers.id',$this->id);

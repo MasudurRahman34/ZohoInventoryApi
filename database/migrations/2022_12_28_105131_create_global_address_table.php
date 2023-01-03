@@ -29,9 +29,9 @@ return new class extends Migration
 
             /* Common fields for all table*/
 
-            $table->integer('account_id')->default(1)->comment('Reference of account');
-            $table->integer('created_by')->default(0);
-            $table->integer('modified_by')->default(0);
+            $table->unsignedBigInteger('account_id')->default(1)->comment('Reference of account');
+            $table->unsignedBigInteger('created_by')->default(0);
+            $table->unsignedBigInteger('modified_by')->default(0);
             $table->timestamps();
             $table->softDeletes();
             //$table->index(['full_address','account_id']);

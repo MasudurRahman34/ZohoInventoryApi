@@ -73,9 +73,11 @@ class User extends Authenticatable
         'first_name' => ['required','string','max:255'],
         'last_name' => ['required','string','max:255'],
         'email' => ['required','string','email','max:255','unique:users'],
-        'mobile' => ['required','string','max:11','unique:users'],
+        'mobile' => ['required','integer','max:11','unique:users'],
         'country' => ['required','string'],
         'mobile_country_code' => ['required','string','max:3'],
+        'notify_new_user'=>['in:0,1'],
+        'status'=>['in:0,1,2,3'],
         'password' => ['required','confirmed', Password::min(8)
         ->letters()
         ->mixedCase()

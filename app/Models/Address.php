@@ -70,7 +70,7 @@ class Address extends Model
     public function store($item)
     {
 
-        //$globalAddresess = GlobalAddress::get();
+        //return $item;
 
         $address = new Address();
         $address->ref_object_key = $item['ref_object_key'];
@@ -92,30 +92,10 @@ class Address extends Model
         $address->full_address = $this->setAddress($item);
         $address->save();
 
-        //insert global address
-        /*$is_find_global_address = FALSE;
-        if (count($globalAddresess) == 0) { //first insert
-            $globalAddresess = GlobalAddress::get();
-            foreach ($globalAddresess as $key => $value) {
-                if ($value->full_address != $address->full_address) {
-                    $is_find_global_address = FALSE;
-                } else {
-                    return $is_find_global_address = TRUE;
-                }
-            }
-        } else {
-            foreach ($globalAddresess as $key => $value) {
-                if ($value->full_address != $address->full_address) {
-                    $is_find_global_address = FALSE;
-                } else {
-                    $is_find_global_address = TRUE;
-                    return $address;
-                }
-            }
-        };*/
-
-        //if $is_find_global_address=false then insert 
-        /*if ($is_find_global_address == FALSE) {
+        //insert global address if not exist.
+        $is_find_global_address = GlobalAddress::where('full_address',json_encode($address->full_address))->first();
+       
+        if(!$is_find_global_address){
             $globalAddress = new GlobalAddress();
             $globalAddress->country_id = $address->country_id;
             $globalAddress->state_id = $address->state_id;
@@ -128,9 +108,11 @@ class Address extends Model
             $globalAddress->plain_address = $this->setPlainAddress($address->full_address);
             $globalAddress->status = 1;
             $globalAddress->save();
-        }*/
+            return $address;
 
-        return $address;
+        }else{
+            return $address;
+        }
     }
 
     public function setAddress($request)

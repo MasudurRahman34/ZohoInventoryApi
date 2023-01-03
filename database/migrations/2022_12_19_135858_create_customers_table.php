@@ -28,9 +28,9 @@ return new class extends Migration
                 $table->integer('payment_terms')->nullable()->default(NULL)->comment('Reference of Net payment terms');
                 $table->tinyInteger('copy_bill_address')->length(1)->comment('0 = Not copy, 1 = copy to ship address');
 
-                $table->integer('account_id')->default(1)->comment('Reference of account');
-                $table->integer('created_by')->default(0);
-                $table->integer('modified_by')->default(0);
+                $table->unsignedBigInteger('account_id')->default(1)->comment('Reference of account');
+                $table->unsignedBigInteger('created_by')->default(0);
+                $table->unsignedBigInteger('modified_by')->default(0);
                 $table->timestamps();
                 $table->softDeletes();
                 $table->index(['account_id', 'customer_number', 'created_at']);

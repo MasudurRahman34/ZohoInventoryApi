@@ -35,14 +35,14 @@ return new class extends Migration
             $table->dateTime('delivery_date')->nullable()->default(NULL);
             $table->string('attachment_file')->nullable()->default(NULL);
             $table->string('image')->nullable()->default(NULL);
-            $table->enum('status',['0','1'])->nullable()->default(NULL);
-            $table->enum('payment_status',['0','1','2'])->default(0)->comment('0=unpaid, 1 =paid,2=Partial Paid');
-            $table->integer('account_id')->default(1)->comment('Reference of account');
-            $table->integer('created_by')->default(0);
-            $table->integer('modified_by')->default(0);
+            $table->tinyInteger('status')->nullable()->default(0);
+            $table->tinyInteger('payment_status')->default(0)->comment('0=unpaid, 1 =paid,2=Partial Paid');
+            $table->unsignedBigInteger('account_id')->default(1)->comment('Reference of account');
+            $table->unsignedBigInteger('created_by')->default(0);
+            $table->unsignedBigInteger('modified_by')->default(0);
             $table->timestamps();
             $table->softDeletes();
-            $table->index(['warehouse_id','purchase_date','account_id']);
+            $table->index(['supplier_id','purchase_date','account_id']);
         });
     }
 

@@ -7,7 +7,7 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class PurchaseRequest extends FormRequest
+class SaleRequest extends FormRequest
 {
     use ApiResponse;
     /**
@@ -28,23 +28,29 @@ class PurchaseRequest extends FormRequest
     public function rules()
     {
         return [
-            'supplier_id' => 'required|integer|min:0',
+            'customer_id' => 'required|integer|min:0',
             'warehouse_id' => 'required|integer|min:0',
             'line_id'=> 'required',
             'total_amount'=> 'numeric',
             'due_amount'=> 'numeric',
+            'paid_amount'=> 'numeric',
+            'recieved_amount'=> 'numeric',
+            'changed_amount'=> 'numeric',
             'grand_total_amount'=> 'numeric',
             'order_discount'=> 'numeric',
-            'discount_currency'=> 'numeric',
+            'discount_currency'=> 'integer',
             'order_tax'=> 'numeric',
             'order_tax_amount'=> 'numeric',
             'shipping_charge'=> 'numeric',
             'order_adjustment'=> 'numeric',
             'last_paid_amount'=> 'numeric',
-            'purchase_date'=> 'date|date_format:Y-m-d H:i:s',
-            'delivery_date'=> 'date|date_format:Y-m-d H:i:s|',
+            'sales_order_date'=> 'date|date_format:Y-m-d H:i:s',
+            'expected_shipment_date'=> 'date|date_format:Y-m-d H:i:s|',
+            'invoice_status'=> 'integer|in:0,1',
+            'shipment_status'=> 'integer|in:0,1',
             'payment_status'=> 'integer|in:0,1,2',
-            'status'=> 'integer|in:0,1',
+            'status'=> 'integer|in:0,1,2',
+            'sales_type'=> 'integer|in:0,1',
             //'line_id'=> 'required',
         ];
     }
