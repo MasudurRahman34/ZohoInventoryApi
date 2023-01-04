@@ -35,8 +35,8 @@ return new class extends Migration
             $table->string('website')->nullable();
             $table->tinyInteger('is_primary_contact')->default(0)->comment('This field is used for primary contact status. 0 = Not Primary Contact, 1 = Primary Contact');
             $table->unsignedBigInteger('contact_type_id')->nullable()->comment('id contact_type table');
-            $table->unsignedBigInteger('created_by')->default(1);
-            $table->unsignedBigInteger('modified_by')->default(1);
+            $table->unsignedBigInteger('created_by')->default(0);
+            $table->unsignedBigInteger('modified_by')->default(0);
             $table->unsignedBigInteger('account_id')->default(1);
             $table->timestamps();
             $table->softDeletes();

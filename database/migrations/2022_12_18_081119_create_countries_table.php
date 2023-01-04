@@ -21,8 +21,8 @@ return new class extends Migration
             $table->integer('sort')->default(0);
             $table->tinyInteger('status')->default(1);
             $table->unsignedBigInteger('account_id')->default(1);;
-            $table->unsignedBigInteger('created_by')->default(1);
-            $table->unsignedBigInteger('modified_by')->default(1);
+            $table->unsignedBigInteger('created_by')->default(0);
+            $table->unsignedBigInteger('modified_by')->default(0);
             $table->timestamps();
             $table->softDeletes();
             $table->index(['countryName', 'account_id','created_at']);

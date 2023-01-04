@@ -23,8 +23,8 @@ return new class extends Migration
                 $table->tinyInteger('status')->default(1);
                 $table->integer("sort")->default(0);
                 $table->unsignedBigInteger('account_id')->default(1);
-                $table->unsignedBigInteger('created_by')->default(1);
-                $table->unsignedBigInteger('modified_by')->default(1);
+                $table->unsignedBigInteger('created_by')->default(0);
+                $table->unsignedBigInteger('modified_by')->default(0);
                 $table->timestamps();
                 $table->softDeletes();
                 $table->index(['union_id', 'account_id']);

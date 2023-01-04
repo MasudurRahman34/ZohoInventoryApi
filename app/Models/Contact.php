@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Http\Controllers\Api\V1\Helper\AccountObservant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -11,7 +12,7 @@ use GuzzleHttp\Psr7\Request;
 
 class Contact extends Model
 {
-    use HasFactory,SoftDeletes;
+    use HasFactory,SoftDeletes,AccountObservant;
     protected $hidden = [
         'account_id'
     ];
@@ -37,16 +38,16 @@ class Contact extends Model
        // 'company_name' => 'required|string|max:255',
     ];
 
-    protected static function boot()
-    {
-        parent::boot();
+    // protected static function boot()
+    // {
+    //     parent::boot();
 
-        // auto-sets account values on creation
-        static::creating(function ($model) {
-            $model->created_by = Auth::user()->id;
-            $model->account_id = Auth::user()->account_id;
-        });
-    }
+    //     // auto-sets account values on creation
+    //     static::creating(function ($model) {
+    //         $model->created_by = Auth::user()->id;
+    //         $model->account_id = Auth::user()->account_id;
+    //     });
+    // }
 
     public function store($item, $ref_id,$ref_object_key){
             $contact=new Contact();

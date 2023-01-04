@@ -24,8 +24,8 @@ return new class extends Migration
             $table->integer("sort")->default(0)->nullable();
             $table->tinyInteger("status")->default(1);
             $table->unsignedBigInteger('created_by')->default(1);
-            $table->unsignedBigInteger('modified_by')->default(1);
-            $table->unsignedBigInteger('account_id')->default(1);
+            $table->unsignedBigInteger('modified_by')->default(0);
+            $table->unsignedBigInteger('account_id')->default(0);
             $table->timestamps();
             $table->softDeletes();
             $table->index(['thana_id', 'account_id','union_name']);

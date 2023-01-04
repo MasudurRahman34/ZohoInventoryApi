@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Http\Controllers\Api\V1\Helper\AccountObservant;
 use App\Models\Location\District;
 use App\Models\Location\State;
 use App\Models\Location\StreetAddress;
@@ -16,7 +17,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Address extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, AccountObservant;
 
     public static $ref_supplier_key = "App\Models\Suppliers";
     public static $ref_customer_key = "App\Models\Customers";
@@ -56,16 +57,16 @@ class Address extends Model
     }
 
 
-    protected static function boot()
-    {
-        parent::boot();
+    // protected static function boot()
+    // {
+    //     parent::boot();
 
-        // auto-sets account values on creation
-        static::creating(function ($model) {
-            $model->created_by = Auth::user()->id;
-            $model->account_id = Auth::user()->account_id;
-        });
-    }
+    //     // auto-sets account values on creation
+    //     static::creating(function ($model) {
+    //         $model->created_by = Auth::user()->id;
+    //         $model->account_id = Auth::user()->account_id;
+    //     });
+    // }
 
     public function store($item)
     {

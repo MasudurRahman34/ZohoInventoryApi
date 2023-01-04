@@ -30,11 +30,12 @@ class SupplierController extends Controller
 
         //return $request->filter['display_name'];
         $this->setFilterProperty($request);
-        $query = Supplier::where('account_id', $this->account_id)
+        $query = Supplier::
+            //withoutGlobalScopes();
             // ->with(['primaryContact'=>fn($query)=>$query
             //     ->where('display_name', 'LIKE', '%' . $request->filter['display_name'] . '%')
             //    ])
-            ->with((['primaryContact' => function ($query) {
+            with((['primaryContact' => function ($query) {
                 //$query->where('display_name', 'LIKE', '%' . 'chonchol chowdhuri' . '%');
                 //$filter['display_name']='chonchol chowdhuri'
                 //$this->filterBy($request,$query);
@@ -49,7 +50,7 @@ class SupplierController extends Controller
     //get single supplier
     public function show($id)
     {
-        $supplier = Supplier::with('PrimaryContact')->with('otherContacts')->with('shipAddress')->with('billAddress')->with('otherAddresses')->where('account_id', Auth::user()->account_id)->find($id);
+        $supplier = Supplier::with('PrimaryContact')->with('otherContacts')->with('shipAddress')->with('billAddress')->with('otherAddresses')->find($id);
         if ($supplier) {
             return $this->success(new SupplierResource($supplier));
         } else {
@@ -62,9 +63,9 @@ class SupplierController extends Controller
         //return $id;
         //$supplierAddresses = Supplier::with('shipAddress')->with('billAddress')->with('otherAddresses')->where('account_id', Auth::user()->account_id)->find($id);
 
-        $addresses['ship_address'] = Address::where('ref_object_key', Address::$ref_supplier_key)->where('ref_id', $supplier_id)->where('is_ship_address', 1)->where('account_id', Auth::user()->account_id)->first();
-        $addresses['bill_address'] = Address::where('ref_object_key', Address::$ref_supplier_key)->where('ref_id', $supplier_id)->where('is_bill_address', 1)->where('account_id', Auth::user()->account_id)->first();
-        $addresses['other_addresses'] = Address::where('ref_object_key', Address::$ref_supplier_key)->where('ref_id', $supplier_id)->where('is_bill_address', 0)->where('account_id', Auth::user()->account_id)->where('is_ship_address', 0)->get();
+        $addresses['ship_address'] = Address::where('ref_object_key', Address::$ref_supplier_key)->where('ref_id', $supplier_id)->where('is_ship_address', 1)->first();
+        $addresses['bill_address'] = Address::where('ref_object_key', Address::$ref_supplier_key)->where('ref_id', $supplier_id)->where('is_bill_address', 1)->first();
+        $addresses['other_addresses'] = Address::where('ref_object_key', Address::$ref_supplier_key)->where('ref_id', $supplier_id)->where('is_bill_address', 0)->where('is_ship_address', 0)->get();
         if ((empty($addresses['ship_address']))  && (empty($addresses['bill_address'])) && (count($addresses['other_addresses']) == 0)) {
             return $this->error('Data Not Found', 404);
         } else {
@@ -75,8 +76,8 @@ class SupplierController extends Controller
     public function getContacts($supplier_id)
     {
         //return $supplier_id;
-        $contacts['primary_contact'] = Contact::where('ref_object_key', Address::$ref_supplier_key)->where('ref_id', $supplier_id)->where('is_primary_contact', 1)->where('account_id', Auth::user()->account_id)->first();
-        $contacts['other_contacts'] = Contact::where('ref_object_key', Address::$ref_supplier_key)->where('ref_id', $supplier_id)->where('is_primary_contact', 0)->where('account_id', Auth::user()->account_id)->get();
+        $contacts['primary_contact'] = Contact::where('ref_object_key', Address::$ref_supplier_key)->where('ref_id', $supplier_id)->where('is_primary_contact', 1)->first();
+        $contacts['other_contacts'] = Contact::where('ref_object_key', Address::$ref_supplier_key)->where('ref_id', $supplier_id)->where('is_primary_contact', 0)->get();
         //contact
         //return ($contacts['other_contacts']);
 
