@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api\V1\Helper;
 
 Trait ApiResponse{
     
-    public function coreResponse($message, $data = null, $statusCode, $isSuccess = true)
+    public function coreResponse($message, $statusCode, $data = null, $isSuccess = true)
     {
         // Check the params
         if(!$message) return response()->json(['message' => 'Message is required'], 500);
@@ -36,7 +36,7 @@ Trait ApiResponse{
      */
     public function success($data, $statusCode = 200)
     {
-        return $this->coreResponse("Operation Successful", $data, $statusCode);
+        return $this->coreResponse("Operation Successful", $statusCode, $data);
     }
 
     /**
@@ -47,9 +47,9 @@ Trait ApiResponse{
      */
     public function error($message, $statusCode)
     {
-        return $this->coreResponse($message, null, $statusCode, false);
+        return $this->coreResponse($message, $statusCode, null, false);
     }
-    protected function errorResponse($message = null, $code)
+    protected function errorResponse($code,$message = null, )
 	{
 		return response()->json([
 			'status'=>'Error',
