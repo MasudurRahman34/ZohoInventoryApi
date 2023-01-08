@@ -49,7 +49,7 @@ Trait ApiResponse{
     {
         return $this->coreResponse($message, $statusCode, null, false);
     }
-    protected function errorResponse($code,$message = null, )
+    protected function errorResponse($code, $message = null, )
 	{
 		return response()->json([
 			'status'=>'Error',

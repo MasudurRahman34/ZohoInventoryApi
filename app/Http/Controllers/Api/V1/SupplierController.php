@@ -15,6 +15,7 @@ use App\Http\Resources\v1\Collections\ContactCollection;
 use App\Http\Resources\v1\Collections\SupplierCollection;
 use App\Http\Resources\v1\ContactResource;
 use App\Http\Resources\v1\SupplierResource;
+use App\Http\Services\AddressService;
 use App\Models\Address;
 use App\Models\Contact;
 use App\Models\Supplier;
@@ -24,6 +25,12 @@ class SupplierController extends Controller
 
     use ApiResponse, ApiFilter;
 
+    protected $addressService;
+
+    public function __construct(AddressService $addressService)
+    {
+        $this->addressService= $addressService;
+    }
     //get supplier list
     public function index(Request $request)
     {
@@ -267,8 +274,8 @@ class SupplierController extends Controller
                         'is_ship_address' => 0
                     ];
 
-                    $address = new Address();
-                    $address['bill'] = $address->store($address_data['bill']);
+                    //$address = new Address();
+                    $address['bill'] = $this->addressService->store($address_data['bill']);
 
                     $return_data['bill_address'] = $address['bill'];
 
@@ -276,7 +283,7 @@ class SupplierController extends Controller
                     if ($request['copy_bill_address'] == 1) {
                         $address_data['bill']['is_bill_address'] = 0;
                         $address_data['bill']['is_ship_address'] = 1;
-                        $address_data['ship_address'] = $address->store($address_data['bill']);
+                        $address_data['ship_address'] =  $this->addressService->store($address_data['bill']);
                         $return_data['ship_address'] = $address_data['ship_address'];
                     }
                 }
@@ -301,8 +308,8 @@ class SupplierController extends Controller
                         //'global_address_edit'=> $request->global_address_edit
 
                     ];
-                    $address = new Address();
-                    $address['ship_address'] = $address->store($address_data['ship']);
+                    // $address = new Address();
+                    $address['ship_address'] =  $this->addressService->store($address_data['ship']);
                     $return_data['ship_address'] = $address['ship_address'];
                 }
             }
