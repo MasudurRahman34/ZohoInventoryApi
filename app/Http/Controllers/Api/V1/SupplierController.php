@@ -9,13 +9,11 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Api\V1\Helper\ApiFilter;
 use App\Http\Controllers\Api\V1\Helper\ApiResponse;
 use App\Http\Requests\v1\SupplierRequest;
-use App\Http\Resources\v1\AddressResource;
-use App\Http\Resources\v1\Collections\AddressCollection;
-use App\Http\Resources\v1\Collections\ContactCollection;
 use App\Http\Resources\v1\Collections\SupplierCollection;
-use App\Http\Resources\v1\ContactResource;
 use App\Http\Resources\v1\SupplierResource;
-use App\Http\Services\AddressService;
+use App\Http\Services\V1\AddressService;
+use App\Http\Services\V1\ContactService;
+use App\Http\Services\V1\SupplierService;
 use App\Models\Address;
 use App\Models\Contact;
 use App\Models\Supplier;
@@ -26,10 +24,14 @@ class SupplierController extends Controller
     use ApiResponse, ApiFilter;
 
     protected $addressService;
+    protected $contactService;
+    protected $supplierService;
 
-    public function __construct(AddressService $addressService)
+    public function __construct(AddressService $addressService, ContactService $contactService, SupplierService $supplierService)
     {
         $this->addressService= $addressService;
+        $this->contactService= $contactService;
+        $this->supplierService= $supplierService;
     }
     //get supplier list
     public function index(Request $request)
@@ -49,7 +51,7 @@ class SupplierController extends Controller
             }]))
             ->with('otherContacts')->with('shipAddress')->with('billAddress')->with('otherAddresses');
         $this->dateRangeQuery($request, $query, 'portal_suppliers.created_at');
-        //$this->filterBy($request, $this->query);
+        $this->filterBy($request, $this->query);
         $suppliers = $this->query->orderBy($this->column_name, $this->sort)->paginate($this->show_per_page)->withQueryString();
         return (new SupplierCollection($suppliers));
     }
@@ -97,27 +99,9 @@ class SupplierController extends Controller
     //create supplier
     public function create(SupplierRequest $request)
     {
-        //return $request;
-
-        $supplierData = [
-            'supplier_number' => $request['supplier_number'],
-            'supplier_type' => isset($request['supplier_type']) ? $request['supplier_type'] : 1,
-            'display_name' => isset($request['display_name']) ? $request['display_name'] : null,
-            'company_name' => isset($request['company_name']) ? $request['company_name'] : null,
-            'website' => isset($request['website']) ? $request['website'] : null,
-            'tax_name' => isset($request['tax_name']) ? $request['tax_name'] : 0,
-            'tax_rate' => isset($request['tax_rate']) ? $request['tax_rate'] : 0,
-            'currency' => isset($request['currency']) ? $request['currency'] : 0,
-            'image' => isset($request['image']) ? $request['image'] : null,
-            'payment_terms' => isset($request['payment_terms']) ? $request['payment_terms'] : 0,
-            'copy_bill_address' => isset($request['copy_bill_address']) ? $request['copy_bill_address'] : 0,
-            'created_by' => Auth::user()->id,
-            'account_id' => Auth::user()->account_id
-        ];
-
         DB::beginTransaction();
         try {
-            $supplier = supplier::create($supplierData);
+            $supplier = $this->supplierService->store($request);
             DB::commit();
             return $this->success(new SupplierResource($supplier), 201);
             //return new SupplierCollection(Supplier::paginate(10));
@@ -135,20 +119,7 @@ class SupplierController extends Controller
         if ($supplier) {
             DB::beginTransaction();
             try {
-                $supplier->update([
-                    'supplier_number' => isset($request['supplier_number']) ? $request['supplier_number'] : $supplier->supplier_number,
-                    'display_name' => isset($request['display_name']) ? $request['display_name'] : $supplier->display_name,
-                    'supplier_type' => isset($request['supplier_type']) ? $request['supplier_type'] : $supplier->supplier_type,
-                    'copy_bill_address' => isset($request['copy_bill_address']) ? $request['copy_bill_address'] : $supplier->copy_bill_address,
-                    'company_name' => isset($request['company_name']) ? $request['company_name'] : $supplier->company_name,
-                    'website' => isset($request['website']) ? $request['website'] : $supplier->website,
-                    'tax_rate' => isset($request['tax_rate']) ? $request['tax_rate'] : $supplier->tax_rate,
-                    'currency' => isset($request['currency']) ? $request['currency'] : $supplier->currency,
-                    'image' => isset($request['image']) ? $request['image'] : $supplier->image,
-                    'payment_terms' => isset($request['payment_terms']) ? $request['payment_terms'] : $supplier->payment_terms,
-                    'modified_by' => Auth::user()->id,
-
-                ]);
+                $supplier=$this->supplierService->update($request, $supplier);
                 DB::commit();
                 return $this->success(new SupplierResource($supplier), 200);
             } catch (\Exception $e) {
@@ -156,64 +127,30 @@ class SupplierController extends Controller
                 return $this->error($e->getMessage(), 200);
             }
         } else {
-            return $this->error('Data Not Found', 200);
+            return $this->error('Data Not Found', 201);
         }
     }
 
     //store supplier with contact and addresss
     public function store(SupplierRequest $request)
     {
-
         $return_data = [];
-        $supplierData = [
-            'supplier_type' => isset($request['supplier_type']) ? $request['supplier_type'] : 1,
-            'display_name' => isset($request['display_name']) ? $request['display_name'] : null,
-            'company_name' => isset($request['company_name']) ? $request['company_name'] : null,
-            'website' => isset($request['website']) ? $request['website'] : null,
-            'tax_name' => isset($request['tax_name']) ? $request['tax_name'] : 0,
-            'tax_rate' => isset($request['tax_rate']) ? $request['tax_rate'] : 0,
-            'currency' => isset($request['currency']) ? $request['currency'] : 0,
-            'image' => isset($request['image']) ? $request['image'] : null,
-            'payment_terms' => isset($request['payment_terms']) ? $request['payment_terms'] : 0,
-            'copy_bill_address' => isset($request['copy_bill_address']) ? $request['copy_bill_address'] : 0,
-            'created_by' => Auth::user()->id,
-            'account_id' => Auth::user()->account_id
-        ];
         DB::beginTransaction();
         try {
 
-            $supplier = supplier::create($supplierData);
+            // $supplier = supplier::create($supplierData);
+            $supplier=$this->supplierService->store($request);
             $supplier_id = $supplier->id;
 
             //store primary address
             $return_data = $supplier;
-            if ($supplier_id > 0) {
+            if ($supplier_id) {
                 if ($request->has('primary_contact')) {
                     if (!empty($request['primary_contact'])) {
-                        $item = $request['primary_contact'];
-                        $primaryContactData = [
-                            'salutation' => isset($item['salutation']) ? $item['salutation'] : null,
-                            'first_name' => isset($item['first_name']) ? $item['first_name'] : null,
-                            'last_name' => isset($item['last_name']) ? $item['last_name'] : null,
-                            'display_name' => isset($item['display_name']) ? $item['display_name'] : '',
-                            'company_name' => isset($item['company_name']) ? $item['company_name'] : null,
-                            'contact_email' => isset($item['contact_email']) ? $item['contact_email'] : null,
-                            'contact_work_phone' => isset($item['contact_work_phone']) ? $item['contact_work_phone'] : null,
-                            'phone_number_country_code' => isset($item['phone_number_country_code']) ? $item['phone_number_country_code'] : null,
-                            'contact_mobile' => isset($item['contact_mobile']) ? $item['contact_mobile'] : null,
-                            'skype' => isset($item['skype']) ? $item['skype'] : null,
-                            'facebook' => isset($item['facebook']) ? $item['facebook'] : null,
-                            'twitter' => isset($item['twitter']) ? $item['twitter'] : null,
-                            'website' => isset($item['website']) ? $item['website'] : null,
-
-                            'designation' => isset($item['designation']) ? $item['designation'] : null,
-                            'department' => isset($item['department']) ? $item['department'] : null,
-                            'is_primary_contact' => isset($item['is_primary_contact']) ? $item['is_primary_contact'] : 1,
-                            'contact_type_id' => isset($item['contact_type_id']) ? $item['contact_type_id'] : 0,
-                        ];
-
-                        $primary_contact = new Contact();
-                        $primary_contact = $primary_contact->store($primaryContactData, $supplier_id, Address::$ref_supplier_key);
+                        $primaryContactData = $request['primary_contact'];
+                        $primaryContactData['ref_object_key'] =Address::$ref_supplier_key;
+                        $primaryContactData['ref_id'] =$supplier_id;
+                        $primary_contact = $this->contactService->store($primaryContactData);
                         $return_data['primary_contact'] = $primary_contact;
                     }
                 }
@@ -222,30 +159,12 @@ class SupplierController extends Controller
                 if ($request->has(['other_contact'])) {
                     if (count($request['other_contact']) > 0) {
                         foreach ($request['other_contact'] as $key => $item) {
-                            $otherContactData = [
+                            $otherContactData = $item;
+                            $otherContactData['ref_object_key'] =Address::$ref_supplier_key;
+                            $otherContactData['ref_id'] =$supplier_id;
 
-                                'salutation' => isset($item['salutation']) ? $item['salutation'] : null,
-                                'first_name' => isset($item['first_name']) ? $item['first_name'] : null,
-                                'last_name' => isset($item['last_name']) ? $item['last_name'] : null,
-                                'display_name' => isset($item['display_name']) ? $item['display_name'] : '',
-                                'company_name' => isset($item['company_name']) ? $item['company_name'] : null,
-                                'contact_email' => isset($item['contact_email']) ? $item['contact_email'] : null,
-                                'contact_work_phone' => isset($item['contact_work_phone']) ? $item['contact_work_phone'] : null,
-                                'phone_number_country_code' => isset($item['phone_number_country_code']) ? $item['phone_number_country_code'] : null,
-                                'contact_mobile' => isset($item['contact_mobile']) ? $item['contact_mobile'] : null,
-                                'skype' => isset($item['skype']) ? $item['skype'] : null,
-                                'facebook' => isset($item['facebook']) ? $item['facebook'] : null,
-                                'twitter' => isset($item['twitter']) ? $item['twitter'] : null,
-                                'website' => isset($item['website']) ? $item['website'] : null,
-
-                                'designation' => isset($item['designation']) ? $item['designation'] : null,
-                                'department' => isset($item['department']) ? $item['department'] : null,
-                                'is_primary_contact' => isset($item['is_primary_contact']) ? $item['is_primary_contact'] : 0,
-                                'contact_type_id' => isset($item['contact_type_id']) ? $item['contact_type_id'] : 0,
-                            ];
-
-                            $other_contact = new Contact();
-                            $other_contact = $other_contact->store($otherContactData, $supplier_id, Address::$ref_supplier_key);
+                            // $other_contact = new Contact();
+                            $other_contact = $this->contactService->store($otherContactData);
                             $return_data['other_contact'] = $other_contact;
                         };
                     };
@@ -275,6 +194,7 @@ class SupplierController extends Controller
                     ];
 
                     //$address = new Address();
+                    
                     $address['bill'] = $this->addressService->store($address_data['bill']);
 
                     $return_data['bill_address'] = $address['bill'];
@@ -321,7 +241,7 @@ class SupplierController extends Controller
             //return $this->success($return_data);
         } catch (\Exception $e) {
             DB::rollBack();
-            return $this->error($e->getMessage(), 200);
+            return $this->error($e->getMessage(), 422);
             //return throw $e; 
         }
     }
@@ -331,12 +251,12 @@ class SupplierController extends Controller
     //soft delete supplier
     public function delete($id)
     {
-        $supplier = Supplier::where('account_id', Auth::user()->account_id)->find($id);
+        $supplier = Supplier::find($id);
         if ($supplier) {
             $supplier->destroy($id);
             return $this->success(null, 200);
         } else {
-            return $this->error('Data Not Found', 201);
+            return $this->error('Data Not Found', 404 );
         };
     }
 }

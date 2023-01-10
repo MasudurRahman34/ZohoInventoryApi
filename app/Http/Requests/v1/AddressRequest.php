@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\V1\Helper\ApiResponse;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Support\Facades\Auth;
 
 class AddressRequest extends FormRequest
 {
@@ -17,7 +18,8 @@ class AddressRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
+       return Auth::check();
+        //return false;
     }
 
     /**
@@ -27,20 +29,33 @@ class AddressRequest extends FormRequest
      */
     public function rules()
     {
-        return [
+        $rule= [
             //'attention'=>'required|string',
-            'ref_id' => 'required|integer',
+            'ref_id' => ['required','integer'],
             'source' => 'required|string|in:customer,supplier,user', //customer, supplier, user
-            'country_id'=>'integer|min:0|nullable',
-            'state_id'=>'integer|min:0|nullable',
-            'district_id'=>'integer|min:0|nullable',
-            'thana_id'=>'integer|min:0|nullable',
-            'union_id'=>'integer|min:0|nullable',
-            'street_address_id'=>'integer|min:0|nullable',
+            'country_id'=>'exists:countries,id|nullable',
+            'state_id'=>'exists:states,id|nullable',
+            'district_id'=>'exists:districts,id|nullable',
+            'thana_id'=>'exists:thanas,id|nullable',
+            'union_id'=>'exists:unions,id|nullable',
+            'zipcode'=>'exists:zipcodes,id|nullable',
+            'street_address_id'=>'exists:street_addresses,id|nullable',
             'is_bill_address'=>'integer|in:0,1|nullable', //1=yes, 0=no
             'is_ship_address'=>'integer|in:0|nullable', //1=yes, 0=no
-            'status'=>'integer|in:0,1'|'nullable', //0=invalid, 1=valid
+            'status'=>'integer|in:0,1|nullable', //0=invalid, 1=valid
+            'house'=>'string|between:5,255|nullable',
+            'phone' => 'numeric|size:11|nullable',
+            'fax' => 'string|between:5,20|nullable',
+            'status' => 'integer|in:0,1|nullable',
         ];
+        if ($this->request->get('source') === 'supplier') {
+            $rule['ref_id'] = ['required','integer','exists:portal_suppliers,id'];
+        } elseif ($this->request->get('source') === 'customer') {
+            $rule['ref_id'] = ['required','integer','exists:portal_customers,id'];
+        } elseif ($this->request->get('source') === 'user') {
+            $rule['ref_id'] = ['required','integer','exists:users,id'];
+        }
+        return $rule;
     }
     public function failedValidation(Validator $validator){
        

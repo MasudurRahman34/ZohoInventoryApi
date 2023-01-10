@@ -16,7 +16,7 @@ class ContactResource extends JsonResource
     {
         //return parent::toArray($request);
         return[
-            "id"=> 211,
+            "id"=> $this->id,
             "ref_object_key"=> $this->ref_object_key,
             "ref_id"=>  $this->ref_id,
             "salutation"=>$this->salutation,

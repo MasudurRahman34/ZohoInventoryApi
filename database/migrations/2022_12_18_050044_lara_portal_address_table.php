@@ -20,13 +20,13 @@ return new class extends Migration
                 $table->unsignedBigInteger('ref_id')->comment('The id value reference table i.e. users | customers | supplires -  for the address.');
 
                 $table->string('attention')->nullable()->comment('Contact person name for this address');
-                $table->integer('country_id')->default(0)->comment('Reference of country');
-                $table->unsignedBigInteger('state_id')->default(0)->comment('Reference of states');
-                $table->unsignedBigInteger('district_id')->default(0)->comment('Reference of district');
-                $table->unsignedBigInteger('thana_id')->default(0)->comment('Reference of thana');
-                $table->unsignedBigInteger('union_id')->default(0)->comment('Reference of union');
-                $table->unsignedBigInteger('zipcode_id')->default(0)->comment('Reference of zipcodes');
-                $table->unsignedBigInteger('street_address_id')->default(0)->comment('Reference of street_address');
+                $table->unsignedBigInteger('country_id')->nullable()->default(0)->comment('Reference of country');
+                $table->unsignedBigInteger('state_id')->nullable()->default(0)->comment('Reference of states');
+                $table->unsignedBigInteger('district_id')->nullable()->default(0)->comment('Reference of district');
+                $table->unsignedBigInteger('thana_id')->nullable()->default(0)->comment('Reference of thana');
+                $table->unsignedBigInteger('union_id')->nullable()->default(0)->comment('Reference of union');
+                $table->unsignedBigInteger('zipcode_id')->nullable()->default(0)->comment('Reference of zipcodes');
+                $table->unsignedBigInteger('street_address_id')->nullable()->default(0)->comment('Reference of street_address');
                 $table->string('house')->nullable()->defalut(NULL)->comment('House/suite/apartment number');
                 $table->string('phone', 20)->nullable()->defalut(NULL)->comment('Phone number');
                 $table->string('fax', 20)->nullable()->defalut(NULL)->comment('fax number');
