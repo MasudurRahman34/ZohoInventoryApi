@@ -150,6 +150,7 @@ class SupplierController extends Controller
                         $primaryContactData = $request['primary_contact'];
                         $primaryContactData['ref_object_key'] =Address::$ref_supplier_key;
                         $primaryContactData['ref_id'] =$supplier_id;
+                        $primaryContactData['is_primary_contact'] =1;
                         $primary_contact = $this->contactService->store($primaryContactData);
                         $return_data['primary_contact'] = $primary_contact;
                     }
@@ -225,6 +226,7 @@ class SupplierController extends Controller
                         'phone' => $request->ship_phone,
                         'fax' => $request->ship_fax,
                         'is_ship_address' => 1,
+                        'is_bill_address' => 0,
                         //'global_address_edit'=> $request->global_address_edit
 
                     ];

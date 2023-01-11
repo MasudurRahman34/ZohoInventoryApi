@@ -9,15 +9,24 @@ use App\Http\Controllers\Api\V1\Helper\ApiResponse;
 use App\Http\Requests\v1\PurchaseRequest;
 use App\Http\Resources\v1\Collections\PurchaseCollection;
 use App\Http\Resources\v1\PurchaseResource;
+use App\Http\Services\V1\PurchaseItemService;
 use App\Models\Purchase;
 use App\Models\PurchaseItem;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use PhpParser\Node\Stmt\Foreach_;
 use PhpParser\Node\Stmt\TryCatch;
 
 class PurchaseController extends Controller
 {
     use ApiFilter, ApiResponse;
+    protected $purchaseItem;
+
+
+    public function __construct(PurchaseItemService $purchaseItem)
+    {
+        $this->purchaseItem= $purchaseItem;
+    }
     public function index(Request $request)
     {
         $this->setFilterProperty($request);
@@ -36,9 +45,9 @@ class PurchaseController extends Controller
             return $this->error('Data Not Found', 404);
         }
     }
-    public function store(PurchaseRequest $request)
+    public function store(Request $request)
     {
-
+            //return $request;
         //return $request
         DB::beginTransaction();
         try {
@@ -63,31 +72,36 @@ class PurchaseController extends Controller
                 'attachment_file' => isset($request['attachment_file']) ? $request['attachment_file'] : NULL,
                 'image' => isset($request['image']) ? $request['image'] : NULL,
                 'status' => isset($request['status']) ? $request['status'] : '0',
-                'payment_status' => isset($request['payment_status']) ? $request['payment_status'] : '0',
+                // 'payment_status' => isset($request['payment_status']) ? $request['payment_status'] : '0',
 
             ];
             $purchase = Purchase::create($purchaseData);
             if ($purchase) {
-                if ($request->has('line_id')) {
-                    $purchaseItems = array();
-                    $purchaseItems['line_id'] = $request['line_id'];
-                    $purchaseItems['deleted_line_id'] = $request['deleted_line_id'];
-                    //$purchaseItems['deleted_inventory_line_id'] = $request['deleted_inventory_line_id'];
-                    $purchaseItems['product_id'] = $request['product_id'];
-                    $purchaseItems['description'] = $request['description'];
-                    $purchaseItems['serial_number'] = $request['serial_number'];
-                    // Generate purchase price according to settings
-                    $purchaseItems['unit_price'] = $request['product_qty'];
-                    $purchaseItems['product_qty'] = $request['product_qty'];
-                    $purchaseItems['received_qty'] = $request['received_qty'];
-                    $purchaseItems['product_discount'] = $request['product_discount'];
-                    $purchaseItems['product_tax'] = $request['product_tax'];
-                    $purchaseItems['subtotal'] = $request['subtotal'];
+                if ($request->has('purchaseItems')) {
+
+                    foreach ($request->purchaseItems as $key => $item) {
+                        $item['warehouse_id']=$request['warehouse_id'];
+                        $item['purchase_id']=$purchase->id;
+                        if($item['is_serialized']==1){
+
+                            for ($i=0; $i <$item['product_qty'] ; $i++) { 
+                                
+                                $item['generateSerialNumber']=isset($item['serial_number'][$i]) ? $item['serial_number'][$i] : $this->generateSerialNumber(8);
+                                
+                                $this->purchaseItem->store($item);
+                            }
+
+
+                        }else{
+                            $this->purchaseItem->store($item);
+                        }
+                       
+                        
+                        
+                    }
+                   
                 }
-
-
-                $purchaseItem = new PurchaseItem();
-                $purchaseItem->store($purchaseItems, $request['warehouse_id'], $purchase->id);
+                
             }
             DB::commit();
             $purchase = Purchase::with('purchaseItems')->where('account_id', Auth::user()->account_id)->find($purchase->id);
@@ -111,5 +125,11 @@ class PurchaseController extends Controller
         } else {
             return $this->error('Data Not Found', 201);
         };
+    }
+
+    public function generateSerialNumber($length_of_string){
+        $str_result = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+       return substr(str_shuffle($str_result),
+        0, $length_of_string);
     }
 }

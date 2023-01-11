@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use SebastianBergmann\Type\NullType;
 
 return new class extends Migration  
 {
@@ -25,11 +26,14 @@ return new class extends Migration
             $table->float('product_discount',10,4)->default(0);
             $table->float('product_tax',10,4)->default(0);
             $table->float('subtotal',12,4)->default(0);
+            $table->dateTime('package_date')->default(NULL)->nullable();
+            $table->dateTime('expire_date')->default(NULL)->nullable();
+            $table->tinyInteger('is_serialized')->default(0)->nullable()->comment('0=true, 1=false');
     
             $table->text('description')->nullable()->default(NULL);
-            $table->integer('account_id')->default(1)->comment('Reference of account');
-            $table->integer('created_by')->default(0);
-            $table->integer('modified_by')->default(0);
+            $table->unsignedBigInteger('account_id')->default(1)->comment('Reference of account');
+            $table->unsignedBigInteger('created_by')->default(0);
+            $table->unsignedBigInteger('modified_by')->default(0);
             $table->timestamps();
             $table->softDeletes();
             $table->index(['product_id','purchase_id','account_id']);
