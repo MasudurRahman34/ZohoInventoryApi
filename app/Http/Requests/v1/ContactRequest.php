@@ -28,16 +28,16 @@ class ContactRequest extends FormRequest
     public function rules()
     {
         $rule= [
-            'source' => 'required|string|in:customer,supplier,user', //customer, supplier, user
-            'salutation' => 'string|between:2,20|nullable',
-            'first_name' => 'required_with:display_name|string|between:3,50|nullable',
-            'last_name' => 'string|between:3,50|nullable',
+            'source' => 'required|alpha|in:customer,supplier,user', //customer, supplier, user
+            'salutation' => 'alpha|between:2,20|nullable',
+            'first_name' => 'alpha|between:3,50|nullable',
+            'last_name' => 'alpha|between:3,50|nullable',
             'display_name' => 'required|string|between:3,50',
             'company_name' => 'string|between:3,50|nullable',
-            'phone_number_country_code' => 'string|size:3|nullable',
+            'phone_number_country_code' => 'string|between:1,3|nullable',
             'contact_email' => ['email:rfc,filter,dns', 'max:255', 'nullable'],
-            'contact_work_phone' => 'numeric|size:11|nullable',
-            'contact_mobile' => 'numeric|size:11|nullable',
+            'contact_work_phone' => 'digits_between:7,15|nullable',
+            'contact_mobile' => 'digits_between:7,15|nullable',
             'facebook' => 'url|max:255|nullable',
             'twitter' => 'url|max:255|nullable',
             'skype' => 'string|max:255|nullable',
