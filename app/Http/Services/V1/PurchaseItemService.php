@@ -1,13 +1,16 @@
 <?php
 namespace App\Http\Services\V1;
 
+use App\Http\Resources\v1\PurchaseResource;
 use App\Models\PurchaseItem;
+use App\Http\Controllers\Api\V1\Helper\ApiResponse;
+use App\Http\Resources\v1\PurchaseItemResource;
 
 class PurchaseItemService{
-
+ use ApiResponse;
 
     public function store($purchaseItem){
-        $line_insert = [
+        $insertData = [
             'purchase_id'=>$purchaseItem['purchase_id'],
             'warehouse_id'=>$purchaseItem['warehouse_id'],
             "product_id" => $purchaseItem['product_id'],
@@ -24,18 +27,35 @@ class PurchaseItemService{
 
         ];
         if($purchaseItem['is_serialized']==1){
-            $line_insert['serial_number']=$purchaseItem['generateSerialNumber'];
-            $line_insert['product_qty']=1;
+            $insertData['serial_number']=$purchaseItem['generateSerialNumber'];
+            $insertData['product_qty']=1;
+        }else if($purchaseItem['is_serialized']==0){
+            $insertData['serial_number']=$purchaseItem['serial_number'];
         }
 
-        $response = PurchaseItem::create($line_insert);
+        $response = PurchaseItem::create($insertData);
 
     
     return $response;
     }
 
-    public function update($request, $customer){
+    public function update($request, $purchaseItem){
 
         
+    }
+
+    public function showBySerialNumber($serialNumeber){
+        try {
+            $purchaseItem=PurchaseItem::where('serial_number', $serialNumeber)->first();
+            if($purchaseItem){
+                return $this->success( new PurchaseItemResource($purchaseItem),200);
+            }else{
+               return $this->error('Data Not found',200);
+            }
+            
+            
+        } catch (\Exception $e) {
+           return $this->error($e->getMessage(),422);
+        }
     }
 }

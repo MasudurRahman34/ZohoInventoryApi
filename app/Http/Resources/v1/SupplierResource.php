@@ -4,6 +4,7 @@ namespace App\Http\Resources\v1;
 
 use App\Http\Resources\v1\Collections\AddressCollection;
 use App\Http\Resources\v1\Collections\ContactCollection;
+use App\Http\Resources\v1\Collections\PurchaseCollection;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class SupplierResource extends JsonResource
@@ -16,6 +17,7 @@ class SupplierResource extends JsonResource
         //return parent::toArray($request);
         return[
         'id' => $this->id,
+        'uuid' => $this->uuid,
         'supplier_number' => $this->supplier_number,
         'supplier_type' => $this->supplier_type,
         'display_name' => $this->display_name,
@@ -43,6 +45,7 @@ class SupplierResource extends JsonResource
         'ship_address' => new AddressResource($this->whenLoaded('shipAddress')),
         'bill_address' => new AddressResource($this->whenLoaded('billAddress')),
         'other_addresses' => new AddressCollection($this->whenLoaded('otherAddresses')),
+        'purchases' => new PurchaseCollection($this->whenLoaded('purchases')),
         
         
         ];

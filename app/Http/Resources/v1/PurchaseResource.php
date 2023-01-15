@@ -19,6 +19,7 @@ class PurchaseResource extends JsonResource
         //return parent::toArray($request);
         return [
             'id' => $this->id,
+            'uuid' => $this->uuid,
             'supplier_id' => $this->supplier_id,
             'warehouse_id' => $this->warehouse_id,
             'invoice_no' => $this->invoice_no,
@@ -44,7 +45,7 @@ class PurchaseResource extends JsonResource
 
             'created_at' => $this->created_at,
             'created_by' => $this->created_by,
-            'account_id ' => $this->account_id,
+            // 'account_id ' => $this->account_id,
             'modified_by' => $this->modified_by,
             'updated_at' => $this->updated_at,
             'deleted_at' => $this->deleted_at,

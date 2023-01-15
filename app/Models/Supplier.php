@@ -5,8 +5,10 @@ namespace App\Models;
 use App\Http\Controllers\Api\V1\Helper\IdIncreamentable;
 use App\Http\Controllers\Api\V1\Helper\AccountObservant;
 use App\Models\Scopes\AccountScope;
+use App\Models\Scopes\ScopeUuid;
 use App\Observers\LogObserver;
 use DateTimeInterface;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -15,7 +17,7 @@ use Illuminate\Support\Facades\Auth;
 class Supplier extends Model
 {
 
-    use HasFactory,SoftDeletes,AccountObservant;
+    use HasFactory,SoftDeletes,AccountObservant, HasUuids,ScopeUuid;
     protected $table='portal_suppliers';
     protected $hidden = [
         'account_id'
@@ -33,7 +35,7 @@ class Supplier extends Model
     }
  
      protected $fillable=[
-            'supplier_number','supplier_type','display_name','copy_bill_address','company_name','website','tax_rate','tax_name','currency','image','payment_terms','account_id','created_by','modified_by'
+            'supplier_number','uuid','supplier_type','display_name','copy_bill_address','company_name','website','tax_rate','tax_name','currency','image','payment_terms','account_id','created_by','modified_by'
      ];
 
     //  public static $rules = [
@@ -49,26 +51,12 @@ class Supplier extends Model
          $totalSupplier= Supplier::where('account_id',Auth::user()->account_id)->withTrashed()->count();
          return $totalSupplier+1;
      }
-
-    // public function IdIncreamentable():array{
-    //     return [
-    //         'source'=>'id',
-    //         'prefix'=>'SACC'.date("y").date("m").date('d')."-",
-    //         'attribute'=>'account_id',
-    //     ];
-    // }
-
     
     protected static function boot()
     {
         parent::boot();
-       
-        //static::observe(new LogObserver);
-        // auto-sets account values on creation
         static::creating(function ($model) {
             $model->supplier_number="SACC".static::SplitAccountNumber()."-".static::totalSupplier();
-            // $model->created_by = Auth::user()->id;
-            // $model->account_id = Auth::user()->account_id;
         });
     }
 
@@ -93,6 +81,10 @@ class Supplier extends Model
     }
     public function billAddress(){
         return $this->hasOne(Address::class,'ref_id')->where('ref_object_key',Address::$ref_supplier_key)->where('is_bill_address',1);
+    }
+
+    public function purchases(){
+        return $this->hasMany(Purchase::class,'supplier_id','id');
     }
 
 }

@@ -4,7 +4,9 @@ namespace App\Models;
 
 use App\Http\Controllers\Api\V1\Helper\AccountObservant;
 use App\Http\Controllers\Api\V1\Helper\IdIncreamentable;
+use App\Models\Scopes\ScopeUuid;
 use DateTimeInterface;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -13,7 +15,7 @@ use Illuminate\Support\Facades\Auth;
 class Customer extends Model
 {
 
-    use HasFactory,SoftDeletes, AccountObservant;
+    use HasFactory,SoftDeletes, AccountObservant,HasUuids,ScopeUuid;
 
     protected $table='portal_customers';
     protected $hidden = [
@@ -32,7 +34,7 @@ class Customer extends Model
     }
  
      protected $fillable=[
-            'customer_number','copy_bill_address','customer_type','display_name','company_name','website','tax_name','tax_rate','currency','image','payment_terms','account_id','created_by','modified_by'
+            'customer_number','uuid','copy_bill_address','customer_type','display_name','company_name','website','tax_name','tax_rate','currency','image','payment_terms','account_id','created_by','modified_by'
      ];
 
     public static function SplitAccountNumber(){
@@ -44,15 +46,6 @@ class Customer extends Model
          return $totalCustomer+1;
      }
 
-    // public function IdIncreamentable():array{
-    //     return [
-    //         'source'=>'id',
-    //         'prefix'=>'SACC'.date("y").date("m").date('d')."-",
-    //         'attribute'=>'account_id',
-    //     ];
-    // }
-
-    
     protected static function boot()
     {
         parent::boot();
@@ -83,5 +76,8 @@ class Customer extends Model
     }
     public function billAddress(){
         return $this->hasOne(Address::class,'ref_id')->where('ref_object_key',Address::$ref_customer_key)->where('is_bill_address',1);
+    }
+    public function sales(){
+        return $this->hasMany(Sale::class,'customer_id','id');
     }
 }

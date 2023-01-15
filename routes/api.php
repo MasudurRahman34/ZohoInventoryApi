@@ -8,12 +8,10 @@ use App\Http\Controllers\Api\V1\ContactController;
 use App\Http\Controllers\Api\V1\CustomerController;
 use App\Http\Controllers\Api\V1\GlobalAddressController;
 use App\Http\Controllers\Api\V1\PurchaseController;
+use App\Http\Controllers\Api\V1\PurchaseItemController;
 use App\Http\Controllers\Api\V1\SaleController;
 use App\Http\Controllers\Api\V1\SupplierController;
-use App\Http\Controllers\Api\V1\SuppliersController;
 use App\Http\Controllers\Api\V1\UserController;
-use App\Models\Accounts;
-use App\Models\Address;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -88,13 +86,16 @@ Route::middleware('auth:api')->group(function () {
         Route::PUT('purchases/{purchase}', [PurchaseController::class, 'update'])->name('purchases.update');
         Route::GET('purchases/{purchase}', [PurchaseController::class, 'show'])->name('purchases.show');
         Route::DELETE('purchases/{purchase}', [PurchaseController::class, 'delete'])->name('purchases.delete');
-        
+        //purchase item
+        Route::get('purchaseitems/serialnumber/{serialNumber}', [PurchaseItemController::class, 'showBySerialNumber'])->name('purchasesItems.serialNumber');
+        Route::DELETE('purchaseitems/{purchaseitem}', [PurchaseItemController::class, 'delete'])->name('purchasesItems.delete');
         //sales
         Route::GET('sales', [SaleController::class, 'index'])->name('sales.index');
         Route::POST('sales', [SaleController::class, 'store'])->name('sales.store');
         Route::PUT('sales/{sale}', [SaleController::class, 'update'])->name('sales.update');
         Route::GET('sales/{sale}', [SaleController::class, 'show'])->name('sales.show');
-        Route::DELETE('sales/sale}', [SaleController::class, 'delete'])->name('sales.delete');
+        Route::DELETE('sales/{sale}', [SaleController::class, 'delete'])->name('sales.delete');
+        Route::DELETE('saleitems/{sale}', [SaleController::class, 'deleteSaleItem'])->name('saleitems.delete');
     });
 });
 

@@ -15,6 +15,7 @@ return new class extends Migration
     { if (!Schema::hasTable('portal_suppliers')) {
         Schema::create('portal_suppliers', function (Blueprint $table) {
             $table->id();
+            $table->uuid('uuid')->unique()->index()->default(NULL);
             $table->string('supplier_number',50)->nullable()->comment('generate');
             $table->tinyInteger('supplier_type')->length(1)->comment('1=individual, 2=business')->default(1);
                 $table->string('display_name', 100)->comment('Required, Alfa numeric');

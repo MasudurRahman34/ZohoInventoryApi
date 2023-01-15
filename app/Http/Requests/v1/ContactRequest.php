@@ -7,6 +7,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use App\Http\Controllers\Api\V1\Helper\ApiResponse;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Auth;
 
 class ContactRequest extends FormRequest
 { use ApiResponse;
@@ -17,7 +18,7 @@ class ContactRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        return Auth::check();
     }
 
     /**

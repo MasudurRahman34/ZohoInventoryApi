@@ -1,0 +1,63 @@
+customer_id:1
+warehouse_id:1
+order_number:INV-1001
+sales_order_date:2022-12-29 
+expected_shipment_date:2023-12-15
+billing_address:billing_address'
+shipping_address:shipping address
+delivery_method: by currier
+reference:/2022/06/0010
+order_discount:50
+discount_currency:10
+order_discount_amount:10
+order_tax:20
+order_tax_amount:1
+shipping_charge:15
+order_adjustment:1
+adjustment_text:adjustment
+customer_note:customer note
+terms_condition:term and condition
+total_amount:100.11111111
+grand_total_amount:1000
+due_amount:500
+paid_amount:100
+recieved_amount:100
+changed_amount:100
+last_paid_amount:20
+attachment_file:attachmentfile
+image:image.jpg
+offer_to: offer to
+offer_subject: offer subject
+offer_greetings: offere_greeting
+offer_terms_condition: offer terms and condition
+invoice_status:4
+shipment_status:4
+status:4
+payment_status:4
+sales_type:4
+saleitems[0][product_id]:1
+saleitems[0][serial_number]:serial number-1
+saleitems[0][product_qty]:100
+saleitems[0][packed_qty]:5
+saleitems[0][shipped_qty]:6
+saleitems[0][invoice_qty]:1
+saleitems[0][unit_price]:100
+saleitems[0][product_discount]:20
+saleitems[0][product_tax]:2
+saleitems[0][subtotal]:981
+saleitems[0][description]:product_description-1
+saleitems[0][is_serialized]:0
+saleitems[1][product_id]:2
+saleitems[1][serial_number]:serial number-1
+saleitems[1][product_qty]:12
+saleitems[1][packed_qty]:6
+saleitems[1][shipped_qty]:7
+saleitems[1][invoice_qty]:2
+saleitems[1][received_qty]:2
+saleitems[1][unit_price]:112
+saleitems[1][product_discount]:22
+saleitems[1][product_tax]:2
+saleitems[1][subtotal]:112
+saleitems[1][description]:product_description-1
+saleitems[1][is_serialized]:1
+

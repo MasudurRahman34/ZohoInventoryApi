@@ -49,7 +49,7 @@ class SupplierController extends Controller
                 //$filter['display_name']='chonchol chowdhuri'
                 //$this->filterBy($request,$query);
             }]))
-            ->with('otherContacts')->with('shipAddress')->with('billAddress')->with('otherAddresses');
+            ->with('otherContacts')->with('shipAddress')->with('billAddress')->with('otherAddresses')->with('purchases');
         $this->dateRangeQuery($request, $query, 'portal_suppliers.created_at');
         $this->filterBy($request, $this->query);
         $suppliers = $this->query->orderBy($this->column_name, $this->sort)->paginate($this->show_per_page)->withQueryString();
@@ -57,9 +57,10 @@ class SupplierController extends Controller
     }
 
     //get single supplier
-    public function show($id)
+    public function show($uuid)
     {
-        $supplier = Supplier::with('PrimaryContact')->with('otherContacts')->with('shipAddress')->with('billAddress')->with('otherAddresses')->find($id);
+        // $supplier = Supplier::with('PrimaryContact')->with('otherContacts')->with('shipAddress')->with('billAddress')->with('otherAddresses')->find($id);
+        $supplier = Supplier::Uuid($uuid)->with('PrimaryContact')->with('otherContacts')->with('shipAddress')->with('billAddress')->with('otherAddresses')->first();
         if ($supplier) {
             return $this->success(new SupplierResource($supplier));
         } else {
@@ -67,34 +68,43 @@ class SupplierController extends Controller
         }
     }
     //get addresses by id
-    public function getAddresses($supplier_id)
+    public function getAddresses($uuid)
     {
-        //return $id;
+        //=return $id;
         //$supplierAddresses = Supplier::with('shipAddress')->with('billAddress')->with('otherAddresses')->where('account_id', Auth::user()->account_id)->find($id);
-
-        $addresses['ship_address'] = Address::where('ref_object_key', Address::$ref_supplier_key)->where('ref_id', $supplier_id)->where('is_ship_address', 1)->first();
-        $addresses['bill_address'] = Address::where('ref_object_key', Address::$ref_supplier_key)->where('ref_id', $supplier_id)->where('is_bill_address', 1)->first();
-        $addresses['other_addresses'] = Address::where('ref_object_key', Address::$ref_supplier_key)->where('ref_id', $supplier_id)->where('is_bill_address', 0)->where('is_ship_address', 0)->get();
-        if ((empty($addresses['ship_address']))  && (empty($addresses['bill_address'])) && (count($addresses['other_addresses']) == 0)) {
-            return $this->error('Data Not Found', 404);
-        } else {
-            return $this->success($addresses);
-        }
+        $supplier=Supplier::Uuid($uuid)->first();
+        if($supplier){
+            $supplierId= $supplier->id;
+            $addresses['ship_address'] = Address::where('ref_object_key', Address::$ref_supplier_key)->where('ref_id', $supplierId)->where('is_ship_address', 1)->first();
+            $addresses['bill_address'] = Address::where('ref_object_key', Address::$ref_supplier_key)->where('ref_id', $supplierId)->where('is_bill_address', 1)->first();
+            $addresses['other_addresses'] = Address::where('ref_object_key', Address::$ref_supplier_key)->where('ref_id', $supplierId)->where('is_bill_address', 0)->where('is_ship_address', 0)->get();
+            if ((empty($addresses['ship_address']))  && (empty($addresses['bill_address'])) && (count($addresses['other_addresses']) == 0)) {
+                return $this->error('Data Not Found', 404);
+            } else {
+                return $this->success($addresses);
+            }
+     }
     }
     //get contacts by id
-    public function getContacts($supplier_id)
+    public function getContacts($uuid)
     {
-        //return $supplier_id;
-        $contacts['primary_contact'] = Contact::where('ref_object_key', Address::$ref_supplier_key)->where('ref_id', $supplier_id)->where('is_primary_contact', 1)->first();
-        $contacts['other_contacts'] = Contact::where('ref_object_key', Address::$ref_supplier_key)->where('ref_id', $supplier_id)->where('is_primary_contact', 0)->get();
-        //contact
-        //return ($contacts['other_contacts']);
+        $supplier=Supplier::Uuid($uuid)->first();
+            if($supplier){
+                $supplierId= $supplier->id;
+            //return $supplier_id;
+            $contacts['primary_contact'] = Contact::where('ref_object_key', Address::$ref_supplier_key)->where('ref_id', $supplierId)->where('is_primary_contact', 1)->first();
+            $contacts['other_contacts'] = Contact::where('ref_object_key', Address::$ref_supplier_key)->where('ref_id', $supplierId)->where('is_primary_contact', 0)->get();
+            //contact
+            //return ($contacts['other_contacts']);
 
-        if (empty($contacts['primary_contact']) && (count($contacts['other_contacts']) == 0)) {
+            if (empty($contacts['primary_contact']) && (count($contacts['other_contacts']) == 0)) {
+                return $this->error('Data Not Found', 404);
+            } else {
+                return $this->success($contacts);
+            }
+        }else{
             return $this->error('Data Not Found', 404);
-        } else {
-            return $this->success($contacts);
-        }
+         }
     }
     //create supplier
     public function create(SupplierRequest $request)
@@ -112,10 +122,10 @@ class SupplierController extends Controller
     }
 
     //update supplier
-    public function update(SupplierRequest $request, $id)
+    public function update(SupplierRequest $request, $uuid)
     {
         //return $request;
-        $supplier = Supplier::find($id);
+        $supplier = Supplier::Uuid($uuid)->first();
         if ($supplier) {
             DB::beginTransaction();
             try {
@@ -251,11 +261,11 @@ class SupplierController extends Controller
 
 
     //soft delete supplier
-    public function delete($id)
+    public function delete($uuid)
     {
-        $supplier = Supplier::find($id);
+        $supplier = Supplier::Uuid($uuid)->first();
         if ($supplier) {
-            $supplier->destroy($id);
+            $supplier->destroy($uuid);
             return $this->success(null, 200);
         } else {
             return $this->error('Data Not Found', 404 );

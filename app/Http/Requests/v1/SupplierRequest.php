@@ -23,7 +23,7 @@ class SupplierRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        return Auth::check();
     }
 
     /**
@@ -37,7 +37,7 @@ class SupplierRequest extends FormRequest
                
                'supplier_type' => 'required|integer|in:1,2',
             //    'supplier_number'=>'unique:portal_suppliers,supplier_number,'.$this->supplier,
-               'supplier_number'=>Rule::unique('portal_suppliers')->where(fn ($query) => $query->where('account_id', Auth::user()->account_id))->ignore($this->supplier),
+               'supplier_number'=>Rule::unique('portal_suppliers')->where(fn ($query) => $query->where('account_id', Auth::user()->account_id))->ignore($this->supplier,'uuid'),
                'display_name' => 'required|string|between:3,100', 
                'company_name' =>'string|between:3,255|nullable',
                'website' =>'url|Max:255|nullable',

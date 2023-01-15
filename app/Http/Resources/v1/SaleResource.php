@@ -19,6 +19,7 @@ class SaleResource extends JsonResource
         //return parent::toArray($request);
         return [
             'id' => $this->id,
+            'uuid' => $this->uuid,
             'customer_id' => $this->customer_id,
             'warehouse_id' => $this->warehouse_id,
             'order_number' => $this->order_number,

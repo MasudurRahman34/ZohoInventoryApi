@@ -15,26 +15,26 @@ return new class extends Migration
     {
         Schema::create('sale_items', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('sale_id')->comment('id value sales table');
-            $table->unsignedBigInteger('warehouse_id')->comment('id value warhouses table');
-            $table->unsignedBigInteger('product_id')->comment('id value product table');
+            $table->unsignedBigInteger('sale_id')->comment('id value sales table')->index();
+            $table->unsignedBigInteger('warehouse_id')->comment('id value warhouses table')->index();
+            $table->unsignedBigInteger('product_id')->comment('id value product table')->index();
             $table->string('serial_number',100)->nullable()->default(NULL);
             $table->integer('product_qty')->default(0);
-            $table->integer('packed_qty')->default(0)->comment('This field is used for keep track how much product are packed for this sales');
+            $table->integer('packed_qty')->default(0)->nullable()->comment('This field is used for keep track how much product are packed for this sales');
             $table->integer('shipped_qty')->default(0)->nullable()->comment('This field is used for keep track how much product are shipped for this sales');
             $table->integer('invoice_qty')->default(0)->nullable()->comment('This field is used for keep track how much product are invoiced for this sales');
-            $table->float('unit_price',10,4)->default(0);
-            $table->float('product_discount',10,4)->default(0);
-            $table->float('product_tax',10,4)->default(0);
-            $table->float('subtotal',12,4)->default(0);
+            $table->float('unit_price',16,4)->default(0);
+            $table->float('product_discount',16,4)->nullable()->default(0);
+            $table->float('product_tax',16,4)->nullable()->default(0);
+            $table->float('subtotal',16,4)->default(0);
     
             $table->text('description')->nullable()->default(NULL);
+            $table->tinyInteger('is_serialized')->default(0)->nullable()->comment('0=true, 1=false');
             $table->unsignedBigInteger('account_id')->default(1)->comment('Reference of account');
             $table->unsignedBigInteger('created_by')->default(0);
             $table->unsignedBigInteger('modified_by')->default(0);
             $table->timestamps();
             $table->softDeletes();
-            $table->index(['product_id','sale_id','account_id']);
         });
     }
 
