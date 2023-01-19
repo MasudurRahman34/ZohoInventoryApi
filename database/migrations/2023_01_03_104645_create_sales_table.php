@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('sales', function (Blueprint $table) {
             $table->id();
-            $table->uuid('uuid')->unique()->index()->default(NULL)->nullale();
+            $table->uuid('uuid')->unique()->index()->default(NULL);
             $table->unsignedBigInteger('customer_id')->comment('id value suppliers table')->index();
             $table->unsignedBigInteger('warehouse_id')->comment('id value warhouses table')->index();
             $table->string('order_number',50)->nullable()->default(NULL);

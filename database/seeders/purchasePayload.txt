@@ -19,11 +19,11 @@ attachment_file:attachmentfile
 image:image.jpg
 status:1
 payment_status:10
-purchaseItems[0][serial_id][0]:194018340184
-purchaseItems[0][serial_id][1]:194018340184
-purchaseItems[0][serial_id][2]:194018340184
-purchaseItems[0][serial_id][3]:194018340184
-purchaseItems[0][serial_id][4]:194018340184
+purchaseItems[0][serial_number][0]:194018340184
+purchaseItems[0][serial_number][1]:194018340184
+purchaseItems[0][serial_number][2]:194018340184
+purchaseItems[0][serial_number][3]:194018340184
+purchaseItems[0][serial_number][4]:194018340184
 purchaseItems[0][product_id]:1
 purchaseItems[0][serial_number]:serial number-1
 purchaseItems[0][product_qty]:100
@@ -35,7 +35,7 @@ purchaseItems[0][subtotal]:981
 purchaseItems[0][description]:product_description-1
 purchaseItems[0][expire_date]:12-10-23
 purchaseItems[0][package_date]:12-10-23
-purchaseItems[1][serial_id][0]:123123
+purchaseItems[1][serial_number][0]:123123
 purchaseItems[1][product_id]:2
 purchaseItems[1][serial_number]:serial number-1
 purchaseItems[1][product_qty]:12

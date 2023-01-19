@@ -16,6 +16,7 @@ return new class extends Migration
         if (!Schema::hasTable('portal_customers')) {
             Schema::create('portal_customers', function (Blueprint $table) {
                 $table->id();
+                $table->uuid('uuid')->unique()->index()->default(NULL);
                 $table->string('customer_number', 50)->comment('Required, System automatically generate a unique customer number, editable');
                 $table->tinyInteger('customer_type')->length(1)->comment('1=individual, 2=business')->default(1);
                 $table->string('display_name', 100)->comment('Required, Alfa numeric');

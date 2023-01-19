@@ -11,16 +11,11 @@ class SaleItemService{
 
     public function store($saleItem){
         $insertData = [
-            // 'line_id' => $saleItem['line_id'],
-            // 'deleted_line_id' => $saleItem['deleted_line_id'],
-            //'deleted_inventory_line_id' => $saleItem['deleted_inventory_line_id'],
             'product_id' => $saleItem['product_id'],
             'sale_id' => $saleItem['sale_id'],
             'warehouse_id' => $saleItem['warehouse_id'],
             'description' => $saleItem['description'],
             'serial_number' => $saleItem['serial_number'],
-            // Generate sale price according to settings
-          
             'product_qty' => $saleItem['product_qty'],
             'packed_qty' => $saleItem['packed_qty'],
             'shipped_qty' => $saleItem['shipped_qty'],

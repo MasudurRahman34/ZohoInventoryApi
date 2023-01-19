@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\V1\Auth\RegistrationController;
 use App\Http\Controllers\Api\V1\ContactController;
 use App\Http\Controllers\Api\V1\CustomerController;
 use App\Http\Controllers\Api\V1\GlobalAddressController;
+use App\Http\Controllers\Api\V1\InventoryAdjustmentController;
 use App\Http\Controllers\Api\V1\PurchaseController;
 use App\Http\Controllers\Api\V1\PurchaseItemController;
 use App\Http\Controllers\Api\V1\SaleController;
@@ -96,6 +97,9 @@ Route::middleware('auth:api')->group(function () {
         Route::GET('sales/{sale}', [SaleController::class, 'show'])->name('sales.show');
         Route::DELETE('sales/{sale}', [SaleController::class, 'delete'])->name('sales.delete');
         Route::DELETE('saleitems/{sale}', [SaleController::class, 'deleteSaleItem'])->name('saleitems.delete');
+
+        //inventory adjustment
+        Route::POST('inventory/adjustment', [InventoryAdjustmentController::class, 'store'])->name('inventory.adjustment.store');
     });
 });
 

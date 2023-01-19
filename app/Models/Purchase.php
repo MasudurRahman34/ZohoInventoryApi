@@ -45,6 +45,10 @@ class Purchase extends Model
     public function supplier(){
         return $this->belongsTo(Supplier::class,'supplier_id','id');
     }
+
+    public function inventoryAdjustment(){
+        return $this->morphOne(InventoryAdjustment::class,'inventory_adjustmentable')->with('adjustmentItems');
+    }
     // public function getRouteKey()
     // {
     //     return 'uuid';

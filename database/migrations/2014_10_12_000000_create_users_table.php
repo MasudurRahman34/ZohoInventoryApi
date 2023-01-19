@@ -21,11 +21,11 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('password');
             $table->string('user_role', 100)->default('web-user');
-            $table->integer('mobile', 15)->unique()->nullable()->default(NULL);
-            $table->string('mobile_country_code', 20)->nullable()->default(NULL);
+            $table->integer('mobile')->unique()->nullable()->default(NULL);
+            $table->string('mobile_country_code',20)->nullable()->default(NULL);
 
             $table->date('date_of_birth')->nullable()->default(NULL);
-            $table->string('gender', 20)->nullable()->default(NULL);
+            $table->string('gender',20)->nullable()->default(NULL);
             $table->string('image')->nullable()->default(NULL);
             $table->string('language', 100)->nullable()->default(NULL);
             $table->string('interests')->nullable()->default(NULL);
@@ -44,7 +44,7 @@ return new class extends Migration
 
             $table->timestamps();
             $table->softDeletes();
-            $table->index(['user_number', 'email', 'mobile', 'account_id', 'created_at']);
+            $table->index(['user_number', 'email','account_id', 'created_at']);
         });
     }
 

@@ -54,6 +54,7 @@ class PurchaseResource extends JsonResource
             // 'contacts' => new ContactCollection($this->whenLoaded('contacts')),
             'supplier' => new SupplierResource($this->whenLoaded('supplier')),
             'purchaseItems' => new PurchaseItemCollection($this->whenLoaded('purchaseItems')),
+            'inventoryAdjustment' => new InventoryAdjustmentResource($this->whenLoaded('inventoryAdjustment')),
 
         ];
     }

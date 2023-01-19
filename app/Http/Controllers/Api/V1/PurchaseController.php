@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\V1\Helper\ApiResponse;
 use App\Http\Requests\v1\PurchaseRequest;
 use App\Http\Resources\v1\Collections\PurchaseCollection;
 use App\Http\Resources\v1\PurchaseResource;
+use App\Http\Services\V1\InventoryAdjustmentService;
 use App\Http\Services\V1\PurchaseItemService;
 use App\Http\Services\V1\PurchaseService;
 use App\Models\Purchase;
@@ -23,12 +24,14 @@ class PurchaseController extends Controller
     use ApiFilter, ApiResponse;
     protected $purchaseItemService;
     protected $purchaseService;
+    protected $inventoryAdjustment;
 
 
-    public function __construct(PurchaseItemService $purchaseItemService,PurchaseService $purchaseService)
+    public function __construct(PurchaseItemService $purchaseItemService, PurchaseService $purchaseService, InventoryAdjustmentService $inventoryAdjustment)
     {
-        $this->purchaseItemService= $purchaseItemService;
-        $this->purchaseService= $purchaseService;
+        $this->purchaseItemService = $purchaseItemService;
+        $this->purchaseService = $purchaseService;
+        $this->inventoryAdjustment = $inventoryAdjustment;
     }
     public function index(Request $request)
     {
@@ -41,7 +44,7 @@ class PurchaseController extends Controller
 
     public function show($uuid)
     {
-        $purchase = Purchase::Uuid($uuid)->with('supplier')->with('purchaseItems')->first();
+        $purchase = Purchase::Uuid($uuid)->with('supplier')->with('purchaseItems')->with('inventoryAdjustment')->first();
         if ($purchase) {
             return $this->success(new PurchaseResource($purchase));
         } else {
@@ -50,43 +53,62 @@ class PurchaseController extends Controller
     }
     public function store(Request $request)
     {
-            //return $request;
+
         //return $request
         DB::beginTransaction();
         try {
-        
+
             $purchase = $this->purchaseService->store($request);
-          
+
             if ($purchase) {
+                $inventoryAdjustment = [];
                 if ($request->has('purchaseItems')) {
 
                     foreach ($request->purchaseItems as $key => $item) {
-                        $item['warehouse_id']=$request['warehouse_id'];
-                        $item['purchase_id']=$purchase->id;
-                        if($item['is_serialized']==1){
+                        //return $key;
+                        $item['warehouse_id'] = $request['warehouse_id'];
+                        $item['purchase_id'] = $purchase->id;
+                        if ($item['is_serialized'] == 1) {
 
-                            for ($i=0; $i <$item['product_qty'] ; $i++) { 
-                                
-                                $item['generateSerialNumber']=isset($item['serial_number'][$i]) ? $item['serial_number'][$i] : $this->generateSerialNumber('purchase_items','serial_number',4);
-                                
+                            for ($i = 0; $i < $item['product_qty']; $i++) {
+
+                                $item['generateSerialNumber'] = isset($item['serial_number'][$i]) ? $item['serial_number'][$i] : $this->generateSerialNumber('purchase_items', 'serial_number', 4);
+
                                 $this->purchaseItemService->store($item);
                             }
-
-
-                        }else{
-                            $item['serial_number'] = isset($item['serial_number'][0]) ? ($item['serial_number'][0] !=null ? $item['serial_number'][0] : $this->generateSerialNumber('purchase_items','serial_number',4)) : $this->generateSerialNumber('purchase_items','serial_number',4);
+                        } else {
+                            $item['serial_number'] = isset($item['serial_number'][0]) ? ($item['serial_number'][0] != null ? $item['serial_number'][0] : $this->generateSerialNumber('purchase_items', 'serial_number', 4)) : $this->generateSerialNumber('purchase_items', 'serial_number', 4);
                             $this->purchaseItemService->store($item);
                         }
-                        
+
+                        //inventory adjustment item
+                        $inventoryAdjustment['adjustmentItems'][$key]['product_id'] = $item['product_id'];
+                        $inventoryAdjustment['adjustmentItems'][$key]['warehouse_id'] = $item['warehouse_id'];
+                        $inventoryAdjustment['adjustmentItems'][$key]['item_adjustment_date'] = $purchase->purchase_date;
+                        $inventoryAdjustment['adjustmentItems'][$key]['quantity'] = $item['product_qty'];
+                        $inventoryAdjustment['adjustmentItems'][$key]['quantity_available'] = 0;
+                        $inventoryAdjustment['adjustmentItems'][$key]['new_quantity_on_hand'] = 0;
+                        $inventoryAdjustment['adjustmentItems'][$key]['description'] = 'Item adjustment based on purchased';
+                        $inventoryAdjustment['adjustmentItems'][$key]['status'] = 0;
                     }
-                   
+                    //inventory adjustment
+                    $inventoryAdjustment['source'] = 'purchase';
+                    $inventoryAdjustment['mode_of_adjustment'] = 1;
+                    $inventoryAdjustment['reference_number'] = $purchase->reference;
+                    $inventoryAdjustment['adjustment_date'] = $purchase->purchase_date;
+                    $inventoryAdjustment['account'] = 0;
+                    $inventoryAdjustment['reason_id'] = 7; //billed
+                    $inventoryAdjustment['warehouse_id'] = $request['warehouse_id'];
+                    $inventoryAdjustment['description'] = 'Item adjustment based on purchased';
+                    $inventoryAdjustment['inventory_adjustmentable_id'] = $purchase->id;
+                    //storing inventory adjustment and adjustment items
+                    $this->inventoryAdjustment->store($inventoryAdjustment);
                 }
-                
             }
             DB::commit();
-            
-            $purchase = Purchase::with('purchaseItems')->where('account_id', Auth::user()->account_id)->find($purchase->id);
-            return $this->success(new PurchaseResource($purchase),201);
+
+            $purchase = Purchase::with('purchaseItems')->with('inventoryAdjustment')->find($purchase->id);
+            return $this->success(new PurchaseResource($purchase), 201);
         } catch (\Exception $e) {
             DB::rollBack();
             return $this->error($e->getMessage(), 200);
@@ -97,9 +119,9 @@ class PurchaseController extends Controller
     }
 
     //soft delete supplier
-    public function delete($uuid) 
+    public function delete($uuid)
     {
-     
+
         $purchase = Purchase::Uuid($uuid)->first();
         if ($purchase) {
             try {
@@ -109,35 +131,31 @@ class PurchaseController extends Controller
                 DB::commit();
                 return $this->success(null, 200);
             } catch (\Throwable $th) {
-               return $this->error($th->getMessage(),422);
+                return $this->error($th->getMessage(), 422);
             }
-            
         } else {
             return $this->error('Data Not Found', 201);
         };
     }
 
-    public function generateSerialNumber($table,$coloumn,$length_of_string){
-    //for random string
+    public function generateSerialNumber($table, $coloumn, $length_of_string)
+    {
+        //for random string
         $str_result = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-        $string= substr(str_shuffle($str_result),0, $length_of_string);
+        $string = substr(str_shuffle($str_result), 0, $length_of_string);
 
-       //for next id
-       $id=DB::select("SHOW TABLE STATUS LIKE '$table'");
-       $next_id=$id[0]->Auto_increment;
-       //with next id
-       $generatekey=date("Ymd").'-'. $next_id;
+        //for next id
+        $id = DB::select("SHOW TABLE STATUS LIKE '$table'");
+        $next_id = $id[0]->Auto_increment;
+        //with next id
+        $generatekey = date("Ymd") . '-' . $next_id;
 
-       $isExistString=  DB::table($table)->where($coloumn,$generatekey)->first();
- 
-       if ($isExistString) {
-         return $this->generateSerialNumber($table,$coloumn,$length_of_string);
-       }else{
-        return $string;
-       }
+        $isExistString =  DB::table($table)->where($coloumn, $generatekey)->first();
 
-
+        if ($isExistString) {
+            return $this->generateSerialNumber($table, $coloumn, $length_of_string);
+        } else {
+            return $string;
+        }
     }
-
-    
 }
