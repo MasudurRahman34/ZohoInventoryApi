@@ -149,13 +149,15 @@ class PurchaseController extends Controller
         $next_id = $id[0]->Auto_increment;
         //with next id
         $generatekey = date("Ymd") . '-' . $next_id;
+        $generateStringkey = date("Ymd") . '-' . $string;
 
-        $isExistString =  DB::table($table)->where($coloumn, $generatekey)->first();
+        $isExistString =  DB::table($table)->where($coloumn, $generateStringkey)->first();
 
         if ($isExistString) {
+            //return $generatekey;
             return $this->generateSerialNumber($table, $coloumn, $length_of_string);
         } else {
-            return $string;
+            return $generateStringkey;
         }
     }
 }
