@@ -20,17 +20,17 @@ return new class extends Migration
             $table->unsignedBigInteger('warehouse_id')->comment('id value warhouses table');
             $table->string('invoice_no',50)->nullable()->default(NULL);
             $table->string('reference',50)->nullable()->default(NULL);
-            $table->float('total_amount',16,4)->default(0); //12 precision, 4 fraction
-            $table->float('due_amount',16,4)->default(0);
-            $table->float('paid_amount',16,4)->default(0);
-            $table->float('grand_total_amount',16,4)->default(0);
-            $table->float('order_discount',16,4)->default(0);
-            $table->float('discount_currency',16,4)->default(0);
-            $table->float('order_tax',16,4)->default(0);
-            $table->float('order_tax_amount',16,4)->default(0);
-            $table->float('shipping_charge',16,4)->default(0);
-            $table->float('order_adjustment',16,4)->default(0);
-            $table->float('last_paid_amount',16,4)->default(0);
+            $table->float('total_amount')->default(0); //12 precision, 4 fraction
+            $table->float('due_amount')->default(0);
+            $table->float('paid_amount')->default(0);
+            $table->float('grand_total_amount')->default(0);
+            $table->float('order_discount')->default(0);
+            $table->float('discount_currency')->default(0);
+            $table->float('order_tax')->default(0);
+            $table->float('order_tax_amount')->default(0);
+            $table->float('shipping_charge')->default(0);
+            $table->float('order_adjustment')->default(0);
+            $table->float('last_paid_amount')->default(0);
             $table->string('adjustment_text')->nullable()->default(NULL);
             $table->dateTime('purchase_date')->nullable()->default(NULL);
             $table->dateTime('delivery_date')->nullable()->default(NULL);

@@ -2,20 +2,30 @@
 namespace App\Http\Services\V1;
 
 use App\Models\AdjustmentItem;
+use App\Models\Stock;
 use Illuminate\Support\Facades\DB;
 
 class AdjustmentItemService{
 
 
     public function store($adjustmentItem){
+        $stock=Stock::where('product_id',$adjustmentItem['product_id'])->where('warehouse_id',$adjustmentItem['warehouse_id'])->first();
+       
+       //return $stock;
+       if($stock){
+        $stock_on_hand=$stock->quantity_on_hand;
+       }else{
+        $stock_on_hand=0;
+       }
+       
         $insertData = [
             'inventory_adjustment_id' => $adjustmentItem['inventory_adjustment_id'],
             'product_id' => $adjustmentItem['product_id'],
             'warehouse_id' => $adjustmentItem['warehouse_id'],
             'item_adjustment_date' => $adjustmentItem['item_adjustment_date'],
             'quantity' => $adjustmentItem['quantity'],
-            'quantity_available' => $adjustmentItem['quantity_available'],
-            'new_quantity_on_hand' => $adjustmentItem['new_quantity_on_hand'],
+            'quantity_available' => $stock_on_hand,
+            'new_quantity_on_hand' => $stock_on_hand + $adjustmentItem['quantity'],
             'description' => $adjustmentItem['description'],
             'status' => $adjustmentItem['status'],
 

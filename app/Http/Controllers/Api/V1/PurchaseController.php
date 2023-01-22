@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\V1\Helper\ApiResponse;
 use App\Http\Requests\v1\PurchaseRequest;
 use App\Http\Resources\v1\Collections\PurchaseCollection;
 use App\Http\Resources\v1\PurchaseResource;
+use App\Http\Services\V1\CalculateProductPriceService;
 use App\Http\Services\V1\InventoryAdjustmentService;
 use App\Http\Services\V1\PurchaseItemService;
 use App\Http\Services\V1\PurchaseService;
@@ -25,13 +26,15 @@ class PurchaseController extends Controller
     protected $purchaseItemService;
     protected $purchaseService;
     protected $inventoryAdjustment;
+    protected $calculateProductPriceService;
 
 
-    public function __construct(PurchaseItemService $purchaseItemService, PurchaseService $purchaseService, InventoryAdjustmentService $inventoryAdjustment)
+    public function __construct(PurchaseItemService $purchaseItemService, PurchaseService $purchaseService, InventoryAdjustmentService $inventoryAdjustment, CalculateProductPriceService $calculateProductPriceService)
     {
         $this->purchaseItemService = $purchaseItemService;
         $this->purchaseService = $purchaseService;
         $this->inventoryAdjustment = $inventoryAdjustment;
+        $this->calculateProductPriceService = $calculateProductPriceService;
     }
     public function index(Request $request)
     {
@@ -55,6 +58,8 @@ class PurchaseController extends Controller
     {
 
         //return $request
+        $request=$this->calculateProductPriceService->purchasePrice($request);
+       //return $request;
         DB::beginTransaction();
         try {
 
@@ -62,9 +67,9 @@ class PurchaseController extends Controller
 
             if ($purchase) {
                 $inventoryAdjustment = [];
-                if ($request->has('purchaseItems')) {
+                if (count($request['purchaseItems'])>0) {
 
-                    foreach ($request->purchaseItems as $key => $item) {
+                    foreach ($request['purchaseItems'] as $key => $item) {
                         //return $key;
                         $item['warehouse_id'] = $request['warehouse_id'];
                         $item['purchase_id'] = $purchase->id;
@@ -77,7 +82,8 @@ class PurchaseController extends Controller
                                 $this->purchaseItemService->store($item);
                             }
                         } else {
-                            $item['serial_number'] = isset($item['serial_number'][0]) ? ($item['serial_number'][0] != null ? $item['serial_number'][0] : $this->generateSerialNumber('purchase_items', 'serial_number', 4)) : $this->generateSerialNumber('purchase_items', 'serial_number', 4);
+                            //$item['serial_number'] = isset($item['serial_number'][0]) ? ($item['serial_number'][0] != null ? $item['serial_number'][0] : $this->generateSerialNumber('purchase_items', 'serial_number', 4)) : $this->generateSerialNumber('purchase_items', 'serial_number', 4);
+                           $item['serial_number'] = isset($item['serial_number'][0]) ? null : null ;
                             $this->purchaseItemService->store($item);
                         }
 
@@ -145,10 +151,10 @@ class PurchaseController extends Controller
         $string = substr(str_shuffle($str_result), 0, $length_of_string);
 
         //for next id
-        $id = DB::select("SHOW TABLE STATUS LIKE '$table'");
-        $next_id = $id[0]->Auto_increment;
+        //$id = DB::select("SHOW TABLE STATUS LIKE '$table'");
+        //$next_id = $id[0]->Auto_increment;
         //with next id
-        $generatekey = date("Ymd") . '-' . $next_id;
+        //$generatekey = date("Ymd") . '-' . $next_id;
         $generateStringkey = date("Ymd") . '-' . $string;
 
         $isExistString =  DB::table($table)->where($coloumn, $generateStringkey)->first();

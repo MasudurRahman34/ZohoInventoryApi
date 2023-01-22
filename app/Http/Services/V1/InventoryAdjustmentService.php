@@ -46,7 +46,7 @@ class InventoryAdjustmentService{
         if((count($request['adjustmentItems']))>0){
             foreach($request['adjustmentItems'] as $key => $item){
                 $item['inventory_adjustment_id']=$inventoryAdjustment->id;
-                $this->adjustmentItemService->store($item);
+              $this->adjustmentItemService->store($item);
             }
         }
         return $inventoryAdjustment;

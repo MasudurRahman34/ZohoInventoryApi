@@ -27,8 +27,9 @@ class InventoryAdjustmentController extends Controller
             DB::beginTransaction();
             $inventoryAdjustment= $this->inventoryAdjustmentService->store($request);
             DB::commit();
+           
             $inventoryAdjustment=InventoryAdjustment::with('adjustmentItems')->find($inventoryAdjustment->id);
-            return $inventoryAdjustment;
+           // return $inventoryAdjustment;
             return $this->success(new InventoryAdjustmentResource($inventoryAdjustment));
         } catch (\Throwable $th) {
             return $this->error($th->getMessage(),422);

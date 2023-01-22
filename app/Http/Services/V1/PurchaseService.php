@@ -7,7 +7,7 @@ class PurchaseService{
 
 
     public function store($request){
-   
+      //return $request['grand_total_amount'];
         $purchaseData = [
             'supplier_id' => $request['supplier_id'],
             'warehouse_id' => $request['warehouse_id'],

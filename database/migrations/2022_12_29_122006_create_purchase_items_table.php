@@ -22,10 +22,10 @@ return new class extends Migration
             $table->string('serial_number',100)->nullable()->default(NULL);
             $table->integer('product_qty')->default(0);
             $table->integer('received_qty')->default(0)->nullable();
-            $table->float('unit_price',14,4)->default(0); //10 pricition , 4 fraction
-            $table->float('product_discount',12,4)->default(0)->nullable(); //
-            $table->float('product_tax',12,4)->default(0)->nullable(); //8 precision, 4 fraction
-            $table->float('subtotal',16,4)->default(0); //12 precision, 4 fraction
+            $table->float('unit_price')->default(0); //10 pricition , 4 fraction
+            $table->float('product_discount')->default(0)->nullable(); //
+            $table->float('product_tax')->default(0)->nullable(); //8 precision, 4 fraction
+            $table->float('subtotal')->default(0); //12 precision, 4 fraction
             $table->dateTime('package_date')->default(NULL)->nullable();
             $table->dateTime('expire_date')->default(NULL)->nullable();
             $table->tinyInteger('is_serialized')->default(0)->nullable()->comment('0=true, 1=false');
