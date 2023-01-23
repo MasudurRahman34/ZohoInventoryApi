@@ -27,7 +27,9 @@ class PurchaseItem extends Model
     }
 
     protected $fillable = [
-        'purchase_id','warehouse_id','product_id','serial_number','product_qty','received_qty','unit_price','product_discount','product_tax','package_date','is_serialized','expire_date','subtotal','description','account_id','created_by','modified_by'
+        'purchase_id','warehouse_id','product_id','serial_number','product_qty','received_qty','unit_price','product_discount','product_tax','package_date','is_serialized','expire_date','subtotal',
+        'description','account_id','created_by','modified_by',
+        'sold_qty','status'
     ];
 
     

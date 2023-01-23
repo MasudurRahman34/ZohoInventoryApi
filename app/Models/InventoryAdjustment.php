@@ -50,4 +50,10 @@ class InventoryAdjustment extends Model
         return $this->hasMany(AdjustmentItem::class,'inventory_adjustment_id','id');
      }
 
+     public static function nextId()
+     {
+         return static::max('id') + 1;
+     }
+     
+
 }

@@ -23,8 +23,9 @@ class InventoryAdjustmentService{
         } elseif ($request['source'] === 'inventory_adjustment') {
             $inventory_adjustmentable_type = InventoryAdjustment::$inventory_adjustment_table;
             
-            $id=DB::select("SHOW TABLE STATUS LIKE 'inventory_adjustments'");
-            $request['inventory_adjustmentable_id']=$id[0]->Auto_increment;
+            // $id=DB::select("SHOW TABLE STATUS LIKE 'inventory_adjustments'");
+            // $request['inventory_adjustmentable_id']=$id[0]->Auto_increment;
+            $request['inventory_adjustmentable_id']=InventoryAdjustment::nextId();
             
         } else {
             $message['source'][] = "The source value deos not match.";
