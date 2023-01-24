@@ -19,6 +19,7 @@ return new class extends Migration
             $table->unsignedBigInteger('inventory_adjustment_id')->comment('ref inventory_adjustment table')->index();
             $table->unsignedBigInteger('product_id')->comment('ref product table')->index();
             $table->unsignedBigInteger('warehouse_id')->default(0)->comment('ref warehouses table')->index();    
+            $table->string('product_name')->nullable()->default(NULL); 
             $table->dateTime("item_adjustment_date")->default(Carbon::now());
             $table->integer('quantity');
             $table->integer('quantity_available')->default(0)->nullable();

@@ -1,7 +1,10 @@
 <?php
 namespace App\Http\Services\V1;
 
+use App\Models\Address;
+use App\Models\Contact;
 use App\Models\Purchase;
+use App\Models\PurchaseAddress;
 
 use function PHPUnit\Framework\throwException;
 
@@ -34,7 +37,37 @@ class PurchaseService{
             // 'payment_status' => isset($request['payment_status']) ? $request['payment_status'] : '0',
 
         ];
+        // $billingAddressId=isset($request['bill_address']) ? $request['bill_address'] : NULL;
+        // $shippingAddressId=isset($request['ship_address']) ? $request['bill_address'] : NULL;
+        // $billingAddress=Address::where('id',$billingAddressId)->first();
+        // $shippingAddress=Address::where('id',$shippingAddressId)->first();
+        // return $billingAddress->full_address;
         $purchase = Purchase::create($purchaseData);
+
+        if($purchase){
+            $billingAddressId=isset($request['bill_address']) ? $request['bill_address'] : NULL;
+            $shippingAddressId=isset($request['ship_address']) ? $request['ship_address'] : NULL;
+            $billingAddress=Address::where('id',$billingAddressId)->where('ref_id', $request['supplier_id'])->where('ref_object_key',Address::$ref_supplier_key)->first();
+            $shippingAddress=Address::where('id',$shippingAddressId)->where('ref_id', $request['supplier_id'])->where('ref_object_key',Address::$ref_supplier_key)->first();
+            if($billingAddress || $shippingAddress){
+                $contactDetails=Contact::where('ref_id', $request['supplier_id'])->where('ref_object_key',Address::$ref_supplier_key)->where('is_primary_contact',1)->first();
+                $billingAddress= $billingAddress ? $billingAddress->full_address : NULL;
+                $shippingAddress= $shippingAddress ? $shippingAddress->full_address : NULL;
+                $display_name= isset($contactDetails->display_name) ? $contactDetails->display_name : NULL;
+                $company_name= isset($contactDetails->company_name) ? $contactDetails->company_name : NULL;
+            
+                $purchaseAddressData=[
+                    'supplier_id' =>$request['supplier_id'],
+                    'purchase_id' =>$purchase->id,
+                    'display_name' => $display_name,
+                    'company_name' =>$company_name,
+                    'billing_address' =>$billingAddress,
+                    'shipping_address' =>$shippingAddress,
+                ];
+
+                $createPurchaseAddress=PurchaseAddress::create($purchaseAddressData);
+            }
+        }
         return $purchase;
     }
 
@@ -65,14 +98,45 @@ class PurchaseService{
                 // 'payment_status' => isset($request['payment_status']) ? $request['payment_status'] : '0',
     
             ];
-            $updatedData = $purchase->update($updatePurchaseData);
+            $update = $purchase->update($updatePurchaseData);
+
+            if($update){
+                $purchaseAddress=PurchaseAddress::where('purchase_id',$purchase->id)->first();
+               
+                if($purchaseAddress){
+                    $billingAddressId=isset($request['bill_address']) ? $request['bill_address'] : NULL;
+                    $shippingAddressId=isset($request['ship_address']) ? $request['ship_address'] : NULL;
+                    $billingAddress=Address::where('id',$billingAddressId)->where('ref_id', $request['supplier_id'])->where('ref_object_key',Address::$ref_supplier_key)->first();
+                    $shippingAddress=Address::where('id',$shippingAddressId)->where('ref_id', $request['supplier_id'])->where('ref_object_key',Address::$ref_supplier_key)->first();
+                    if($billingAddress || $shippingAddress){
+                        
+                        $contactDetails=Contact::where('ref_id', $request['supplier_id'])->where('ref_object_key',Address::$ref_supplier_key)->where('is_primary_contact',1)->first();
+                        $billingAddress= $billingAddress ? $billingAddress->full_address : NULL;
+                        $shippingAddress= $shippingAddress ? $shippingAddress->full_address : NULL;
+                        $display_name= isset($contactDetails->display_name) ? $contactDetails->display_name : NULL;
+                        $company_name= isset($contactDetails->company_name) ? $contactDetails->company_name : NULL;
+                    
+                        $purchaseAddressData=[
+                            'supplier_id' =>$request['supplier_id'],
+                            'purchase_id' =>$purchase->id,
+                            'display_name' => $display_name,
+                            'company_name' =>$company_name,
+                            'billing_address' =>$billingAddress,
+                            'shipping_address' =>$shippingAddress,
+                        ];
+        
+                        $updatePurchaseAddress=$purchase->update($purchaseAddressData);
+                         
+                    } 
+                }
+                
+            }
             return $purchase;
+            
         } catch (\Throwable $th) {
             return $th->getMessage();
         }
        
-     
-            
         
     }
 }

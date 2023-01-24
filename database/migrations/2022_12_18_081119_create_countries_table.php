@@ -15,17 +15,17 @@ return new class extends Migration
     {
         Schema::create('countries', function (Blueprint $table) {
             $table->id();
-            $table->char('countryCode',4);
-            $table->string('countryName',50);
-            $table->string('currency',50)->nullable();
-            $table->integer('sort')->default(0);
-            $table->tinyInteger('status')->default(1);
-            $table->unsignedBigInteger('account_id')->default(1);;
+            $table->char('country_code',4)->default(NULL)->nullable();
+            $table->string('country_name',100)->index();
+            $table->string('currency',100)->nullable()->default(NULL);
+            $table->integer('sort')->default(0)->nullable();
+            $table->tinyInteger('status')->default(0);
+            $table->unsignedBigInteger('account_id')->default(1)->index();
             $table->unsignedBigInteger('created_by')->default(0);
             $table->unsignedBigInteger('modified_by')->default(0);
             $table->timestamps();
             $table->softDeletes();
-            $table->index(['countryName', 'account_id','created_at']);
+           
         });
     }
 

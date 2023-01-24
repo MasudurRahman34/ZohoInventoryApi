@@ -22,6 +22,7 @@ class AdjustmentItemService{
         $insertData = [
             'inventory_adjustment_id' => $adjustmentItem['inventory_adjustment_id'],
             'product_id' => $adjustmentItem['product_id'],
+            'product_name' => isset($adjustmentItem['product_name']) ? $adjustmentItem['product_name'] : NULL,
             'warehouse_id' => $adjustmentItem['warehouse_id'],
             'item_adjustment_date' => $adjustmentItem['item_adjustment_date'],
             'quantity' => $adjustmentItem['quantity'],
@@ -50,6 +51,7 @@ class AdjustmentItemService{
          $updateAdjustmentItem = [
              'inventory_adjustment_id' => isset($request['inventory_adjustment_id']) ? $request['inventory_adjustment_id'] : $adjustmentItem['inventory_adjustment_id'],
              'product_id' => isset($request['product_id']) ? $request['product_id'] : $adjustmentItem['product_id'],
+             'product_name' => isset($request['product_name']) ? $request['product_name'] : $adjustmentItem['product_name'],
              'warehouse_id' => isset($request['warehouse_id']) ? $request['warehouse_id'] : $adjustmentItem['warehouse_id'],
              'item_adjustment_date' => isset($request['item_adjustment_date']) ? $request['item_adjustment_date'] : $adjustmentItem['item_adjustment_date'],
              'quantity' =>  $request['quantity'],

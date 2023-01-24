@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::create('zipcodes', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger("union_id");
-            $table->string("zip_code",150);
+            $table->unsignedBigInteger("union_id")->index();
+            $table->string("zip_code",150)->index();
           
             
             /* Common fields for all table*/
@@ -28,7 +28,7 @@ return new class extends Migration
             $table->unsignedBigInteger('account_id')->default(0);
             $table->timestamps();
             $table->softDeletes();
-            $table->index(['union_id', 'account_id','zip_code']);
+           
         });
     }
 

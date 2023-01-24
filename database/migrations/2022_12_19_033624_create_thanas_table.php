@@ -15,20 +15,19 @@ return new class extends Migration
     {
         Schema::create('thanas', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger("district_id");
-            $table->string("thana_name",150);
-            $table->string("thana_slug",150);
+            $table->unsignedBigInteger("district_id")->index();
+            $table->string("thana_name",150)->index();
+            $table->string("thana_slug",150)->nullable()->default(NULL);
             
             /* Common fields for all table*/
             
             $table->integer("sort")->default(0)->nullable();
-            $table->tinyInteger("status")->default(1);
-            $table->unsignedBigInteger('created_by')->default(1);
+            $table->tinyInteger("status")->default(0);
+            $table->unsignedBigInteger('created_by')->default(1)->index();
             $table->unsignedBigInteger('modified_by')->default(0);
             $table->unsignedBigInteger('account_id')->default(0);
             $table->timestamps();
             $table->softDeletes();
-            $table->index(['district_id', 'account_id','thana_name']);
         });
     }
 

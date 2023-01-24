@@ -25,7 +25,7 @@ class AdjustmentItem extends Model
     }
  
      protected $fillable=[
-            'inventory_adjustment_id','product_id','warehouse_id','item_adjustment_date','quantity','quantity_available','new_quantity_on_hand','description','status','account_id','created_by','modified_by'
+            'inventory_adjustment_id','product_id','product_name','warehouse_id','item_adjustment_date','quantity','quantity_available','new_quantity_on_hand','description','status','account_id','created_by','modified_by'
      ];
 
      public function inventoryAdjustment(){

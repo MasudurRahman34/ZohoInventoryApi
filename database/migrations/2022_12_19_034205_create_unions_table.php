@@ -15,20 +15,21 @@ return new class extends Migration
     {
         Schema::create('unions', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger("thana_id");
-            $table->string("union_name",150);
-            $table->string("union_slug",150);
+            $table->unsignedBigInteger("thana_id")->index();
+            $table->string("union_name",150)->index();
+            $table->string("union_slug",150)->default(NULL)->nullable();
             
             /* Common fields for all table*/
             
             $table->integer("sort")->default(0)->nullable();
-            $table->tinyInteger("status")->default(1);
-            $table->unsignedBigInteger('created_by')->default(1);
+            $table->tinyInteger("status")->default(0);
+            $table->unsignedBigInteger('account_id')->default(1);
+            $table->unsignedBigInteger('created_by')->default(0);
             $table->unsignedBigInteger('modified_by')->default(0);
-            $table->unsignedBigInteger('account_id')->default(0);
+           
             $table->timestamps();
             $table->softDeletes();
-            $table->index(['thana_id', 'account_id','union_name']);
+           
         });
     }
 

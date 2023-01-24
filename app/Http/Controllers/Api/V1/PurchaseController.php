@@ -59,16 +59,17 @@ class PurchaseController extends Controller
             return $this->error('Data Not Found', 404);
         }
     }
+
+    
     public function store(Request $request)
     {
-
-
         $request = $this->calculateProductPriceService->purchasePrice($request->all());
         //return $request;
         DB::beginTransaction();
         try {
 
             $purchase = $this->purchaseService->store($request);
+            // return $purchase;
 
             if ($purchase) {
                 $inventoryAdjustment = [];
@@ -79,21 +80,22 @@ class PurchaseController extends Controller
                         $item['warehouse_id'] = $request['warehouse_id'];
                         $item['purchase_id'] = $purchase->id;
                         if ($item['is_serialized'] == 1) {
-
+                            $item['group_number']= $this->generateKey('purchase_items', 'group_number', 6);
                             for ($i = 0; $i < $item['product_qty']; $i++) {
 
-                                $item['generateSerialNumber'] = isset($item['serial_number'][$i]) ? $item['serial_number'][$i] : $this->generateSerialNumber('purchase_items', 'serial_number', 4);
+                                $item['generateSerialNumber'] = isset($item['serial_number'][$i]) ? $item['serial_number'][$i] : $this->generateKey('purchase_items', 'serial_number', 6);
 
                                 $this->purchaseItemService->store($item);
                             }
                         } else {
-                            //$item['serial_number'] = isset($item['serial_number'][0]) ? ($item['serial_number'][0] != null ? $item['serial_number'][0] : $this->generateSerialNumber('purchase_items', 'serial_number', 4)) : $this->generateSerialNumber('purchase_items', 'serial_number', 4);
+                            //$item['serial_number'] = isset($item['serial_number'][0]) ? ($item['serial_number'][0] != null ? $item['serial_number'][0] : $this->generateKey('purchase_items', 'serial_number', 4)) : $this->generateKey('purchase_items', 'serial_number', 4);
                             $item['serial_number'] = isset($item['serial_number'][0]) ? null : null;
                             $this->purchaseItemService->store($item);
                         }
 
                         //inventory adjustment item
                         $inventoryAdjustment['adjustmentItems'][$key]['product_id'] = $item['product_id'];
+                        $inventoryAdjustment['adjustmentItems'][$key]['product_name'] = isset($item['product_name']) ? $item['product_name'] : NULL;
                         $inventoryAdjustment['adjustmentItems'][$key]['warehouse_id'] = $item['warehouse_id'];
                         $inventoryAdjustment['adjustmentItems'][$key]['item_adjustment_date'] = $purchase->purchase_date;
                         $inventoryAdjustment['adjustmentItems'][$key]['quantity'] = $item['product_qty'];
@@ -127,7 +129,7 @@ class PurchaseController extends Controller
     }
     public function update(Request $request, $uuid)
     {   //overriding and calculating purchase data
-       
+       //return $request; 
         DB::beginTransaction();
         try {
             $purchase = Purchase::Uuid($uuid)->with('purchaseItems')->with('inventoryAdjustment')->first();
@@ -136,7 +138,7 @@ class PurchaseController extends Controller
                 $request = $this->calculateProductPriceService->purchasePrice($request->all());
                 $updatedPurchase = $this->purchaseService->update($request, $purchase);
 
-                //return $updatedPurchase;
+                return $updatedPurchase;
 
                 if ($updatedPurchase) {
 
@@ -148,7 +150,8 @@ class PurchaseController extends Controller
                             $item['warehouse_id'] = $request['warehouse_id'];
                             $item['purchase_id'] = $purchase->id;
                             if ($item['is_serialized'] == 1) {
-                                $isExistSerializedItem = PurchaseItem::where('purchase_id', $purchase->id)->where('product_id', $item['product_id'])->get();
+                                $isExistSerializedItem = PurchaseItem::where('purchase_id', $purchase->id)->where('product_id', $item['product_id'])->where('is_serialized',1)->get();
+                                $remain_quantity = $item['product_qty'] - count($isExistSerializedItem);
                                 if(count($isExistSerializedItem) > 0){
                                     //update existing seriliazed items
                                     foreach($isExistSerializedItem as $serilizeItem){
@@ -159,8 +162,6 @@ class PurchaseController extends Controller
                                         
                                     }
 
-                                     $remain_quantity = $item['product_qty'] - count($isExistSerializedItem);
-                                     //return $remain_quantity;
                                     //delete if remain_quanity = existinQunatity-Item[quantity]
                                     if($remain_quantity<0){
                                          $loopWhile=abs($remain_quantity);
@@ -175,9 +176,10 @@ class PurchaseController extends Controller
                                     }
                                     //add items when remain_quantity greater than exist
                                     if($remain_quantity > 0){
+                                        $item['group_number']= $this->generateKey('purchase_items', 'group_number', 6);
                                         for ($i = 0; $i < $remain_quantity; $i++) {
 
-                                            $item['generateSerialNumber'] = isset($item['serial_number'][$i]) ? $item['serial_number'][$i] : $this->generateSerialNumber('purchase_items', 'serial_number', 6);
+                                            $item['generateSerialNumber'] = isset($item['serial_number'][$i]) ? $item['serial_number'][$i] : $this->generateKey('purchase_items', 'serial_number', 6);
         
                                             $this->purchaseItemService->store($item);
                                         } 
@@ -185,9 +187,10 @@ class PurchaseController extends Controller
 
                                     
                                 }else{  //not exist store serialized
+                                    $item['group_number']= $this->generateKey('purchase_items', 'group_number', 6);
                                     for ($i = 0; $i < $item['product_qty']; $i++) {
 
-                                        $item['generateSerialNumber'] = isset($item['serial_number'][$i]) ? $item['serial_number'][$i] : $this->generateSerialNumber('purchase_items', 'serial_number', 6);
+                                        $item['generateSerialNumber'] = isset($item['serial_number'][$i]) ? $item['serial_number'][$i] : $this->generateKey('purchase_items', 'serial_number', 6);
     
                                         $this->purchaseItemService->store($item);
                                     }
@@ -195,11 +198,13 @@ class PurchaseController extends Controller
 
                                
                             } else {
-
+                                
                                 $isExistItem = PurchaseItem::where('purchase_id', $purchase->id)->where('product_id', $item['product_id'])->first();
                                 if ($isExistItem) {
+                                    
                                     $this->purchaseItemService->update($item, $isExistItem);
                                 } else {
+                                   //return $item[$key];
                                     $item['serial_number'] = isset($item['serial_number'][0]) ? null : null;
                                     $this->purchaseItemService->store($item);
                                 }
@@ -211,6 +216,7 @@ class PurchaseController extends Controller
                                 $adjustmentItems=[];
                                 $adjustmentItems['inventory_adjustment_id'] = $inventoryAdjustment->id;
                                 $adjustmentItems['product_id'] = $item['product_id'];
+                                $adjustmentItems['product_name'] = isset($item['product_name']) ? $item['product_name']: NULL;
                                 $adjustmentItems['warehouse_id'] = $item['warehouse_id'];
                                 $adjustmentItems['item_adjustment_date'] = $purchase->purchase_date;
                                 $adjustmentItems['quantity'] = $item['product_qty'];
@@ -265,7 +271,7 @@ class PurchaseController extends Controller
         };
     }
 
-    public function generateSerialNumber($table, $coloumn, $length_of_string)
+    public function generateKey($table, $coloumn, $length_of_string)
     {
         //for random string
         $str_result = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
@@ -282,7 +288,7 @@ class PurchaseController extends Controller
 
         if ($isExistString) {
             return $generateStringkey;
-            return $this->generateSerialNumber($table, $coloumn, $length_of_string);
+            return $this->generateKey($table, $coloumn, $length_of_string);
         } else {
             return $generateStringkey;
         }

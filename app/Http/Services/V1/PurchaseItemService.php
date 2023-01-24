@@ -19,6 +19,7 @@ class PurchaseItemService
             'purchase_id' =>  $purchaseItem['purchase_id'],
                     "product_id" => $purchaseItem['product_id'],
                     'warehouse_id' => $purchaseItem['warehouse_id'],
+                    'product_name' => isset($purchaseItem['product_name']) ? $purchaseItem['product_name'] : NULL,
                     "product_qty" => isset($purchaseItem['product_qty']) ? $purchaseItem['product_qty'] : 0,
                     "received_qty" => isset($purchaseItem['received_qty']) ? $purchaseItem['received_qty'] : 0,
                     "unit_price" => isset($purchaseItem['unit_price']) ? $purchaseItem['unit_price'] : 0,
@@ -35,6 +36,8 @@ class PurchaseItemService
         ];
         if ($purchaseItem['is_serialized'] == 1) {
             $insertData['serial_number'] = $purchaseItem['generateSerialNumber'];
+            $insertData['group_number'] = $purchaseItem['group_number'];
+
             $insertData['product_qty'] = 1;
         } else if ($purchaseItem['is_serialized'] == 0) {
             $insertData['serial_number'] = $purchaseItem['serial_number'];
@@ -47,52 +50,6 @@ class PurchaseItemService
     }
 
 
-    public function updateOrCreate($request)
-    {
-        $item = PurchaseItem::find($request['id']);
-
-        if ($item) {
-            $item->update(
-                [
-                    'purchase_id' => isset($request['purchase_id']) ? $request['purchase_id'] : $item['purchase_id'],
-                    "product_id" => isset($request['product_id']) ? $request['product_id'] : $item['product_id'],
-                    'warehouse_id' => isset($request['warehouse_id']) ? $request['warehouse_id'] : $item['warehouse_id'],
-                    "product_qty" => isset($request['product_qty']) ? $request['product_qty'] : $item['product_qty'],
-                    "received_qty" => isset($request['received_qty']) ? $request['received_qty'] : $item['received_qty'],
-                    "unit_price" => isset($request['unit_price']) ? $request['unit_price'] : $item['unit_price'],
-                    "product_discount" => isset($request['product_discount']) ? $request['product_discount'] : $item['product_discount'],
-                    "product_tax" => isset($request['product_tax']) ? $request['product_tax'] : $item['product_tax'],
-                    "subtotal" => isset($request['subtotal']) ? $request['subtotal'] : $item['subtotal'],
-                    "description" => isset($request['description']) ? $request['description'] : $item['description'],
-                    'is_serialized' => isset($request['is_serialized']) ? $request['is_serialized'] : $item['is_serialized'],
-                    'expire_date' => isset($request['expire_date']) ? $request['expire_date'] : $item['expire_date'],
-                    'package_date' => isset($request['package_date']) ? $request['package_date'] : $item['package_date'],
-                    "sold_qty" => isset($request['sold_qty']) ? $request['sold_qty'] : $item['sold_qty'],
-                    'status' => isset($request['status']) ? $request['status'] : $item['purchase_id'],
-                ]
-            );
-        } else {
-            $item = PurchaseItem::create([
-                'purchase_id' =>  $request['purchase_id'],
-                    "product_id" => $request['product_id'],
-                    'warehouse_id' => $request['warehouse_id'],
-                    "product_qty" => isset($request['product_qty']) ? $request['product_qty'] : 0,
-                    "received_qty" => isset($request['received_qty']) ? $request['received_qty'] : 0,
-                    "unit_price" => isset($request['unit_price']) ? $request['unit_price'] : 0,
-                    "product_discount" => isset($request['product_discount']) ? $request['product_discount'] : 0,
-                    "product_tax" => isset($request['product_tax']) ? $request['product_tax'] : 0,
-                    "subtotal" => isset($request['subtotal']) ? $request['subtotal'] : 0,
-                    "description" => isset($request['description']) ? $request['description'] : NULL,
-                    'is_serialized' => isset($request['is_serialized']) ? $request['is_serialized'] : 0,
-                    'expire_date' => isset($request['expire_date']) ? $request['expire_date'] : NULL,
-                    'package_date' => isset($request['package_date']) ? $request['package_date'] : NULL,
-                    "sold_qty" => isset($request['sold_qty']) ? $request['sold_qty'] : 0,
-                    'status' => isset($request['status']) ? $request['status'] : 0,
-            ]);
-        }
-        return $item;
-    }
-
     public function update($request ,$item)
     {
       
@@ -100,6 +57,7 @@ class PurchaseItemService
                 [
                     'purchase_id' => isset($request['purchase_id']) ? $request['purchase_id'] : $item['purchase_id'],
                     "product_id" => isset($request['product_id']) ? $request['product_id'] : $item['product_id'],
+                    'product_name' => isset($purchaseItem['product_name']) ? $item['product_name'] : NULL,
                     'warehouse_id' => isset($request['warehouse_id']) ? $request['warehouse_id'] : $item['warehouse_id'],
                     "product_qty" => isset($request['product_qty']) ? $request['product_qty'] : $item['product_qty'],
                     "received_qty" => isset($request['received_qty']) ? $request['received_qty'] : $item['received_qty'],

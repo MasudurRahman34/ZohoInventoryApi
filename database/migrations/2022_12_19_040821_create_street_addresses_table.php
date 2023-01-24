@@ -16,18 +16,16 @@ return new class extends Migration
         if (!Schema::hasTable('street_addresses')) {
             Schema::create('street_addresses', function (Blueprint $table) {
                 $table->id();
-                $table->integer('union_id');
+                $table->integer('union_id')->index();
                 $table->string('street_address_value');
-                $table->string('street_address_slug')->nullable();
-
-                $table->tinyInteger('status')->default(1);
+                $table->string('street_address_slug')->nullable()->default(NULL);
                 $table->integer("sort")->default(0);
-                $table->unsignedBigInteger('account_id')->default(1);
+                $table->tinyInteger('status')->default(0);
+                $table->unsignedBigInteger('account_id')->default(1)->index();
                 $table->unsignedBigInteger('created_by')->default(0);
                 $table->unsignedBigInteger('modified_by')->default(0);
                 $table->timestamps();
                 $table->softDeletes();
-                $table->index(['union_id', 'account_id']);
             });
         }
     }

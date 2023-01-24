@@ -7,12 +7,11 @@ use DateTimeInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\Auth;
 
-class PurchaseItem extends Model
+class PurchaseAddress extends Model
 {
     use HasFactory,SoftDeletes,AccountObservant;
-    protected $table = 'purchase_items';
+   
     protected $hidden=[
         'account_id'
     ];
@@ -25,12 +24,12 @@ class PurchaseItem extends Model
     {
         return $date->format('Y-m-d H:i:s');
     }
-
-    protected $fillable = [
-        'purchase_id','warehouse_id','product_id','product_name','serial_number','group_number','product_qty','received_qty','unit_price','product_discount','product_tax','package_date','is_serialized','expire_date','subtotal',
-        'description','account_id','created_by','modified_by',
-        'sold_qty','status'
+    protected $casts = [
+        'billing_address' => 'array',
+        'shipping_address' => 'array',
     ];
 
-    
+    protected $fillable = [
+        'supplier_id','purchase_id','display_name','company_name','attension','billing_address','shipping_address','account_id','created_by','modified_by'
+    ];
 }

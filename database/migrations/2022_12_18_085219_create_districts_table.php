@@ -15,19 +15,18 @@ return new class extends Migration
     {
         Schema::create('districts', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger("state_id");
-            $table->string("district_name",150);
-            $table->string("district_slug",150);
-            $table->tinyInteger("status")->default(1);
+            $table->unsignedBigInteger("state_id")->index();
+            $table->string("district_name",150)->index();
+            $table->string("district_slug",150)->default(NULL)->nullable();
+            $table->tinyInteger("status")->default(0)->nullable();
             
             /* Common fields for all table*/
-            $table->integer("sort")->default(0);
-            $table->unsignedBigInteger('account_id')->default(1);
+            $table->integer("sort")->default(0)->nullable();
+            $table->unsignedBigInteger('account_id')->default(1)->index();
             $table->unsignedBigInteger('created_by')->default(0);
             $table->unsignedBigInteger('modified_by')->default(0);
             $table->timestamps();
             $table->softDeletes();
-            $table->index(['state_id', 'account_id','district_name']);
         });
     }
 
