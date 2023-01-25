@@ -30,4 +30,11 @@ class Warehouse extends Model
     protected $fillable = [
        'uuid','name', 'code', 'phone_country_code', 'mobile_country_code', 'phone', 'mobile', 'email', 'description','address','current_balance','account_id','created_by','modified_by'
     ];
+
+    public function stocks(){
+        return $this->hasMany(Stock::class,'warehouse_id','id');
+    }
+    public function purchaseItems(){
+        return $this->hasMany(PurchaseItem::class,'warehouse_id');
+    }
 }

@@ -7,11 +7,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use DateTimeInterface;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Support\Facades\Auth;
 
 class Accounts extends Model
 {
-    use HasFactory,SoftDeletes,IdIncreamentable;
+    use HasFactory,SoftDeletes,IdIncreamentable,HasUuids;
     protected $dates=[
         'creadted_at',
         'updated_at',
@@ -23,7 +24,7 @@ class Accounts extends Model
     }
  
      protected $fillable=[
-            'account_number','account_uri','company_name','slug','compnay_logo','module_name','dashboard_blocks','language','ip_address_access','domain','host','database_name','database_user','database_password','account_super_admin','user_id','created_by','modified_by'
+           'uuid', 'account_number','account_uri','company_name','slug','compnay_logo','module_name','dashboard_blocks','language','ip_address_access','domain','host','database_name','database_user','database_password','account_super_admin','user_id','created_by','modified_by'
      ];
 
      public static $rules = [

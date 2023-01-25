@@ -32,6 +32,7 @@ class PurchaseItemService
                     'package_date' => isset($purchaseItem['package_date']) ? $purchaseItem['package_date'] : NULL,
                     "sold_qty" => isset($purchaseItem['sold_qty']) ? $purchaseItem['sold_qty'] : 0,
                     'status' => isset($purchaseItem['status']) ? $purchaseItem['status'] : 0,
+                    'is_taxable' => isset($purchaseItem['is_taxable']) ? $purchaseItem['is_taxable'] : 0,
 
         ];
         if ($purchaseItem['is_serialized'] == 1) {
@@ -71,6 +72,7 @@ class PurchaseItemService
                     'package_date' => isset($request['package_date']) ? $request['package_date'] : $item['package_date'],
                     "sold_qty" => isset($request['sold_qty']) ? $request['sold_qty'] : $item['sold_qty'],
                     'status' => isset($request['status']) ? $request['status'] : $item['purchase_id'],
+                    'is_taxable' => isset($purchaseItem['is_taxable']) ? $item['is_taxable'] : 0,
                 ]
             );
         return $item;
@@ -81,7 +83,7 @@ class PurchaseItemService
     {
         //need to get all kinds of product data.
         try {
-            $purchaseItem = PurchaseItem::where('serial_number', $serialNumeber)->first();
+            $purchaseItem = PurchaseItem::where('serial_number', $serialNumeber)->with(['warehouse'])->first();
             if ($purchaseItem) {
                 return $this->success(new PurchaseItemResource($purchaseItem), 200);
             } else {

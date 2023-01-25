@@ -12,6 +12,6 @@ class AccountScope implements Scope
    
     public function apply(Builder $builder, Model $model)
     {
-        $builder->where('account_id',Auth::user()->account_id);
+        $builder->where($model->getTable().'.account_id',Auth::user()->account_id);
     }
 }

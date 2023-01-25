@@ -61,7 +61,7 @@ class PurchaseController extends Controller
     }
 
     
-    public function store(Request $request)
+    public function store(PurchaseRequest $request)
     {
         $request = $this->calculateProductPriceService->purchasePrice($request->all());
         //return $request;
@@ -127,7 +127,7 @@ class PurchaseController extends Controller
             return $this->error($e->getMessage(), 200);
         }
     }
-    public function update(Request $request, $uuid)
+    public function update(PurchaseRequest $request, $uuid)
     {   //overriding and calculating purchase data
        //return $request; 
         DB::beginTransaction();
@@ -276,18 +276,10 @@ class PurchaseController extends Controller
         //for random string
         $str_result = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
         $string = substr(str_shuffle($str_result), 0, $length_of_string);
-
-        //for next id
-        //$id = DB::select("SHOW TABLE STATUS LIKE '$table'");
-        //$next_id = $id[0]->Auto_increment;
-        //with next id
-        //$generatekey = date("Ymd") . '-' . $next_id;
         $generateStringkey = date("Ymd") . '-' . $string;
-
         $isExistString =  DB::table($table)->where($coloumn, $generateStringkey)->first();
 
         if ($isExistString) {
-            return $generateStringkey;
             return $this->generateKey($table, $coloumn, $length_of_string);
         } else {
             return $generateStringkey;

@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
+            $table->uuid('uuid')->unique()->index()->default(NULL);
             $table->string('user_number', 50)->nullable()->comment('generate');
             $table->string('first_name', 100);
             $table->string('last_name', 100)->nullable();

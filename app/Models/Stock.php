@@ -29,4 +29,9 @@ class Stock extends Model
     protected $fillable = [
        'product_id','warehouse_id', 'date', 'quantity', 'purchase_quantity', 'sale_quantity', 'quantity_on_hand', 'opening_stock_value','account_id','created_by','modified_by'
     ];
+
+    public function warehouse(){
+        return $this->belongsTo(Warehouse::class,'warehouse_id');
+    }
+    
 }

@@ -16,14 +16,14 @@ class UserController extends Controller
 {
     use ApiFilter, ApiResponse;
 
-    public function update(Request $request, $user_id)
+    public function update(Request $request, $uuid)
     {
 
 
         DB::beginTransaction();
         try {
 
-            $user = User::find($user_id)->update(
+            $user = User::where('uuid',$uuid)->first()->update(
                 [
                     'date_of_birth' => $request['date_of_birth'],
                     'gender' => $request['gender'],
@@ -36,13 +36,13 @@ class UserController extends Controller
                     'created_by' => Auth::user()->id,
                 ]
             );
-            $user = User::find($user_id);
+            $user = User::find($uuid);
             // $response = ['token' => $token]
             DB::commit();
             return $this->success($user);
         } catch (\Exception $e) {
             DB::rollBack();
-            return $this->error($e->getMessage(), 200);
+            return $this->error($e->getMessage(), 404);
         }
     }
 
@@ -57,8 +57,14 @@ class UserController extends Controller
 
     public function user($user_id)
     {
+        
         //return Auth::user()->account->account_id;
-        $user = User::find($user_id);
-        return $this->success($user);
+        $user = User::where('uuid',$user_id)->where('account_id',Auth::user()->account_id)->first();
+        if($user){
+            return $this->success($user);
+        }else{
+            return $this->error('Data Not Found',404);
+        }
+       
     }
 }

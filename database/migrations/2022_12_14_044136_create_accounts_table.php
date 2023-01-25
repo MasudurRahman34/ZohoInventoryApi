@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('accounts', function (Blueprint $table) {
             $table->id();
+            $table->uuid('uuid')->unique()->index()->default(NULL);
             $table->string('account_number',20)->comment('generate');
             $table->string('account_uri',100);
             $table->string('company_name');
@@ -30,12 +31,11 @@ return new class extends Migration
             $table->string('database_user',100)->nullable();
             $table->string('database_password')->nullable();
             $table->unsignedBigInteger('account_super_admin')->nullable()->comment('user->id');
-            $table->unsignedBigInteger('user_id')->default(1)->comment('user->id');
+            $table->unsignedBigInteger('user_id')->default(1)->comment('user->id')->index();
             $table->unsignedBigInteger('created_by')->default(0);
             $table->unsignedBigInteger('modified_by')->default(0);
             $table->timestamps();
             $table->softDeletes();
-            $table->index(['account_number','user_id', 'created_at']);
         });
     }
 

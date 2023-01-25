@@ -3,6 +3,8 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use App\Http\Controllers\Api\V1\Helper\AccountObservant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -12,16 +14,18 @@ use DateTimeInterface;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rules\Password;
 use App\Http\Controllers\Api\V1\Helper\IdIncreamentable;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable,SoftDeletes,IdIncreamentable;
+    use HasApiTokens, HasFactory, Notifiable,SoftDeletes,IdIncreamentable,HasUuids;
 
     /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
      */
+   
     protected $dates=[
         'creadted_at',
         'updated_at',
@@ -31,6 +35,7 @@ class User extends Authenticatable
         return $date->format('Y-m-d H:i:s');
     }
     protected $fillable = [
+        'uuid',
         'user_number',
         'first_name',
         'last_name',
@@ -68,32 +73,6 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public static function rules() { 
-        return [
-        'first_name' => ['required','string','max:255'],
-        'last_name' => ['required','string','max:255'],
-        'email' => ['required','string','email','max:255','unique:users'],
-        'mobile' => ['required','unique:users','digits_between:7,15'],
-        'country' => ['required','string'],
-        'mobile_country_code' => ['required','string','max:3'],
-        'notify_new_user'=>['in:0,1'],
-        'status'=>['in:0,1,2,3'],
-        'password' => ['required','confirmed', Password::min(8)
-        ->letters()
-        ->mixedCase()
-        ->numbers()
-        ->symbols()
-        ->uncompromised()
-                                                   
-                    
-                        ]
-        ];
-    }
-
-    public static $login_rules = [
-        'email' => 'required|string|email|max:255',
-        'password' => 'required|string|min:6',
-    ];
 
     public function IdIncreamentable():array{
         return [

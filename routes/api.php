@@ -41,9 +41,9 @@ Route::middleware('auth:api')->group(function () {
 
         //user
         //Route::POST('user/create', [UserController::class,'updateOrCreate'])->name('user.create');
-        Route::POST('user/{id}', [UserController::class, 'update'])->name('user.update');
+        Route::PUT('user/{uuid}', [UserController::class, 'update'])->name('user.update');
         Route::GET('users', [UserController::class, 'users'])->name('users');
-        Route::GET('user/{id}', [UserController::class, 'user'])->name('user');
+        Route::GET('user/{uuid}', [UserController::class, 'user'])->name('user');
 
         //supplier
         Route::POST('suppliers/create', [SupplierController::class, 'create'])->name('suppliers.create');

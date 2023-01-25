@@ -29,8 +29,18 @@ class PurchaseItem extends Model
     protected $fillable = [
         'purchase_id','warehouse_id','product_id','product_name','serial_number','group_number','product_qty','received_qty','unit_price','product_discount','product_tax','package_date','is_serialized','expire_date','subtotal',
         'description','account_id','created_by','modified_by',
-        'sold_qty','status'
+        'sold_qty','status','is_taxable'
     ];
+
+    public function product(){
+        return 'belongsTo(Product::class, product_id, id)';
+    }
+    public function warehouse(){
+        return $this->belongsTo(Warehouse::class,'warehouse_id','id');
+    }
+    // public function stock(){
+    //     return $this->hasOneThrough(Stock::class,PurchaseItem::class,'product_id','warehouse_id');
+    // }
 
     
 }

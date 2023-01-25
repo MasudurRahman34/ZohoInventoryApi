@@ -1,7 +1,9 @@
 <?php
 namespace App\Http\Controllers\Api\V1\Auth;
 
+use App\Http\Controllers\Api\V1\Helper\ApiResponse;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\v1\LoginRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -9,25 +11,26 @@ use Illuminate\Support\Facades\Validator;
 
 class LoginController extends Controller
 {
-   public function login(Request $request){
-    $validator = Validator::make($request->all(), User::$login_rules);
-    if ($validator->fails())
-    {
-        return response(['errors'=>$validator->errors()->all()], 422);
-    }
+    use ApiResponse;
+
+   public function login(LoginRequest $request){
+   
     $user = User::where('email', $request->email)->first();
     if ($user) {
         if (Hash::check($request->password, $user->password)) {
-            $token = $user->createToken('Laravel Password Grant Client')->accessToken;
-            $response = ['token' => $token];
-            return response($response, 200);
+            $token = $user->createToken('authToken')->accessToken;
+            $response = [
+                'user'=>$user,
+                'tokenType'=>"Bearer",
+                'accessToken' => $token,
+            ];
+            return $this->success($response, 200);
         } else {
-            $response = ["message" => "Password mismatch"];
-            return response($response, 422);
+            return $this->error("Password mismatch",404);
         }
     } else {
-        $response = ["message" =>'User does not exist'];
-        return response($response, 422);
+        return $this->error('user does not exsit',404);
+        
     }
    }
 

@@ -19,7 +19,7 @@ return new class extends Migration
             $table->unsignedBigInteger('purchase_id')->comment('id value purchases table');
             $table->unsignedBigInteger('warehouse_id')->comment('id value warhouses table');
             $table->unsignedBigInteger('product_id')->comment('id value product table');
-            $table->string('product_name',100)->nullable()->default(NULL);
+            $table->string('product_name')->nullable()->default(NULL);
             $table->string('serial_number')->nullable()->default(NULL);
             $table->string('group_number',100)->default(NULL)->nullable()->comment('generate when product is serialized');
             $table->integer('product_qty')->default(0);
@@ -34,6 +34,7 @@ return new class extends Migration
             $table->tinyInteger('is_serialized')->default(0)->nullable()->comment('0=true, 1=false');
             $table->text('description')->nullable()->default(NULL);
             $table->tinyInteger('status')->default(0)->nullable()->comment('0=available, 1=sold out');
+            $table->tinyInteger('is_taxable')->default(0)->nullable()->comment('0=no, 1=yes');
             $table->unsignedBigInteger('account_id')->default(1)->comment('Reference of account');
             $table->unsignedBigInteger('created_by')->default(0);
             $table->unsignedBigInteger('modified_by')->default(0);
