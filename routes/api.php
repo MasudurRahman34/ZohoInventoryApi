@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\V1\AccountController;
 use App\Http\Controllers\Api\V1\AddressController;
 use App\Http\Controllers\Api\V1\Auth\LoginController;
 use App\Http\Controllers\Api\V1\Auth\RegistrationController;
+use App\Http\Controllers\Api\V1\Auth\VerifyEmailController;
 use App\Http\Controllers\Api\V1\ContactController;
 use App\Http\Controllers\Api\V1\CustomerController;
 use App\Http\Controllers\Api\V1\GlobalAddressController;
@@ -13,7 +14,9 @@ use App\Http\Controllers\Api\V1\PurchaseItemController;
 use App\Http\Controllers\Api\V1\SaleController;
 use App\Http\Controllers\Api\V1\SupplierController;
 use App\Http\Controllers\Api\V1\UserController;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -30,9 +33,11 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
-
-Route::middleware('auth:api')->group(function () {
+Route::middleware(['auth:api'])->group(function () {
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout.api');
+});
+
+Route::middleware(['auth:api','verified'])->group(function () {
 
     Route::group(['prefix' => 'v1'], function () {
         //account
@@ -103,8 +108,14 @@ Route::middleware('auth:api')->group(function () {
     });
 });
 
+// Auth::routes(['verify'=>true]);
 //public route
 // Route::group(['middleware' => ['cors']], function () {
 Route::POST('/login', [LoginController::class, 'login'])->name('login.api');
 Route::POST('/register', [RegistrationController::class, 'register'])->name('register.api');
+
+Route::get('/email/verify/{id}/{hash}', [VerifyEmailController::class,'__invoke'])
+            ->middleware(['auth:api'])
+            ->name('verification.verify');
+
 // });

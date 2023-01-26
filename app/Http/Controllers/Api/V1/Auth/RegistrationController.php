@@ -8,7 +8,9 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Api\V1\Helper\ApiResponse;
 use App\Http\Requests\v1\RegistrationRequest;
 use App\Http\Resources\v1\UserResource;
+use App\Http\Services\V1\AccountService;
 use App\Models\User;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
@@ -17,18 +19,30 @@ use Illuminate\Support\Facades\DB;
 class RegistrationController extends Controller
 {
     use ApiResponse, ApiFilter;
+    private $accountService;
+        
+    public function __construct(AccountService $accountService) {
+        $this->accountService = $accountService;
+    }
 
     public function register(RegistrationRequest $request){
+       
    // return $request;
-      
+     // $register=$request->validated();
             DB::beginTransaction();
             try {
                 $request['password']=Hash::make($request['password']);
                 $request['remember_token'] = Str::random(10);
-                $user = User::create($request->validated());
-                // $token = $user->createToken('Laravel Password Grant Client')->accessToken;
-                // $response = ['token' => $token];
+                $user = User::create($request->toArray());
+                $token = $user->createToken('Laravel Password Grant Client')->accessToken;
+                $response = ['token' => $token];
                 DB::commit();
+                 event(new Registered($user));
+
+                //  if ($request->has('company_name') && !empty($request['company_name'])){
+                //     $createAccount=$this->accountService->store($request);
+                //  }
+
                 return $this->success(new UserResource($user));
                
             } catch (\Exception $e) {

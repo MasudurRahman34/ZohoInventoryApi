@@ -14,9 +14,12 @@ use DateTimeInterface;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rules\Password;
 use App\Http\Controllers\Api\V1\Helper\IdIncreamentable;
+use App\Jobs\V1\QueuedVerifyEmailJob;
+use App\Notifications\V1\CustomVerifyEmail;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     use HasApiTokens, HasFactory, Notifiable,SoftDeletes,IdIncreamentable,HasUuids;
 
@@ -86,15 +89,8 @@ class User extends Authenticatable
        return $this->belongsTo(Accounts::class,'account_id');
     }
 
-    // protected static function boot()
-    // {
-    //     parent::boot();
-
-    //     // auto-sets account values on creation
-    //     static::creating(function ($model) {
-    //         // $model->account_id = Auth::user()->id;
-    //         $model->created_by = Auth::user()->id;
-           
-    //     });
-    // }
+    public function sendEmailVerificationNotification(){
+        // $this->notify( New CustomVerifyEmail);
+        QueuedVerifyEmailJob::dispatch($this);
+    }
 }

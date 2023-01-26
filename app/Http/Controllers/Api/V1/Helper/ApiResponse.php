@@ -22,7 +22,7 @@ Trait ApiResponse{
                 'message' => $message,
                 'error' => true,
                 'code' => $statusCode,
-                'data' => null
+                'data' => $data
             ], $statusCode);
         }
     }
@@ -34,9 +34,9 @@ Trait ApiResponse{
      * @param   array|object    $data
      * @param   integer         $statusCode
      */
-    public function success($data, $statusCode = 200)
+    public function success($data, $statusCode = 200, $message="Operation Successful")
     {
-        return $this->coreResponse("Operation Successful", $statusCode, $data);
+        return $this->coreResponse($message, $statusCode, $data);
     }
 
     /**
@@ -45,11 +45,11 @@ Trait ApiResponse{
      * @param   string          $message
      * @param   integer         $statusCode    
      */
-    public function error($message, $statusCode)
+    public function error($message, $statusCode,$data=Null)
     {
-        return $this->coreResponse($message, $statusCode, null, false);
+        return $this->coreResponse($message, $statusCode, $data, false);
     }
-    protected function errorResponse($message = null,$code )
+    protected function errorResponse($message, $code)
 	{
 		return response()->json([
 			'status'=>'Error',

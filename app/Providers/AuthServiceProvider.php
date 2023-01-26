@@ -24,6 +24,7 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        //return "boot";
         $this->registerPolicies();
 
         // expirartion auth token
