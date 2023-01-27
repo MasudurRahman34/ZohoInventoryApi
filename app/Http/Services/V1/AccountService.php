@@ -9,11 +9,11 @@ use Illuminate\Support\Str;
 class AccountService{
 
 
-    public function store($request, $accountId=""){
-        $account = Accounts::updateOrCreate(
-            ['id' => $accountId],
+    public function store($request){
+       
+        $accountData = 
             [
-                'account_uri' => $this->generateAccountUri(),
+                'account_uri' => $this->generateAccountUri($request['first_name'],$request['last_name']),
                 'company_name' => $request['company_name'],
                 'slug' => $this->generateSlug($request),
                 'module_name' => isset($request['module_name']) ? json_encode($request['module_name']): NULL,
@@ -25,13 +25,17 @@ class AccountService{
                 'database_name' => isset($request['database_name']) ? $request['database_name']: NULL,
                 'database_user' => isset($request['database_user']) ? $request['database_user']: NULL,
                 'database_password' => isset($request['database_password']) ?$request['database_password'] : NULL,
-            ]
-        );
+            ];
+
+        //return $accountData;
+            $account= Accounts::create($accountData);
+            return $account;
 }
-public function generateAccountUri()
+public function generateAccountUri($firstName,$lastName)
     {
 
-        $requestedAccountUri = strtolower(Auth::user()->first_name) . '-' . strtolower(Auth::user()->last_name);
+        $requestedAccountUri = strtolower($firstName) . '-' . strtolower($lastName);
+        
 
         $checkAccountUri = DB::table('accounts')
             ->select('account_uri')
@@ -50,12 +54,12 @@ public function generateAccountUri()
     {
         $checkSlug = DB::table('accounts')
             ->select('slug')
-            ->where('slug', Str::slug($request->company_name))
+            ->where('slug', Str::slug($request['company_name']))
             ->get();
         if (count($checkSlug) > 0) {
-            $slug = Str::slug($request->company_name) . '-' . count($checkSlug) + 1;
+            $slug = Str::slug($request['company_name']) . '-' . count($checkSlug) + 1;
         } else {
-            $slug = Str::slug($request->company_name);
+            $slug = Str::slug($request['company_name']);
         }
         return $slug;
     }

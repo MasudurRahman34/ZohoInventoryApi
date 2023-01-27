@@ -28,12 +28,13 @@ class RegistrationRequest extends FormRequest
     public function rules()
     {
         return [
-            'first_name' => ['required','string','max:255'],
+            'first_name' => ['required','string','max:255'], //first name and last name requeried for creating account
             'last_name' => ['required','string','max:255'],
             'email' => ['required','string','email','max:255','unique:users'],
-            'mobile' => ['required','unique:users','digits_between:7,15'],
+            'mobile' => ['unique:users','digits_between:7,15','nullable'],
             'country' => ['required','string','exists:countries,id'],
-            'mobile_country_code' => ['required','between:1,3'],
+            'comapany_name'=>['string',"between:3,255"],
+            'mobile_country_code' => ['required','string','between:2,3'],
             'notify_new_user'=>['in:0,1'],
             'status'=>['in:0,1,2,3'],
             'password' => ['required','confirmed', Password::min(8)

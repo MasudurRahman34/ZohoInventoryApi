@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
+use Psy\CodeCleaner\ReturnTypePass;
 
 class RegistrationController extends Controller
 {
@@ -26,24 +27,39 @@ class RegistrationController extends Controller
     }
 
     public function register(RegistrationRequest $request){
-       
+       //return 'working';
    // return $request;
      // $register=$request->validated();
             DB::beginTransaction();
             try {
+                $request['account_id']=1; //default account
+                if ($request->has('company_name') && !empty($request['company_name'])){
+                    
+                    $accountData['first_name']=$request['first_name'];
+                    $accountData['last_name']=$request['last_name'];
+                    $accountData['company_name']=$request['company_name'];
+                    $createAccount=$this->accountService->store($accountData);
+                 }
+                 //return $createAccount;
+
+                 if($createAccount){
+                   
+                    $request['account_id']=$createAccount->id;
+                 }
+               
                 $request['password']=Hash::make($request['password']);
                 $request['remember_token'] = Str::random(10);
+
                 $user = User::create($request->toArray());
                 $token = $user->createToken('Laravel Password Grant Client')->accessToken;
                 $response = ['token' => $token];
-                DB::commit();
+                
                  event(new Registered($user));
 
-                //  if ($request->has('company_name') && !empty($request['company_name'])){
-                //     $createAccount=$this->accountService->store($request);
-                //  }
-
-                return $this->success(new UserResource($user));
+                 
+                 DB::commit();
+                 $user=User::with('account')->find($user->id);
+                return $this->success($user,200);
                
             } catch (\Exception $e) {
                 DB::rollBack();

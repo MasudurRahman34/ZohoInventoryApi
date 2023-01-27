@@ -18,6 +18,9 @@ class Accounts extends Model
         'updated_at',
         'deleted_at'
     ];
+    protected $casts = [
+        'module_name' => 'array'
+    ];
     
     public function serializeDate(DateTimeInterface $date){
         return $date->format('Y-m-d H:i:s');
@@ -39,17 +42,17 @@ class Accounts extends Model
             'attribute'=>'account_number',
         ];
     }
-    protected static function boot()
-    {
-        parent::boot();
+    // protected static function boot()
+    // {
+    //     parent::boot();
 
-        // auto-sets account values on creation
-        static::creating(function ($model) {
-            $model->user_id = Auth::user()->id;
-            $model->created_by = Auth::user()->id;
-            $model->account_super_admin = Auth::user()->id;
-        });
-    }
+    //     // auto-sets account values on creation
+    //     static::creating(function ($model) {
+    //         $model->user_id = Auth::user()->id;
+    //         $model->created_by = Auth::user()->id;
+    //         $model->account_super_admin = Auth::user()->id;
+    //     });
+    // }
     public function user(){
         $this->belongsTo(User::class,'user_id','id');
     }
