@@ -9,7 +9,8 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Validation\Rules\Password;
 
 class RegistrationRequest extends FormRequest
-{ use ApiResponse;
+{
+    use ApiResponse;
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -28,31 +29,34 @@ class RegistrationRequest extends FormRequest
     public function rules()
     {
         return [
-            'first_name' => ['required','string','max:255'], //first name and last name requeried for creating account
-            'last_name' => ['required','string','max:255'],
-            'email' => ['required','string','email','max:255','unique:users'],
-            'mobile' => ['unique:users','digits_between:7,15','nullable'],
-            'country' => ['required','string','exists:countries,id'],
-            'comapany_name'=>['string',"between:3,255"],
-            'mobile_country_code' => ['required','string','between:2,3'],
-            'notify_new_user'=>['in:0,1'],
-            'status'=>['in:0,1,2,3'],
-            'password' => ['required','confirmed', Password::min(8)
-                            ->letters()
-                            ->mixedCase()
-                            ->numbers()
-                            ->symbols()
-                            ->uncompromised()                          
-                            ]
-            ];
+            'first_name' => ['required', 'string', 'max:255'], //first name and last name requeried for creating account
+            'last_name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'mobile' => ['unique:users', 'digits_between:7,15', 'nullable'],
+            'country' => ['required', 'string', 'exists:countries,id'],
+            'comapany_name' => ['string', "between:3,255"],
+            'mobile_country_code' => ['required', 'string', 'between:2,3'],
+            'notify_new_user' => ['in:0,1'],
+            'country_code' => ['string', 'exists:countries,country_code'],
+            'status' => ['in:0,1,2,3'],
+            'password' => [
+                'required', 'confirmed', Password::min(8)
+                    ->letters()
+                    ->mixedCase()
+                    ->numbers()
+                    ->symbols()
+                    ->uncompromised()
+            ]
+        ];
     }
 
-    public function failedValidation(Validator $validator){
-       
+    public function failedValidation(Validator $validator)
+    {
+
         throw new HttpResponseException(
-           
-               $this->error($validator->errors(),422)
-            
+
+            $this->error($validator->errors(), 422)
+
         );
     }
 }

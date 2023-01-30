@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Illuminate\Auth\Middleware\Authenticate as Middleware;
 
 use App\Http\Controllers\Api\V1\Helper\ApiResponse;
+
 class Authenticate extends Middleware
 {
     use ApiResponse;
@@ -16,10 +17,12 @@ class Authenticate extends Middleware
      */
     protected function redirectTo($request)
     {
-        if (! $request->expectsJson()) {
-         //return route('login.api');
-            return $this->error('Unauthorized ! Please Log In Or Sign Up !',401,['signup'=>'link', 'login'=>
+        if (!$request->expectsJson()) {
+            //return route('login.api');
+            return $this->error('Unauthorized ! Please Log In Or Sign Up !', 401, ['signup' => 'link', 'login' =>
             'link']);
         }
+        return $this->error('Unauthorized ! Please Log In Or Sign Up !', 401, ['signup' => 'link', 'login' =>
+        'link']);
     }
 }

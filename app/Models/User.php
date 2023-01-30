@@ -18,23 +18,25 @@ use App\Jobs\V1\QueuedVerifyEmailJob;
 use App\Notifications\V1\CustomVerifyEmail;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Support\Facades\DB;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
-    use HasApiTokens, HasFactory, Notifiable,SoftDeletes,IdIncreamentable,HasUuids;
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes, IdIncreamentable, HasUuids;
 
     /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
      */
-   
-    protected $dates=[
+
+    protected $dates = [
         'creadted_at',
         'updated_at',
         'deleted_at'
     ];
-    public function serializeDate(DateTimeInterface $date){
+    public function serializeDate(DateTimeInterface $date)
+    {
         return $date->format('Y-m-d H:i:s');
     }
     protected $fillable = [
@@ -47,6 +49,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'user_role',
         'mobile',
         'mobile_country_code',
+        'country_code',
         'date_of_birth',
         'gender',
         'image',
@@ -65,6 +68,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'account_id',
         'branch_id',
         'email_verified_at',
+        'is_mobile_verified'
     ];
 
     protected $hidden = [
@@ -77,19 +81,29 @@ class User extends Authenticatable implements MustVerifyEmail
     ];
 
 
-    public function IdIncreamentable():array{
+    public function IdIncreamentable(): array
+    {
         return [
-            'source'=>'id',
-            'prefix'=>'BE'.date("y").date("m").date('d'),
-            'attribute'=>'user_number',
+            'source' => 'id',
+            'prefix' => 'BE' . date("y") . date("m") . date('d'),
+            'attribute' => 'user_number',
         ];
     }
 
-    public function account(){
-       return $this->belongsTo(Accounts::class,'account_id');
+    public function account()
+    {
+        return $this->belongsTo(Accounts::class, 'account_id');
     }
 
-    public function sendEmailVerificationNotification(){
+    public static function nextId()
+    {
+        $statement = DB::select("SHOW TABLE STATUS LIKE 'users'");
+        $nextId = $statement[0]->Auto_increment;
+        return $nextId;
+    }
+
+    public function sendEmailVerificationNotification()
+    {
         // $this->notify( New CustomVerifyEmail);
         QueuedVerifyEmailJob::dispatch($this);
     }

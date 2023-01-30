@@ -21,58 +21,66 @@ class RegistrationController extends Controller
 {
     use ApiResponse, ApiFilter;
     private $accountService;
-        
-    public function __construct(AccountService $accountService) {
+
+    public function __construct(AccountService $accountService)
+    {
         $this->accountService = $accountService;
     }
 
-    public function register(RegistrationRequest $request){
-       //return 'working';
-   // return $request;
-     // $register=$request->validated();
-            DB::beginTransaction();
-            try {
-                $request['account_id']=1; //default account
-                if ($request->has('company_name') && !empty($request['company_name'])){
-                    
-                    $accountData['first_name']=$request['first_name'];
-                    $accountData['last_name']=$request['last_name'];
-                    $accountData['company_name']=$request['company_name'];
-                    $createAccount=$this->accountService->store($accountData);
-                 }
-                 //return $createAccount;
+    public function register(RegistrationRequest $request)
+    {
 
-                 if($createAccount){
-                   
-                    $request['account_id']=$createAccount->id;
-                 }
-               
-                $request['password']=Hash::make($request['password']);
-                $request['remember_token'] = Str::random(10);
-
-                $user = User::create($request->toArray());
-                $token = $user->createToken('Laravel Password Grant Client')->accessToken;
-                $response = ['token' => $token];
-                
-                 event(new Registered($user));
-
-                 
-                 DB::commit();
-                 $user=User::with('account')->find($user->id);
-                return $this->success($user,200);
-               
-            } catch (\Exception $e) {
-                DB::rollBack();
-                return $this->error($e->getMessage(), 422);
-                
+        DB::beginTransaction();
+        try {
+            $accountData = $this->setAccount($request);
+            if (!is_int($accountData)) {
+                $request['account_id'] = $accountData->id;
+            } else {
+                $request['account_id'] = $accountData;
             }
-      
+
+            $request['password'] = Hash::make($request['password']);
+            $request['remember_token'] = Str::random(10);
+
+            $user = User::create($request->toArray());
+            $token = $user->createToken('Laravel Password Grant Client')->accessToken;
+
+            $this->sendVerificationMail($user); //send verfication mail;
+
+
+            if (!is_int($accountData)) {
+                $updateAccount = $this->accountService->updateAccountUserId($user, $accountData);
+            }
+            DB::commit();
+            $userWithAccount = User::with('account')->find($user->id);
+            $response = [];
+            $response = [
+                'token' => $token,
+                'user' => $userWithAccount
+            ];
+            return $this->success($response, 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $this->error($e->getMessage(), 422);
+        }
     }
 
-    // public function users(){
+    public function setAccount($request)
+    {
+        $account = 1; //default account
+        if ($request->has('company_name') && !empty($request['company_name'])) {
 
-    //         $users=User::with('accounts')->get();
-    //         return $this->success($users);
+            $accountData['first_name'] = $request['first_name'];
+            $accountData['last_name'] = $request['last_name'];
+            $accountData['company_name'] = $request['company_name'];
+            $newAccount = $this->accountService->store($accountData); //create new account if exsist company name
+            $account = $newAccount;
+        }
+        return $account;
+    }
 
-    // }
+    public function sendVerificationMail($user): void
+    {
+        event(new Registered($user));
+    }
 }

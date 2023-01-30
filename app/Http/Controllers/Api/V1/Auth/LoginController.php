@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Api\V1\Auth;
 
 use App\Http\Controllers\Api\V1\Helper\ApiResponse;
@@ -13,29 +14,29 @@ class LoginController extends Controller
 {
     use ApiResponse;
 
-   public function login(LoginRequest $request){
-   
-    $user = User::where('email', $request->email)->first();
-    if ($user) {
-        if (Hash::check($request->password, $user->password)) {
-            $token = $user->createToken('authToken')->accessToken;
-            $response = [
-                'user'=>$user,
-                'tokenType'=>"Bearer",
-                'accessToken' => $token,
-            ];
-            return $this->success($response, 200);
-        } else {
-            return $this->error("Password mismatch",404);
-        }
-    } else {
-        return $this->error('user does not exsit',404);
-        
-    }
-   }
+    public function login(LoginRequest $request)
+    {
 
-   public function logout (Request $request) {
-    // return ('working');
+        $user = User::where('email', $request->email)->with('account')->first();
+        if ($user) {
+            if (Hash::check($request->password, $user->password)) {
+                $token = $user->createToken('authToken')->accessToken;
+
+                $user['tokenType'] = "Bearer";
+                $user['accessToken'] = $token;
+
+                return $this->success($user, 200);
+            } else {
+                return $this->error("Password mismatch", 404);
+            }
+        } else {
+            return $this->error('user does not exsit', 404);
+        }
+    }
+
+    public function logout(Request $request)
+    {
+        // return ('working');
         $token = $request->user()->token();
         $token->revoke();
         $response = ['message' => 'You have been successfully logged out!'];
