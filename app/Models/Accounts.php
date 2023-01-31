@@ -7,8 +7,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use DateTimeInterface;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Api\V1\Helper\HasUuids;
+
 
 class Accounts extends Model
 {

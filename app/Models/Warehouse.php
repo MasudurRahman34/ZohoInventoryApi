@@ -5,7 +5,7 @@ namespace App\Models;
 use App\Http\Controllers\Api\V1\Helper\AccountObservant;
 use App\Models\Scopes\ScopeUuid;
 use DateTimeInterface;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use App\Http\Controllers\Api\V1\Helper\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;

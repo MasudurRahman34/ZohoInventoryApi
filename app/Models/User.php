@@ -2,22 +2,16 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-
-use App\Http\Controllers\Api\V1\Helper\AccountObservant;
+use App\Http\Controllers\Api\V1\Helper\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use DateTimeInterface;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\Rules\Password;
 use App\Http\Controllers\Api\V1\Helper\IdIncreamentable;
 use App\Jobs\V1\QueuedVerifyEmailJob;
-use App\Notifications\V1\CustomVerifyEmail;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Support\Facades\DB;
 
 class User extends Authenticatable implements MustVerifyEmail
