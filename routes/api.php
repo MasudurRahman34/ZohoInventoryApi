@@ -44,9 +44,10 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
     Route::group(['prefix' => 'v1'], function () {
         //account
         Route::POST('accounts', [AccountController::class, 'store'])->name('account.store');
-        Route::GET('accounts', [AccountController::class, 'accounts'])->name('accounts');
+        Route::GET('accounts', [AccountController::class, 'index'])->name('accounts.index');
         Route::PUT('accounts/{uuid}', [AccountController::class, 'update'])->name('accounts.update');
         Route::PUT('accounts/{uuid}/user', [AccountController::class, 'updateUserAccount'])->name('user.accounts.update');
+        Route::POST('accounts/{uuid}/businesstype', [AccountController::class, 'storeAccountBusinessType'])->name('accounts.businesstype');
 
         //user
         //Route::POST('user/create', [UserController::class,'updateOrCreate'])->name('user.create');
@@ -59,7 +60,7 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
         Route::GET('suppliers', [SupplierController::class, 'index'])->name('suppliers.index');
         Route::GET('suppliers/{supplier}', [SupplierController::class, 'show'])->name('suppliers.show');
         Route::DELETE('suppliers/{supplier}', [SupplierController::class, 'delete'])->name('suppliers.delete');
-        Route::POST('suppliers', [SupplierController::class, 'store'])->name('suppliers.store');
+        Route::post('suppliers/store', [SupplierController::class, 'store'])->name('suppliers.store');
         Route::PUT('suppliers/{supplier}', [SupplierController::class, 'update'])->name('suppliers.update');
         Route::GET('suppliers/{supplier}/addresses', [SupplierController::class, 'getAddresses'])->name('suppliers.addresses');
         Route::GET('suppliers/{supplier}/contacts', [SupplierController::class, 'getContacts'])->name('suppliers.contacts');
@@ -111,7 +112,7 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
         Route::POST('inventory/adjustment', [InventoryAdjustmentController::class, 'store'])->name('inventory.adjustment.store');
 
         //Purchase
-        Route::GET('businesstypes', [BusinessTypeController::class, 'index'])->name('businesstypes.index');
+        // Route::GET('businesstypes', [BusinessTypeController::class, 'index'])->name('businesstypes.index');
         Route::POST('businesstypes', [BusinessTypeController::class, 'store'])->name('businesstypes.store');
         Route::PUT('businesstypes/{businesstype}', [BusinessTypeController::class, 'update'])->name('businesstypes.update');
         Route::GET('businesstypes/{businesstype}', [BusinessTypeController::class, 'show'])->name('businesstypes.show');
@@ -129,14 +130,18 @@ Route::GET('businesstypes', [BusinessTypeController::class, 'index'])->name('bus
 //open api 
 Route::POST('/login', [LoginController::class, 'login'])->name('login.api');
 Route::POST('/register', [RegistrationController::class, 'register'])->name('register.api');
-Route::GET('businesstypes', [BusinessTypeController::class, 'index'])->name('businesstypes.index');
+
+Route::GET('v1/businesstypes', [BusinessTypeController::class, 'index'])->name('businesstypes.index');
+Route::GET('v1/countries', [CountryController::class, 'index'])->name('countries.index');
+
+
 Route::get('/email/verify/{id}/{hash}', [VerifyEmailController::class, '__invoke'])
 
     ->middleware(['auth:api'])
     ->name('verification.verify');
 
 
-Route::GET('v1/countries', [CountryController::class, 'index'])->name('countries.index');
+
 //verify before login
 // Route::get('/email/verify/{id}/{hash}', [VerifyEmailController::class, 'verifyBeforeLogin'])
 //     ->name('verification.verify');

@@ -46,7 +46,8 @@ class RegistrationRequest extends FormRequest
                     ->numbers()
                     ->symbols()
                     ->uncompromised()
-            ]
+            ],
+            'privacy_aggrement' => ['required', 'integer', 'in:1']
         ];
     }
 

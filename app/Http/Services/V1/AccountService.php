@@ -36,14 +36,17 @@ class AccountService
                 'database_user' => isset($request['database_user']) ? $request['database_user'] : NULL,
                 'database_password' => isset($request['database_password']) ? $request['database_password'] : NULL,
                 'account_super_admin' => isset($request['account_super_admin']) ? $request['account_super_admin'] : 0,
-                'business_type_id' => isset($request['business_type_id']) ? $request['business_type_id'] : NULL,
                 'user_id' => $userId,
 
             ];
 
         //return $accountData;
-        $account = Accounts::create($accountData);
-        return $account;
+        $newAccount = Accounts::create($accountData);
+        if (isset($request['business_type_id'])) {
+
+            $this->storeAccountBusinessType($request['business_type_id'], $newAccount);
+        }
+        return $newAccount;
     }
 
     public function update($request, $account)
@@ -65,7 +68,7 @@ class AccountService
                 'account_uri' => $accountUri,
                 'company_name' => isset($request['company_name']) ? $request['company_name'] : $account->company_name,
                 'slug' =>  $slug,
-                'module_name' => isset($request['module_name']) ? json_encode($request['module_name']) : $account->module_name,
+                'module_name' => isset($request['module_name']) ? $request['module_name'] : $account->module_name,
                 'dashboard_blocks' => isset($request['dashboard_blocks']) ? $request['dashboard_blocks'] : $account->dashboard_blocks,
                 'language' => isset($request['language']) ? $request['language'] : $account->language,
                 'domain' => isset($request['domain']) ? $request['domain'] : $account->domain,
@@ -75,12 +78,12 @@ class AccountService
                 'database_user' => isset($request['database_user']) ? $request['database_user'] : $account->database_user,
                 'database_password' => isset($request['database_password']) ? $request['database_password'] : $account->database_password,
                 'account_super_admin' => isset($request['account_super_admin']) ? $request['account_super_admin'] : $account->account_super_admin,
-                'business_type_parent_id' => isset($request['business_type_id']) ? $request['business_type_id'] : $account->account_super_admin,
                 'modified_by' => Auth::user()->id,
                 'user_id' => Auth::user()->id,
             ];
         //return $accountData;
         $updatedAccount =  $account->update($accountData);
+
         return $updatedAccount;
     }
 
@@ -126,5 +129,22 @@ class AccountService
             $slug = Str::slug($request['company_name']);
         }
         return $slug;
+    }
+    public function storeAccountBusinessType($business_type_ids, $account)
+    {
+        if (count($business_type_ids) > 0) {
+            # code...
+            $business_type = [];
+            foreach ($business_type_ids as $key => $business_type_id) {
+
+                $business_type[$key] = [
+                    'business_type_id' => $business_type_id
+                ];
+            }
+
+
+            $newAccountBusinessType = $account->businessTypes()->attach($business_type);
+            return $newAccountBusinessType;
+        }
     }
 }

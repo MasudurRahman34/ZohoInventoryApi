@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Api\V1\Helper\ApiFilter;
 use App\Http\Controllers\Api\V1\Helper\ApiResponse;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\v1\UserResource;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -23,7 +24,7 @@ class UserController extends Controller
         DB::beginTransaction();
         try {
 
-            $user = User::where('uuid',$uuid)->first()->update(
+            $user = User::where('uuid', $uuid)->first()->update(
                 [
                     'date_of_birth' => $request['date_of_birth'],
                     'gender' => $request['gender'],
@@ -48,23 +49,23 @@ class UserController extends Controller
 
     public function users(Request $request)
     {
+
         $this->setFilterProperty($request);
         //$accounts=Accounts::with('user')->get();
 
         $users = User::where('account_id', Auth::user()->account_id)->orderBy($this->column_name, $this->sort)->paginate($this->show_per_page)->withQueryString();
-        return $this->success($users);
+        return $this->success(new UserResource($users));
     }
 
     public function user($user_id)
     {
-        
+
         //return Auth::user()->account->account_id;
-        $user = User::where('uuid',$user_id)->where('account_id',Auth::user()->account_id)->first();
-        if($user){
+        $user = User::where('uuid', $user_id)->where('account_id', Auth::user()->account_id)->first();
+        if ($user) {
             return $this->success($user);
-        }else{
-            return $this->error('Data Not Found',404);
+        } else {
+            return $this->error('Data Not Found', 404);
         }
-       
     }
 }

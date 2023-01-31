@@ -31,7 +31,6 @@ return new class extends Migration
             $table->string('database_name', 100)->nullable();
             $table->string('database_user', 100)->nullable();
             $table->string('database_password')->nullable();
-            $table->unsignedBigInteger('business_type_parent_id')->default(0)->nullable()->comment('Reference of account')->index();
             $table->unsignedBigInteger('account_super_admin')->nullable()->comment('user->id');
             $table->unsignedBigInteger('user_id')->default(1)->comment('user->id')->index();
             $table->unsignedBigInteger('created_by')->default(0);

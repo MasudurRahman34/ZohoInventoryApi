@@ -40,17 +40,17 @@ class AccountRequest extends FormRequest
             'database_name' => 'string|nullable',
             'database_user' => 'string|nullable',
             'database_password' => 'string|nullable',
-            'business_type_id' => 'integer|exists:business_types,id',
+            'business_type_id.*' => 'exists:business_types,id',
             'user_id' => 'integer|exists:users,id',
         ];
     }
-    // public function failedValidation(Validator $validator)
-    // {
+    public function failedValidation(Validator $validator)
+    {
 
-    //     throw new HttpResponseException(
+        throw new HttpResponseException(
 
-    //         $this->error($validator->errors(), 422)
+            $this->error($validator->errors(), 422)
 
-    //     );
-    // }
+        );
+    }
 }

@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class BusinessType extends Model
 {
-    use HasFactory, SoftDeletes, AccountObservant;
+    use HasFactory, SoftDeletes;
     protected $dates = [
         'creadted_at',
         'updated_at',
@@ -48,4 +48,9 @@ class BusinessType extends Model
     {
         return $this->child()->with('childRecursive');
     }
+
+    // public function accounts()
+    // {
+    //     return $this->belongsToMany(Accounts::class, 'account_business_type', 'account_id', 'business_type_id');
+    // }
 }

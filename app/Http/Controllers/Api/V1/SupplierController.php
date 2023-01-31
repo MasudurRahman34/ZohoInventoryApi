@@ -29,9 +29,9 @@ class SupplierController extends Controller
 
     public function __construct(AddressService $addressService, ContactService $contactService, SupplierService $supplierService)
     {
-        $this->addressService= $addressService;
-        $this->contactService= $contactService;
-        $this->supplierService= $supplierService;
+        $this->addressService = $addressService;
+        $this->contactService = $contactService;
+        $this->supplierService = $supplierService;
     }
     //get supplier list
     public function index(Request $request)
@@ -53,7 +53,7 @@ class SupplierController extends Controller
         $this->dateRangeQuery($request, $query, 'portal_suppliers.created_at');
         $this->filterBy($request, $this->query);
         $suppliers = $this->query->orderBy($this->column_name, $this->sort)->paginate($this->show_per_page)->withQueryString();
-        return (new SupplierCollection($suppliers));
+        return $this->success(new SupplierCollection($suppliers));
     }
 
     //get single supplier
@@ -72,9 +72,9 @@ class SupplierController extends Controller
     {
         //=return $id;
         //$supplierAddresses = Supplier::with('shipAddress')->with('billAddress')->with('otherAddresses')->where('account_id', Auth::user()->account_id)->find($id);
-        $supplier=Supplier::Uuid($uuid)->first();
-        if($supplier){
-            $supplierId= $supplier->id;
+        $supplier = Supplier::Uuid($uuid)->first();
+        if ($supplier) {
+            $supplierId = $supplier->id;
             $addresses['ship_address'] = Address::where('ref_object_key', Address::$ref_supplier_key)->where('ref_id', $supplierId)->where('is_ship_address', 1)->first();
             $addresses['bill_address'] = Address::where('ref_object_key', Address::$ref_supplier_key)->where('ref_id', $supplierId)->where('is_bill_address', 1)->first();
             $addresses['other_addresses'] = Address::where('ref_object_key', Address::$ref_supplier_key)->where('ref_id', $supplierId)->where('is_bill_address', 0)->where('is_ship_address', 0)->get();
@@ -83,14 +83,14 @@ class SupplierController extends Controller
             } else {
                 return $this->success($addresses);
             }
-     }
+        }
     }
     //get contacts by id
     public function getContacts($uuid)
     {
-        $supplier=Supplier::Uuid($uuid)->first();
-            if($supplier){
-                $supplierId= $supplier->id;
+        $supplier = Supplier::Uuid($uuid)->first();
+        if ($supplier) {
+            $supplierId = $supplier->id;
             //return $supplier_id;
             $contacts['primary_contact'] = Contact::where('ref_object_key', Address::$ref_supplier_key)->where('ref_id', $supplierId)->where('is_primary_contact', 1)->first();
             $contacts['other_contacts'] = Contact::where('ref_object_key', Address::$ref_supplier_key)->where('ref_id', $supplierId)->where('is_primary_contact', 0)->get();
@@ -102,9 +102,9 @@ class SupplierController extends Controller
             } else {
                 return $this->success($contacts);
             }
-        }else{
+        } else {
             return $this->error('Data Not Found', 404);
-         }
+        }
     }
     //create supplier
     public function create(SupplierRequest $request)
@@ -129,7 +129,7 @@ class SupplierController extends Controller
         if ($supplier) {
             DB::beginTransaction();
             try {
-                $supplier=$this->supplierService->update($request, $supplier);
+                $supplier = $this->supplierService->update($request, $supplier);
                 DB::commit();
                 return $this->success(new SupplierResource($supplier), 200);
             } catch (\Exception $e) {
@@ -149,7 +149,7 @@ class SupplierController extends Controller
         try {
 
             // $supplier = supplier::create($supplierData);
-            $supplier=$this->supplierService->store($request);
+            $supplier = $this->supplierService->store($request);
             $supplier_id = $supplier->id;
 
             //store primary address
@@ -158,9 +158,9 @@ class SupplierController extends Controller
                 if ($request->has('primary_contact')) {
                     if (!empty($request['primary_contact'])) {
                         $primaryContactData = $request['primary_contact'];
-                        $primaryContactData['ref_object_key'] =Address::$ref_supplier_key;
-                        $primaryContactData['ref_id'] =$supplier_id;
-                        $primaryContactData['is_primary_contact'] =1;
+                        $primaryContactData['ref_object_key'] = Address::$ref_supplier_key;
+                        $primaryContactData['ref_id'] = $supplier_id;
+                        $primaryContactData['is_primary_contact'] = 1;
                         $primary_contact = $this->contactService->store($primaryContactData);
                         $return_data['primary_contact'] = $primary_contact;
                     }
@@ -171,8 +171,8 @@ class SupplierController extends Controller
                     if (count($request['other_contact']) > 0) {
                         foreach ($request['other_contact'] as $key => $item) {
                             $otherContactData = $item;
-                            $otherContactData['ref_object_key'] =Address::$ref_supplier_key;
-                            $otherContactData['ref_id'] =$supplier_id;
+                            $otherContactData['ref_object_key'] = Address::$ref_supplier_key;
+                            $otherContactData['ref_id'] = $supplier_id;
 
                             // $other_contact = new Contact();
                             $other_contact = $this->contactService->store($otherContactData);
@@ -205,7 +205,7 @@ class SupplierController extends Controller
                     ];
 
                     //$address = new Address();
-                    
+
                     $address['bill'] = $this->addressService->store($address_data['bill']);
 
                     $return_data['bill_address'] = $address['bill'];
@@ -268,7 +268,7 @@ class SupplierController extends Controller
             $supplier->destroy($uuid);
             return $this->success(null, 200);
         } else {
-            return $this->error('Data Not Found', 404 );
+            return $this->error('Data Not Found', 404);
         };
     }
 }

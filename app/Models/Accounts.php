@@ -28,7 +28,7 @@ class Accounts extends Model
     }
 
     protected $fillable = [
-        'uuid', 'business_type_id', 'account_number', 'account_uri', 'company_name', 'slug', 'compnay_logo', 'module_name', 'dashboard_blocks', 'language', 'ip_address_access', 'domain', 'host', 'database_name', 'database_user', 'database_password', 'account_super_admin', 'user_id', 'created_by', 'modified_by'
+        'uuid', 'account_number', 'account_uri', 'company_name', 'slug', 'compnay_logo', 'module_name', 'dashboard_blocks', 'language', 'ip_address_access', 'domain', 'host', 'database_name', 'database_user', 'database_password', 'account_super_admin', 'user_id', 'created_by', 'modified_by'
     ];
 
     public static $rules = [
@@ -47,6 +47,10 @@ class Accounts extends Model
 
     public function user()
     {
-        $this->belongsTo(User::class, 'user_id', 'id');
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+    public function businessTypes()
+    {
+        return $this->belongsToMany(BusinessType::class)->distinct();
     }
 }
