@@ -15,6 +15,7 @@ use App\Http\Controllers\Api\V1\PurchaseController;
 use App\Http\Controllers\Api\V1\PurchaseItemController;
 use App\Http\Controllers\Api\V1\SaleController;
 use App\Http\Controllers\Api\V1\SupplierController;
+use App\Http\Controllers\Api\V1\TestimonialController;
 use App\Http\Controllers\Api\V1\UserController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
@@ -133,6 +134,7 @@ Route::POST('/register', [RegistrationController::class, 'register'])->name('reg
 
 Route::GET('v1/businesstypes', [BusinessTypeController::class, 'index'])->name('businesstypes.index');
 Route::GET('v1/countries', [CountryController::class, 'index'])->name('countries.index');
+Route::GET('v1/testimonials', [TestimonialController::class, 'index'])->name('testimonials.index');
 
 
 Route::get('/email/verify/{id}/{hash}', [VerifyEmailController::class, '__invoke'])

@@ -47,7 +47,8 @@ class RegistrationRequest extends FormRequest
                     ->symbols()
                     ->uncompromised()
             ],
-            'privacy_aggrement' => ['required', 'integer', 'in:1']
+            'privacy_aggrement' => ['required', 'integer', 'in:1'],
+            'g-recaptcha-response' => ['required', 'recaptcha'],
         ];
     }
 
@@ -59,5 +60,11 @@ class RegistrationRequest extends FormRequest
             $this->error($validator->errors(), 422)
 
         );
+    }
+    public function messages()
+    {
+        return [
+            'g-recaptcha-response' => 'invalid recaptcha'
+        ];
     }
 }
