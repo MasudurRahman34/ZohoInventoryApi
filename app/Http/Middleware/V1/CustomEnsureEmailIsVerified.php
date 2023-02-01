@@ -39,15 +39,16 @@ class CustomEnsureEmailIsVerified
      */
     public function handle($request, Closure $next, $redirectToRoute = null)
     {
-        if (! $request->user() ||
+        if (
+            !$request->user() ||
             ($request->user() instanceof MustVerifyEmail &&
-            ! $request->user()->hasVerifiedEmail())) {
-            if($request->expectsJson()){
+                !$request->user()->hasVerifiedEmail())
+        ) {
+            if ($request->expectsJson()) {
                 // return $this->error('Your email address is not verified . !!');
-                return $this->error('Your email address is not verified !',403, ['link'=>'resend verified link here']);  
-                
+                return $this->error('Your email address is not verified !', 403, ['link' => 'resend verified link here']);
             }
-                    
+
             Redirect::guest(URL::route($redirectToRoute ?: 'verification.notice'));
         }
 

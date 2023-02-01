@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\V1\AccountController;
 use App\Http\Controllers\Api\V1\AddressController;
+use App\Http\Controllers\Api\V1\Auth\EmailVerificationNotificationController;
 use App\Http\Controllers\Api\V1\Auth\LoginController;
 use App\Http\Controllers\Api\V1\Auth\RegistrationController;
 use App\Http\Controllers\Api\V1\Auth\VerifyEmailController;
@@ -139,8 +140,12 @@ Route::GET('v1/testimonials', [TestimonialController::class, 'index'])->name('te
 
 Route::get('/email/verify/{id}/{hash}', [VerifyEmailController::class, '__invoke'])
 
-    ->middleware(['auth:api'])
+    ->middleware(['auth:api', 'signed', 'throttle:6,1'])
     ->name('verification.verify');
+
+Route::post('email/verification-notification', [EmailVerificationNotificationController::class, 'store'])
+    ->middleware(['auth:api', 'signed', 'throttle:6,1'])
+    ->name('verification.send');
 
 
 

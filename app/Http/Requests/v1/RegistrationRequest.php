@@ -48,7 +48,7 @@ class RegistrationRequest extends FormRequest
                     ->uncompromised()
             ],
             'privacy_aggrement' => ['required', 'integer', 'in:1'],
-            'g-recaptcha-response' => ['required', 'recaptcha'],
+            // 'g-recaptcha-response' => ['required', 'recaptcha'],
         ];
     }
 
