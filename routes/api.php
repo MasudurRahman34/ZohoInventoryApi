@@ -4,6 +4,8 @@ use App\Http\Controllers\Api\V1\AccountController;
 use App\Http\Controllers\Api\V1\AddressController;
 use App\Http\Controllers\Api\V1\Auth\EmailVerificationNotificationController;
 use App\Http\Controllers\Api\V1\Auth\LoginController;
+use App\Http\Controllers\Api\V1\Auth\NewPasswordController;
+use App\Http\Controllers\Api\V1\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Api\V1\Auth\RegistrationController;
 use App\Http\Controllers\Api\V1\Auth\VerifyEmailController;
 use App\Http\Controllers\Api\V1\BusinessTypeController;
@@ -130,14 +132,31 @@ Route::GET('businesstypes', [BusinessTypeController::class, 'index'])->name('bus
 
 
 //open api 
-Route::POST('/login', [LoginController::class, 'login'])->name('login.api');
+Route::POST('v1/login', [LoginController::class, 'login'])->name('login.api');
 Route::POST('/register', [RegistrationController::class, 'register'])->name('register.api');
 
 Route::GET('v1/businesstypes', [BusinessTypeController::class, 'index'])->name('businesstypes.index');
 Route::GET('v1/countries', [CountryController::class, 'index'])->name('countries.index');
 Route::GET('v1/testimonials', [TestimonialController::class, 'index'])->name('testimonials.index');
 
+Route::post('v1/forgot-password', [PasswordResetLinkController::class, 'store'])
+    ->name('password.email');
 
+Route::get('reset-password/{token}', [NewPasswordController::class, 'create'])
+    ->name('password.reset');
+
+Route::post('v1/reset-password', [NewPasswordController::class, 'store'])
+    ->name('password.store');
+
+//end open api
+
+
+// verification
+//verify before login
+// Route::get('/email/verify/{id}/{hash}', [VerifyEmailController::class, 'verifyBeforeLogin'])
+//     ->name('verification.verify');
+
+// });
 Route::get('/email/verify/{id}/{hash}', [VerifyEmailController::class, '__invoke'])
 
     ->middleware(['auth:api', 'signed', 'throttle:6,1'])
@@ -147,10 +166,4 @@ Route::post('email/verification-notification', [EmailVerificationNotificationCon
     ->middleware(['auth:api', 'signed', 'throttle:6,1'])
     ->name('verification.send');
 
-
-
-//verify before login
-// Route::get('/email/verify/{id}/{hash}', [VerifyEmailController::class, 'verifyBeforeLogin'])
-//     ->name('verification.verify');
-
-// });
+    //end verification
