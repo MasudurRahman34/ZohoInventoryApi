@@ -148,6 +148,7 @@ Route::get('reset-password/{token}', [NewPasswordController::class, 'create'])
 Route::post('v1/reset-password', [NewPasswordController::class, 'store'])
     ->name('password.store');
 
+
 //end open api
 
 

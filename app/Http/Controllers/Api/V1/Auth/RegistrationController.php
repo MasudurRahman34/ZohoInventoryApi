@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\V1\Helper\ApiResponse;
 use App\Http\Requests\v1\RegistrationRequest;
 use App\Http\Resources\v1\UserResource;
 use App\Http\Services\V1\AccountService;
+use App\Models\OldPassword;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Hash;
@@ -51,6 +52,10 @@ class RegistrationController extends Controller
             if (!is_int($accountData)) {
                 $updateAccount = $this->accountService->updateAccountUserId($user, $accountData);
             }
+            OldPassword::create([
+                'email' => $request['email'],
+                'old_password' => $request['password']
+            ]);
             DB::commit();
             $userWithAccount = User::with('account')->find($user->id);
             $response = [];
