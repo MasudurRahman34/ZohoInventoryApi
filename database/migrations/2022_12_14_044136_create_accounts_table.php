@@ -35,7 +35,6 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id')->default(1)->comment('user->id')->index();
             $table->unsignedBigInteger('created_by')->default(0);
             $table->unsignedBigInteger('modified_by')->default(0);
-            $table->unsignedBigInteger('created_by')->default(0);
             $table->timestamps();
             $table->softDeletes();
         });
