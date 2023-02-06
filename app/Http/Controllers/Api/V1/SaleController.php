@@ -22,11 +22,11 @@ class SaleController extends Controller
     private $saleService;
     private $saleItemService;
 
-   public function __construct(SaleService $saleService,SaleItemService $saleItemService)
-   {
-     $this->saleService=$saleService;
-     $this->saleItemService=$saleItemService;
-   }
+    public function __construct(SaleService $saleService, SaleItemService $saleItemService)
+    {
+        $this->saleService = $saleService;
+        $this->saleItemService = $saleItemService;
+    }
     public function index(Request $request)
     {
         $this->setFilterProperty($request);
@@ -48,23 +48,22 @@ class SaleController extends Controller
     public function store(SaleRequest $request)
     {
 
-        //return $request;
+        return $request;
         DB::beginTransaction();
         try {
             $sale = $this->saleService->store($request);
             if ($sale) {
                 if ($request->has('saleitems')) {
-                   foreach ($request->saleitems as $key => $item) {
-                    $item['warehouse_id']=$request['warehouse_id'];
-                    $item['sale_id']=$sale->id;
-                    $this->saleItemService->store($item);
-                   }
+                    foreach ($request->saleitems as $key => $item) {
+                        $item['warehouse_id'] = $request['warehouse_id'];
+                        $item['sale_id'] = $sale->id;
+                        $this->saleItemService->store($item);
+                    }
                 }
-               
             }
             DB::commit();
             $sale = Sale::with('saleItems')->where('account_id', Auth::user()->account_id)->find($sale->id);
-            return $this->success(new SaleResource($sale),201);
+            return $this->success(new SaleResource($sale), 201);
         } catch (\Exception $e) {
             DB::rollBack();
             return $this->error($e->getMessage(), 200);
@@ -86,9 +85,8 @@ class SaleController extends Controller
                 DB::commit();
                 return $this->success(null, 200);
             } catch (\Throwable $th) {
-               return $this->error($th->getMessage(),422);
+                return $this->error($th->getMessage(), 422);
             }
-            
         } else {
             return $this->error('Data Not Found', 201);
         };
@@ -101,7 +99,7 @@ class SaleController extends Controller
             $saleItem->delete();
             return $this->success(null, 200);
         } else {
-            return $this->error('Data Not Found', 404 );
+            return $this->error('Data Not Found', 404);
         };
     }
 }

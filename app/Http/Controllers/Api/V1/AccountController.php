@@ -15,7 +15,10 @@ use App\Http\Requests\v1\AccountBusinessTypeRequest;
 use App\Http\Requests\v1\AccountRequest;
 use App\Http\Requests\v1\BusinessTypeRequest;
 use App\Http\Services\V1\AccountService;
+use App\Models\AccountBusinessType;
+use App\Models\BusinessType;
 use App\Models\User;
+use Illuminate\Validation\ValidationException;
 use PhpParser\Node\Stmt\TryCatch;
 
 class AccountController extends Controller
@@ -111,6 +114,15 @@ class AccountController extends Controller
         $account = Accounts::with('businessTypes')->where('user_id', Auth::user()->id)->where('uuid', $accountUuid)->first();
 
         if ($account) {
+            foreach ($request['business_type_id'] as $busessTypeId) {
+                $hasAccountbusinessType = AccountBusinessType::where('business_type_id', $busessTypeId)->where('accounts_id', $account->id)->first();
+                if ($hasAccountbusinessType) {
+                    return $this->error([
+                        'accountBusinessType' => ['Account Business Type Already Exist']
+                    ], 422);
+                }
+            }
+
             try {
                 $newAccountBusinessType = $this->accountService->storeAccountBusinessType($request['business_type_id'], $account);
                 DB::commit();

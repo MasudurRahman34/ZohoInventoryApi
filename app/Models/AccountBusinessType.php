@@ -11,7 +11,7 @@ class AccountBusinessType extends Model
 {
 
     use HasFactory, SoftDeletes;
-    protected $table = "account_business_type";
+    protected $table = "accounts_business_type";
     protected $dates = [
         'creadted_at',
         'updated_at',

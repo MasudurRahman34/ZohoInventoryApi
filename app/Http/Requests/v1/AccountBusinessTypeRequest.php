@@ -33,6 +33,7 @@ class AccountBusinessTypeRequest extends FormRequest
             'business_type_id.*' => ['exists:business_types,id'],
         ];
     }
+
     public function failedValidation(Validator $validator)
     {
 
