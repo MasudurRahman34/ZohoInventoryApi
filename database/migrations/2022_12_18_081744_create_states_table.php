@@ -16,11 +16,12 @@ return new class extends Migration
     {
         Schema::create('states', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger("country_id")->index();
-            $table->string("state_name",100)->index();
-            $table->string("state_slug",150)->default(NULL)->nullable();
+            $table->char("country_iso2")->index();
+            $table->char("country_iso3")->index();
+            $table->string("state_name", 100)->index();
+            $table->string("state_slug", 150)->default(NULL)->nullable();
             $table->tinyInteger("status")->default(0)->nullable();
-            
+
             /* Common fields for all table*/
             $table->integer("sort")->default(0)->nullable();
             $table->unsignedBigInteger('account_id')->default(1)->index();

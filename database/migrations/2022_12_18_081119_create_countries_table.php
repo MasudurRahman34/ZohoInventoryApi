@@ -15,9 +15,12 @@ return new class extends Migration
     {
         Schema::create('countries', function (Blueprint $table) {
             $table->id();
-            $table->char('country_code',4)->default(NULL)->nullable();
-            $table->string('country_name',100)->index();
-            $table->string('currency',100)->nullable()->default(NULL);
+            $table->string('country_name', 100)->index();
+            $table->string('country_slug', 100)->default(NULL)->nullable();
+            $table->char('iso2', 2)->default(NULL)->nullable();
+            $table->char('iso3', 3)->default(NULL)->nullable();
+            $table->char('calling_code', 4)->default(NULL)->nullable();
+            $table->string('currency', 100)->nullable()->default(NULL);
             $table->integer('sort')->default(0)->nullable();
             $table->tinyInteger('status')->default(0);
             $table->unsignedBigInteger('account_id')->default(1)->index();
@@ -25,7 +28,6 @@ return new class extends Migration
             $table->unsignedBigInteger('modified_by')->default(0);
             $table->timestamps();
             $table->softDeletes();
-           
         });
     }
 
