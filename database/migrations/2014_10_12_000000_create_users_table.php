@@ -31,7 +31,7 @@ return new class extends Migration
             $table->string('language', 100)->nullable()->default(NULL);
             $table->string('interests')->nullable()->default(NULL);
             $table->string('occupation', 50)->nullable()->default(NULL);
-            $table->string('about')->nullable()->default(NULL);
+            $table->text('about')->nullable()->default(NULL);
             $table->integer('country')->nullable()->default(NULL);
             $table->tinyInteger('notify_new_user')->nullable()->comment('0 = New User Notification sent; 1 = New User Notification will sent');
             $table->rememberToken();

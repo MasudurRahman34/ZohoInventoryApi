@@ -63,7 +63,7 @@ class PurchaseController extends Controller
 
     public function store(PurchaseRequest $request)
     {
-        return "working";
+
         $request = $this->calculateProductPriceService->purchasePrice($request->all());
         //return $request;
         DB::beginTransaction();

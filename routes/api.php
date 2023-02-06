@@ -55,7 +55,7 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
 
         //user
         //Route::POST('user/create', [UserController::class,'updateOrCreate'])->name('user.create');
-        Route::PUT('user/{uuid}', [UserController::class, 'update'])->name('user.update');
+        Route::PUT('users/{uuid}', [UserController::class, 'update'])->name('user.update');
         Route::GET('users', [UserController::class, 'users'])->name('users');
         Route::GET('user/{uuid}', [UserController::class, 'user'])->name('user');
 
