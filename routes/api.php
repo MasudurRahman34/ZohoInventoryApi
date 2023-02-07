@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\V1\CountryController;
 use App\Http\Controllers\Api\V1\CustomerController;
 use App\Http\Controllers\Api\V1\GlobalAddressController;
 use App\Http\Controllers\Api\V1\InventoryAdjustmentController;
+use App\Http\Controllers\Api\V1\PlanFeaturePermissionController;
 use App\Http\Controllers\Api\V1\PurchaseController;
 use App\Http\Controllers\Api\V1\PurchaseItemController;
 use App\Http\Controllers\Api\V1\SaleController;
@@ -125,6 +126,8 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
 });
 
 Route::GET('businesstypes', [BusinessTypeController::class, 'index'])->name('businesstypes.index');
+Route::GET('v1/plansfeatures', [PlanFeaturePermissionController::class, 'index'])->name('plansfeatures.index');
+Route::GET('v1/plans', [PlanFeaturePermissionController::class, 'plans'])->name('plansfeatures.plans');
 
 // Auth::routes(['verify'=>true]);
 //public route
@@ -164,7 +167,7 @@ Route::get('/email/verify/{id}/{hash}', [VerifyEmailController::class, '__invoke
     ->name('verification.verify');
 
 Route::post('email/verification-notification', [EmailVerificationNotificationController::class, 'store'])
-    ->middleware(['auth:api', 'signed', 'throttle:6,1'])
+    ->middleware(['auth:api', 'throttle:6,1'])
     ->name('verification.send');
 
     //end verification

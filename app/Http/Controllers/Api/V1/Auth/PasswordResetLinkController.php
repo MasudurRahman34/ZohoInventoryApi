@@ -5,10 +5,8 @@ namespace App\Http\Controllers\Api\V1\Auth;
 use App\Http\Controllers\Api\V1\Helper\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\v1\PasswordResetLinkRequest;
-use App\Jobs\v1\QueuedSendPasswordResetLink;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Password;
-use Illuminate\Validation\ValidationException;
+use App\Jobs\V1\QueuedSendPasswordResetLink;
+
 
 
 class PasswordResetLinkController extends Controller
