@@ -3,6 +3,7 @@
 namespace App\Http;
 
 use App\Http\Middleware\V1\CustomEnsureEmailIsVerified;
+use App\Http\Middleware\V1\guestApi;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
@@ -67,6 +68,6 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         // 'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'verified' => CustomEnsureEmailIsVerified::class,
-        // 'cors' => \App\Http\Middleware\Cors::class,
+        'guestApi' => guestApi::class,
     ];
 }

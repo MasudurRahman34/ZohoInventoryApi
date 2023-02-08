@@ -17,9 +17,9 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('plan_id');
             $table->unsignedBigInteger('feature_id');
-            $table->char('access')->default('yes')->comment('Yes, No, Limit');
-            $table->integer('access_value')->default(0);
-            $table->string('plan_feature_type')->nullable();
+            $table->char('access', 50)->default('yes')->nullable()->comment('Yes, No, Limit -if Access Value Present then Limit otherwise Yes or No');
+            $table->string('access_value')->default(NULL)->nullable()->comment("Limit then access value otherwise 0 or null");
+            // $table->string('unique_key')->default(NULL)->nullable();
             $table->unsignedBigInteger('account_id')->default(1);
             $table->unsignedBigInteger('created_by')->default(0);
             $table->unsignedBigInteger('modified_by')->default(0);

@@ -125,9 +125,12 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
     });
 });
 
-Route::GET('businesstypes', [BusinessTypeController::class, 'index'])->name('businesstypes.index');
-Route::GET('v1/plansfeatures', [PlanFeaturePermissionController::class, 'index'])->name('plansfeatures.index');
-Route::GET('v1/plans', [PlanFeaturePermissionController::class, 'plans'])->name('plansfeatures.plans');
+Route::GET('v1/businesstypes', [BusinessTypeController::class, 'index'])->name('businesstypes.index');
+Route::GET('v1/features/plan', [PlanFeaturePermissionController::class, 'featurePlan'])->name('feature.plan');
+Route::GET('v1/plans/feature', [PlanFeaturePermissionController::class, 'planFeature'])->name('plan.feature');
+Route::GET('v1/plans', [PlanFeaturePermissionController::class, 'plans'])->name('plans');
+Route::GET('v1/prices/plan', [PlanFeaturePermissionController::class, 'pricePlan'])->name('price.plan');
+Route::GET('v1/plans/pricetype', [PlanFeaturePermissionController::class, 'planPrice'])->name('plan.price');
 
 // Auth::routes(['verify'=>true]);
 //public route
@@ -135,21 +138,21 @@ Route::GET('v1/plans', [PlanFeaturePermissionController::class, 'plans'])->name(
 
 
 //open api 
-Route::POST('v1/login', [LoginController::class, 'login'])->name('login.api');
-Route::POST('/register', [RegistrationController::class, 'register'])->name('register.api');
+Route::POST('login', [LoginController::class, 'login'])->name('login.api');
+Route::POST('register', [RegistrationController::class, 'register'])->name('register.api');
 
 Route::GET('v1/businesstypes', [BusinessTypeController::class, 'index'])->name('businesstypes.index');
 Route::GET('v1/countries', [CountryController::class, 'index'])->name('countries.index');
 Route::GET('v1/testimonials', [TestimonialController::class, 'index'])->name('testimonials.index');
 
 Route::post('v1/forgot-password', [PasswordResetLinkController::class, 'store'])
-    ->name('password.email');
+    ->name('password.email')->middleware(['guestApi']);
 
-Route::get('reset-password/{token}', [NewPasswordController::class, 'create'])
-    ->name('password.reset');
+Route::get('v1/reset-password/{token}', [NewPasswordController::class, 'create'])
+    ->name('password.reset')->middleware(['guestApi']);
 
 Route::post('v1/reset-password', [NewPasswordController::class, 'store'])
-    ->name('password.store');
+    ->name('password.store')->middleware(['guestApi']);
 
 
 //end open api
