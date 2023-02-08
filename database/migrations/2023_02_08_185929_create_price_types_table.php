@@ -13,12 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('features', function (Blueprint $table) {
+        Schema::create('price_types', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('parent_id')->nullable();
-            $table->tinyInteger('status')->default(1)->comment('0=inactive, 1=active');
-            $table->string('unique_key')->default(NULL)->nullable()->index('unique_key');
+            $table->string('price_type_name');
+            $table->text('description')->nullable()->default(NULL);
+            $table->tinyInteger('status');
             $table->unsignedBigInteger('account_id')->default(1);
             $table->unsignedBigInteger('created_by')->default(0);
             $table->unsignedBigInteger('modified_by')->default(0);
@@ -34,6 +33,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('features');
+        Schema::dropIfExists('price_types');
     }
 };

@@ -13,17 +13,20 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('features', function (Blueprint $table) {
+        Schema::create('plan_prices', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('parent_id')->nullable();
-            $table->tinyInteger('status')->default(1)->comment('0=inactive, 1=active');
-            $table->string('unique_key')->default(NULL)->nullable()->index('unique_key');
+            $table->unsignedBigInteger('plan_id');
+            $table->unsignedBigInteger('price_types_id');
+            $table->float('amount')->nullable()->default(NULL);
+            $table->string('offer_name')->nullable()->default(NULL);
+            $table->float('discount')->nullable()->default(NULL);
+            $table->string('currency')->nullable()->default(NULL)->commnet('BTD, URO');
+            $table->text('description')->nullable()->default(NULL);
+
             $table->unsignedBigInteger('account_id')->default(1);
             $table->unsignedBigInteger('created_by')->default(0);
             $table->unsignedBigInteger('modified_by')->default(0);
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 
@@ -34,6 +37,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('features');
+        Schema::dropIfExists('plan_prices');
     }
 };

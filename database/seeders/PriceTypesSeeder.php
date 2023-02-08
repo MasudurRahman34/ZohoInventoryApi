@@ -2,12 +2,12 @@
 
 namespace Database\Seeders;
 
-use App\Models\Plan;
+use App\Models\PriceType;
 use Carbon\Carbon;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class PlanSeeder extends Seeder
+class PriceTypesSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -16,40 +16,31 @@ class PlanSeeder extends Seeder
      */
     public function run()
     {
-        $plans =
+        $PriceTypes =
             array(
                 array(
-                    'plan_name' => 'Free',
-                    'business_type' => 'Personal',
+                    'price_type_name' => 'Monthly',
                     'status' => '1',
                     'created_at' => Carbon::now(),
                     'updated_at' => NULL
                 ),
                 array(
-                    'plan_name' => 'Standard',
-                    'business_type' => 'Small Business',
+                    'price_type_name' => 'Yearly',
                     'status' => '1',
                     'created_at' => Carbon::now(),
                     'updated_at' => NULL
                 ),
                 array(
-                    'plan_name' => 'Professional',
-                    'business_type' => 'Medium Business',
+                    'price_type_name' => 'Half Yearly',
                     'status' => '1',
                     'created_at' => Carbon::now(),
                     'updated_at' => NULL
                 ),
-                array(
-                    'plan_name' => 'Premium',
-                    'business_type' => 'Established Firms',
-                    'status' => '1',
-                    'created_at' => Carbon::now(),
-                    'updated_at' => NULL
-                ),
+
             );
 
 
-        Plan::truncate();
-        Plan::insert($plans);
+        PriceType::truncate();
+        PriceType::insert($PriceTypes);
     }
 }
