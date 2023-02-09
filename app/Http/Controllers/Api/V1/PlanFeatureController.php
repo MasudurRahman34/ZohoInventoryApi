@@ -10,9 +10,9 @@ use App\Models\Feature;
 use App\Models\Plan;
 use App\Models\PriceType;
 use Illuminate\Http\Request;
-use Symfony\Component\CssSelector\XPath\Extension\FunctionExtension;
 
-class PlanFeaturePermissionController extends Controller
+
+class PlanFeatureController extends Controller
 {
     use ApiResponse;
     public function featurePlan()

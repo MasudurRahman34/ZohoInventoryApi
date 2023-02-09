@@ -14,13 +14,14 @@ use App\Http\Controllers\Api\V1\CountryController;
 use App\Http\Controllers\Api\V1\CustomerController;
 use App\Http\Controllers\Api\V1\GlobalAddressController;
 use App\Http\Controllers\Api\V1\InventoryAdjustmentController;
-use App\Http\Controllers\Api\V1\PlanFeaturePermissionController;
+use App\Http\Controllers\Api\V1\InvoiceController;
 use App\Http\Controllers\Api\V1\PurchaseController;
 use App\Http\Controllers\Api\V1\PurchaseItemController;
 use App\Http\Controllers\Api\V1\SaleController;
 use App\Http\Controllers\Api\V1\SupplierController;
 use App\Http\Controllers\Api\V1\TestimonialController;
 use App\Http\Controllers\Api\V1\UserController;
+use App\Http\Controllers\Api\V1\UserPlanFeatureController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -52,7 +53,7 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
         Route::GET('accounts', [AccountController::class, 'index'])->name('accounts.index');
         Route::PUT('accounts/{uuid}', [AccountController::class, 'update'])->name('accounts.update');
         Route::PUT('accounts/{uuid}/user', [AccountController::class, 'updateUserAccount'])->name('user.accounts.update');
-        Route::POST('accounts/{uuid}/businesstype', [AccountController::class, 'storeAccountBusinessType'])->name('accounts.businesstype');
+        Route::PUT('accounts/{uuid}/businesstype', [AccountController::class, 'storeAccountBusinessType'])->name('accounts.businesstype');
 
         //user
         //Route::POST('user/create', [UserController::class,'updateOrCreate'])->name('user.create');
@@ -122,15 +123,18 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
         Route::PUT('businesstypes/{businesstype}', [BusinessTypeController::class, 'update'])->name('businesstypes.update');
         Route::GET('businesstypes/{businesstype}', [BusinessTypeController::class, 'show'])->name('businesstypes.show');
         Route::DELETE('businesstypes/{businesstype}', [BusinessTypeController::class, 'delete'])->name('businesstypes.delete');
+
+        //account plan feature
+        Route::POST('user/plan/features', [UserPlanFeatureController::class, 'store'])->name('businesstypes.store');
     });
 });
 
 Route::GET('v1/businesstypes', [BusinessTypeController::class, 'index'])->name('businesstypes.index');
-Route::GET('v1/features/plan', [PlanFeaturePermissionController::class, 'featurePlan'])->name('feature.plan');
-Route::GET('v1/plans/feature', [PlanFeaturePermissionController::class, 'planFeature'])->name('plan.feature');
-Route::GET('v1/plans', [PlanFeaturePermissionController::class, 'plans'])->name('plans');
-Route::GET('v1/prices/plan', [PlanFeaturePermissionController::class, 'pricePlan'])->name('price.plan');
-Route::GET('v1/plans/pricetype', [PlanFeaturePermissionController::class, 'planPrice'])->name('plan.price');
+Route::GET('v1/features/plan', [PlanFeatureController::class, 'featurePlan'])->name('feature.plan');
+Route::GET('v1/plans/feature', [PlanFeatureController::class, 'planFeature'])->name('plan.feature');
+Route::GET('v1/plans', [PlanFeatureController::class, 'plans'])->name('plans');
+Route::GET('v1/prices/plan', [PlanFeatureController::class, 'pricePlan'])->name('price.plan');
+Route::GET('v1/plans/pricetype', [PlanFeatureController::class, 'planPrice'])->name('plan.price');
 
 // Auth::routes(['verify'=>true]);
 //public route
@@ -138,12 +142,14 @@ Route::GET('v1/plans/pricetype', [PlanFeaturePermissionController::class, 'planP
 
 
 //open api 
-Route::POST('login', [LoginController::class, 'login'])->name('login.api');
-Route::POST('register', [RegistrationController::class, 'register'])->name('register.api');
+Route::POST('login', [LoginController::class, 'login'])->name('login.api')->middleware(['guestApi']);
+Route::POST('register', [RegistrationController::class, 'register'])->name('register.api')->middleware(['guestApi']);
 
 Route::GET('v1/businesstypes', [BusinessTypeController::class, 'index'])->name('businesstypes.index');
 Route::GET('v1/countries', [CountryController::class, 'index'])->name('countries.index');
 Route::GET('v1/testimonials', [TestimonialController::class, 'index'])->name('testimonials.index');
+
+Route::POST('v1/invoice/public', [InvoiceController::class, 'public'])->name('invoice.public');
 
 Route::post('v1/forgot-password', [PasswordResetLinkController::class, 'store'])
     ->name('password.email')->middleware(['guestApi']);
@@ -153,6 +159,7 @@ Route::get('v1/reset-password/{token}', [NewPasswordController::class, 'create']
 
 Route::post('v1/reset-password', [NewPasswordController::class, 'store'])
     ->name('password.store')->middleware(['guestApi']);
+
 
 
 //end open api

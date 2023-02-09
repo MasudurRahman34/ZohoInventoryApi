@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('plan_feature_permissions', function (Blueprint $table) {
+        Schema::create('plan_features', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('plan_id');
             $table->unsignedBigInteger('feature_id');

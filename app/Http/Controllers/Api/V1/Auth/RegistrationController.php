@@ -4,19 +4,16 @@ namespace App\Http\Controllers\Api\V1\Auth;
 
 use App\Http\Controllers\Api\V1\Helper\ApiFilter;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Api\V1\Helper\ApiResponse;
 use App\Http\Requests\v1\RegistrationRequest;
-use App\Http\Resources\v1\UserResource;
 use App\Http\Services\V1\AccountService;
 use App\Models\OldPassword;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
-use Psy\CodeCleaner\ReturnTypePass;
+
 
 class RegistrationController extends Controller
 {
@@ -60,6 +57,7 @@ class RegistrationController extends Controller
             $userWithAccount = User::with('account')->find($user->id);
             $response = [];
             $response = [
+                'tokenType' => 'Bearer',
                 'token' => $token,
                 'user' => $userWithAccount
             ];

@@ -22,15 +22,20 @@ class LoginController extends Controller
             if (Hash::check($request->password, $user->password)) {
                 $token = $user->createToken('authToken')->accessToken;
 
-                $user['tokenType'] = "Bearer";
-                $user['accessToken'] = $token;
+                // $user['tokenType'] = "Bearer";
+                // $user['accessToken'] = $token;
+                $response = [
+                    'tokenType' => 'Bearer',
+                    'token' => $token,
+                    'user' => $user
+                ];
 
-                return $this->success($user, 200);
+                return $this->success($response, 200);
             } else {
                 return $this->error("Password mismatch", 404);
             }
         } else {
-            return $this->error('user does not exsit', 404);
+            return $this->error('user does notfds exsit', 404);
         }
     }
 

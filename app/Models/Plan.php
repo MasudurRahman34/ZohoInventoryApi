@@ -30,7 +30,7 @@ class Plan extends Model
     ];
     public function features()
     {
-        return $this->belongsToMany(Feature::class, 'plan_feature_permissions', 'plan_id', 'feature_id');
+        return $this->belongsToMany(Feature::class, 'plan_features', 'plan_id', 'feature_id');
     }
 
     public function pricesTypes()

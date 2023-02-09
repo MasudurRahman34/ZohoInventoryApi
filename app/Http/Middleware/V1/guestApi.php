@@ -19,8 +19,8 @@ class guestApi
     {
         if (Auth::guard('api')->check()) {
 
-            $message = ["message" => "Permission Denied"];
-            return response($message, 401);
+            $message = ["message" => "You Are In Login . Permisison denied !"];
+            return response($message, 403);
         } else {
             return $next($request);
             //return response(Auth::user());
