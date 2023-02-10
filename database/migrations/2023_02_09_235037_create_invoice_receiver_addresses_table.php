@@ -17,8 +17,8 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('invoice_id')->comment('invoice table id')->index();
             $table->string('display_name')->default(NULL)->nullable();
-            $table->string('company_name')->comment('company/sender name');
-            $table->string('attension')->default(NULL)->nullable();
+            $table->string('company_name')->comment('company/reciever name');
+            $table->string('attention')->default(NULL)->nullable();
             $table->string('first_name', 100)->default(NULL)->nullable();
             $table->string('last_name', 100)->default(NULL)->nullable();
             $table->string('mobile', 20)->default(NULL)->nullable();
@@ -33,6 +33,7 @@ return new class extends Migration
             $table->unsignedBigInteger('union_id')->nullable()->default(0)->comment('Reference of union');
             $table->unsignedBigInteger('zipcode_id')->nullable()->default(0)->comment('Reference of zipcodes');
             $table->unsignedBigInteger('street_address_id')->nullable()->default(0)->comment('Reference of street_address');
+            $table->string('house')->nullable()->default(NULL)->comment('Reference of street_address');
             $table->text('plain_address')->default(NULL)->nullable();
             $table->json('full_address')->nullable()->default(NULL)->comment('Keep full address as json format, as key/value pair. key is the reference id');
             $table->tinyInteger('status')->default(1)->nullable()->comment('0 = Invalid Address; 1 = Valid Address');

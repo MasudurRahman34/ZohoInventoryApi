@@ -45,6 +45,7 @@ class UserRequest extends FormRequest
             'language' => ['filled', 'alpha', 'between:3,100'],
             'about' => ['filled', 'string'],
             'occupation' => ['filled', 'regex:/^[\pL\s]+$/u'],
+            'is_skip_businesstype_section' => ['filled', 'in:1'],
         ];
     }
     public function failedValidation(Validator $validator)

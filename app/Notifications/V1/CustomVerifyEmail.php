@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Notifications\V1;
+
 use Illuminate\Support\Facades\Config;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -22,7 +23,7 @@ class CustomVerifyEmail extends Notification
     {
         //
     }
-   
+
     /**
      * Get the notification's delivery channels.
      *
@@ -64,11 +65,13 @@ class CustomVerifyEmail extends Notification
 
     protected function verificationUrl($notifiable)
     {
+        $fronendUrl = env('APP_FRONTEND_URL');
         if (static::$createUrlCallback) {
             return call_user_func(static::$createUrlCallback, $notifiable);
         }
 
-        return URL::temporarySignedRoute(
+        // return 
+        $verifyUrl = URL::temporarySignedRoute(
             'verification.verify',
             Carbon::now()->addMinutes(Config::get('auth.verification.expire', 60)),
             [
@@ -76,6 +79,7 @@ class CustomVerifyEmail extends Notification
                 'hash' => sha1($notifiable->getEmailForVerification()),
             ]
         );
+        return $fronendUrl . '?verify_url=' . urlencode($verifyUrl);
     }
 
     public static function createUrlUsing($callback)
@@ -88,7 +92,7 @@ class CustomVerifyEmail extends Notification
         static::$toMailCallback = $callback;
     }
 
-   
+
     public function toArray($notifiable)
     {
         return [

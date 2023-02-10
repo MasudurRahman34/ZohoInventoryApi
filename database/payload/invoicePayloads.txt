@@ -1,0 +1,80 @@
+customer_name:customer name
+order_number[0]:INV-1001
+invoice_date:2022-12-29 
+due_date:2023-12-15
+order_discount:10
+shipping_charge:1
+order_adjustment:15
+total_amount:123
+grand_total_amount:132
+adjustment_text: adjustment_text
+invoice_terms: this is invoice terms
+invoice_type: general invoice
+invoice_currency: BDT
+status:1
+invoiceItems[0][product_id]:1
+invoiceItems[0][product_name]: SMUG Premium T-shirt Fabric soft and comfortable
+invoiceItems[0][warehouse_id]:1
+invoiceItems[0][order_id]:100
+invoiceItems[0][serial_number]:11111
+invoiceItems[0][product_description]:Tshirt Size Chart Size
+invoiceItems[0][order_number]: ord-10000
+invoiceItems[0][product_qty]:1
+invoiceItems[0][unit_price]:100
+invoiceItems[0][product_discount]:20
+invoiceItems[0][tax_name]:govt
+invoiceItems[0][tax_rate]:10
+invoiceItems[0][tax_amount]:10
+invoiceItems[0][whole_price]:100
+invoiceItems[0][subtotal]:90
+invoiceItems[0][is_taxable]:1
+invoiceItems[1][product_id]:2
+invoiceItems[1][product_name]: Stylish A To Z Alphabets Unisex White And Ash Color Tshirts - Tshirt For Men
+invoiceItems[1][serial_number]:22222
+invoiceItems[1][product_description]:Best Quality Sublimation (no glue) Print.
+invoiceItems[1][warehouse_id]:2
+invoiceItems[1][order_id]:200
+invoiceItems[1][order_number]:ord-20000
+invoiceItems[1][product_qty]:2
+invoiceItems[1][unit_price]:200
+invoiceItems[1][product_discount]:20
+invoiceItems[1][tax_name]:govt
+invoiceItems[1][tax_rate]:15
+invoiceItems[1][tax_amount]:30
+invoiceItems[1][whole_price]:200
+invoiceItems[1][subtotal]:210
+invoiceItems[1][is_taxable]:1
+sender[display_name]:display_name
+sender[company_name]:compnay_name
+sender[company_logo]:company_logo
+sender[attention]:attension
+sender[first_name]:first_name
+sender[last_name]:last_name
+sender[mobile]:01750658791
+sender[mobile_country_code]:+88
+sender[email]:mohammadmasud34@gmail.com
+sender[country_id]:1
+sender[state_id]:2
+sender[district_id]:3
+sender[thana_id]:4
+sender[union_id]:5
+sender[zipcode_id]:6
+sender[street_address_id]:7
+sender[house]:1234 khulna
+reciever[display_name]:display_name
+reciever[company_name]:compnay_name
+reciever[company_logo]:company_logo
+reciever[attention]:attension
+reciever[first_name]:first_name
+reciever[last_name]:last_name
+reciever[mobile]:01750658791
+reciever[mobile_country_code]:+88
+reciever[email]:mohammadmasud34@gmail.com
+reciever[country_id]:1
+reciever[state_id]:2
+reciever[district_id]:3
+reciever[thana_id]:4
+reciever[union_id]:5
+reciever[zipcode_id]:6
+reciever[street_address_id]:7
+reciever[house]:1234 khulna

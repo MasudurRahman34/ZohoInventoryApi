@@ -62,7 +62,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'account_id',
         'branch_id',
         'email_verified_at',
-        'is_mobile_verified'
+        'is_mobile_verified',
+        'is_skip_businesstype_section'
     ];
 
     protected $hidden = [
