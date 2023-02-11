@@ -112,6 +112,7 @@ class CalculateProductPriceService
         $request['total_amount'] = $this->total_amount;
         $request['grand_total_amount'] = $this->grand_total_amount;
         $request['total_tax'] = $this->total_tax;
+
         return $request;
     }
 
@@ -119,7 +120,7 @@ class CalculateProductPriceService
     {
         $subtotal = $whole_price = ($item['unit_price'] * $item['product_qty']);
 
-        if ($item['is_taxable'] == 1) {
+        if ($item['is_taxable'] == 1 && $item['tax_rate'] > 0) {
             $tax_amount = $whole_price * ($item['tax_rate'] / 100);
             $subtotal = $whole_price + $tax_amount; //tax applies each product
             $this->tax_amount = $tax_amount;
