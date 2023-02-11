@@ -49,7 +49,7 @@ class UserService
                 'language' => isset($request['language']) ? $request['language'] : $user->language,
                 'about' => isset($request['about']) ? $request['about'] : $user->about,
                 'occupation' => isset($request['occupation']) ? $request['occupation'] : $user->occupation,
-                'is_skip_businesstype_section' => isset($request['is_skip_businesstype_section']) ? $request['is_skip_businesstype_section'] : $user->is_skip_businesstype_section,
+                'signup_business_step' => isset($request['signup_business_step']) ? $request['signup_business_step'] : $user->signup_business_step,
                 'modified_by' => Auth::user()->id,
             ];
         //return $accountData;

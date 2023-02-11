@@ -51,6 +51,7 @@ class InvoiceService
             'total_amount' => isset($request['total_amount']) ? $request['total_amount'] : 0,
             'total_tax' => isset($request['total_amount']) ? $request['total_tax'] : 0,
             'grand_total_amount' => isset($request['grand_total_amount']) ? $request['grand_total_amount'] : 0,
+            'balance' => isset($request['balance']) ? $request['balance'] : 0,
             'due_amount' => isset($request['due_amount']) ? $request['due_amount'] : 0,
             'paid_amount' => isset($request['paid_amount']) ? $request['paid_amount'] : 0,
             // 'recieved_amount' => isset($request['recieved_amount']) ? $request['recieved_amount'] : 0,
@@ -59,6 +60,7 @@ class InvoiceService
 
             'adjustment_text' => isset($request['adjustment_text']) ? $request['adjustment_text'] : NULL,
             'invoice_terms' => isset($request['invoice_terms']) ? $request['invoice_terms'] : NULL,
+            'invoice_description' => isset($request['invoice_description']) ? $request['invoice_description'] : NULL,
 
             'invoice_type' => isset($request['invoice_type']) ? $request['invoice_type'] : NULL,
             'invoice_currency' => isset($request['invoice_currency']) ? $request['invoice_currency'] : NULL,
@@ -112,11 +114,15 @@ class InvoiceService
     public function invoiceAddress($request, $reference, $newInvoice)
     {
 
+
+
         $addressData = [
             'invoice_id' => $newInvoice,
             'attention' => isset($request['attention']) ? $request['attention'] : null,
             'display_name' => isset($request['display_name']) ? $request['display_name'] : null,
             'company_name' => isset($request['company_name']) ? $request['company_name'] : null,
+            'company_info' => isset($request['company_info']) ? $request['company_info'] : null,
+
             'first_name' => isset($request['first_name']) ? $request['first_name'] : null,
             'last_name' => isset($request['last_name']) ? $request['last_name'] : null,
 
@@ -142,6 +148,31 @@ class InvoiceService
 
         $addressData['plain_address'] = $this->addressService->setPlainAddress($addressData['full_address']);
         if ($reference == 'sender') {
+            if (isset($request['company_logo'])) {
+                if (file_exists($request['company_logo'])) {
+
+                    $company_logo = $request['company_logo'];
+                    $fileName = $company_logo->getClientOriginalName();
+                    $uploadTo = base_path('public/uploads/publicInvoice/' . date("Y-m-d"));
+                    $existLink = base_path('public/uploads/publicInvoice/' . date("Y-m-d")) . '/' . $fileName;
+
+                    if (file_exists($existLink)) {
+                        $increment = 0;
+                        list($name, $ext) = explode('.', $existLink);
+                        while (file_exists($existLink)) {
+                            $increment++;
+                            // rename if exsist like example1.jpg, example2.jpg"
+                            $existLink = $name . $increment . '.' . $ext;
+                            $fileName = $name . $increment . '.' . $ext;
+                        }
+                        // return throw new Exception('file exsist');
+                    }
+                    $link =  'public/uploads/publicInvoice/' . date("Y-m-d") . '/' . $fileName;
+                    $company_logo->move($uploadTo, $fileName);
+
+                    $addressData['company_logo'] = env('APP_URL') . '/' . $link;
+                }
+            }
             $newSenderAddress = InvoiceSenderAddress::create($addressData);
         }
         if ($reference == 'reciever') {
@@ -149,6 +180,10 @@ class InvoiceService
         }
 
         return;
+    }
+
+    public function renameFileIfExsist()
+    {
     }
     public function delete()
     {

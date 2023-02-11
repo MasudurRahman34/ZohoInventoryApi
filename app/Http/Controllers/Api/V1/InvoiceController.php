@@ -24,8 +24,6 @@ class InvoiceController extends Controller
     public function createPublicInvoice(Request $request)
     {
         $request = $request->all();
-            // $request = $request['sender'];
-        ;
         $request = $this->calculateProductPriceService->invoicePrice($request);
         try {
             DB::beginTransaction();

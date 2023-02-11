@@ -29,6 +29,6 @@ class InvoiceSenderAddress extends Model
     protected $fillable = [
         'invoice_id', 'attention', 'display_name', 'company_name', 'company_logo', 'first_name', 'last_name', 'mobile', 'mobile_country_code', 'email', 'phone', 'fax',
         'country_id', 'state_id', 'district_id', 'thana_id', 'union_id', 'zipcode_id', 'street_address_id', 'house',
-        'full_address', 'plain_address', 'status', 'created_by', 'modified_by', 'account_id'
+        'full_address', 'plain_address', 'status', 'created_by', 'modified_by', 'account_id', 'company_info'
     ];
 }

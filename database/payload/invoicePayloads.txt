@@ -3,11 +3,14 @@ order_number[0]:INV-1001
 invoice_date:2022-12-29 
 due_date:2023-12-15
 order_discount:10
+balance:0
 shipping_charge:1
 order_adjustment:15
 total_amount:123
 grand_total_amount:132
 adjustment_text: adjustment_text
+invoice_description:invoice_description
+
 invoice_terms: this is invoice terms
 invoice_type: general invoice
 invoice_currency: BDT
@@ -44,8 +47,10 @@ invoiceItems[1][tax_amount]:30
 invoiceItems[1][whole_price]:200
 invoiceItems[1][subtotal]:210
 invoiceItems[1][is_taxable]:1
+
 sender[display_name]:display_name
 sender[company_name]:compnay_name
+sender[company_name]: company info
 sender[company_logo]:company_logo
 sender[attention]:attension
 sender[first_name]:first_name
@@ -61,10 +66,11 @@ sender[union_id]:5
 sender[zipcode_id]:6
 sender[street_address_id]:7
 sender[house]:1234 khulna
+
 reciever[display_name]:display_name
 reciever[company_name]:compnay_name
-reciever[company_logo]:company_logo
-reciever[attention]:attension
+sender[company_name]: company info
+reciever[attention]:attention
 reciever[first_name]:first_name
 reciever[last_name]:last_name
 reciever[mobile]:01750658791

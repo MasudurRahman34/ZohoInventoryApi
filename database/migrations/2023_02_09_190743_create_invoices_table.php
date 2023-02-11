@@ -42,13 +42,15 @@ return new class extends Migration
             $table->float('total_amount')->default(0);
             $table->float('total_tax')->default(0);
             $table->float('grand_total_amount')->default(0);
+            $table->float('balance')->default(0)->nullable();
             $table->float('due_amount')->default(0)->nullable();
             $table->float('paid_amount')->default(0)->nullable();
             $table->float('change_amount')->default(0)->nullable();
             $table->float('last_paid')->default(0)->nullable();
 
             $table->string('adjustment_text')->default(NULL)->nullable();
-            $table->string('invoice_terms')->default(NULL)->nullable();
+            $table->text('invoice_terms')->default(NULL)->nullable();
+            $table->text('invoice_description')->default(NULL)->nullable();
             $table->string('invoice_type')->default(NULL)->nullable();
             $table->string('invoice_currency')->default(NULL)->nullable();
 

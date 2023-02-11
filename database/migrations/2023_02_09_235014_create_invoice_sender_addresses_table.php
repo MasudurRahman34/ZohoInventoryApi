@@ -18,6 +18,7 @@ return new class extends Migration
             $table->unsignedBigInteger('invoice_id')->comment('invoice table id')->index();
             $table->string('display_name')->default(NULL)->nullable();
             $table->string('company_name')->comment('company/sender name');
+            $table->text('company_info')->default(NUll)->nullable()->comment('company/sender info');
             $table->string('company_logo')->default(NULL)->nullable()->comment('company logo');
             $table->string('attention')->default(NULL)->nullable();
             $table->string('first_name', 100)->default(NULL)->nullable();

@@ -35,7 +35,7 @@ class Invoice extends Model
         'order_number', 'invoice_date', 'due_date', 'order_tax',
         'order_tax_amount', 'order_discount', 'discount_type',
         'shipping_charge', 'order_adjustment', 'total_amount',
-        'total_tax',
+        'total_tax', 'invoice_description', 'balance',
         'grand_total_amount', 'due_amount', 'paid_amount', 'change_amount',
         'last_paid', 'adjustment_text', 'invoice_terms', 'invoice_type',
         'invoice_currency', 'status',
