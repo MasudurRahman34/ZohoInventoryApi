@@ -31,8 +31,6 @@ class NewPasswordController extends Controller
 
     public function store(NewPasswordResetRequest $request)
     {
-        Session::forget('old_password_token');
-
         $status = Password::reset(
             $request->only('email', 'password', 'password_confirmation', 'token'),
             function ($user) use ($request) {
@@ -45,20 +43,20 @@ class NewPasswordController extends Controller
             }
         );
 
-        throw ValidationException::withMessages([
-            "message" => [trans($status)],
-        ]);
-
-        OldPassword::create([
-            'email' => $request['email'],
-            'old_password' => Hash::make($request['password'])
-        ]);
-
 
         if ($status == Password::PASSWORD_RESET) {
             // return redirect()->route('login')->with('status', __($status));
-            Session::forget('old_password_token');
+            OldPassword::create([
+                'email' => $request['email'],
+                'old_password' => Hash::make($request['password']),
+                'keep_old_password' => $request['keep_old_password']
+            ]);
+
             return $this->success(null, 200, "Password Has Been Reset, Please Login");
         }
+
+        throw ValidationException::withMessages([
+            "message" => [trans($status)],
+        ]);
     }
 }

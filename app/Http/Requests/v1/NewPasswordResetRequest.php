@@ -32,7 +32,7 @@ class NewPasswordResetRequest extends FormRequest
         return [
             'token' => ['required'],
             'email' => ['required', 'email:rfc,filter,dns', 'max:255', 'exists:users,email'],
-            'old_password_token' => 'present',
+            'keep_old_password' => ['integer', 'in:0,1'],
             'password' => [
                 'required', 'confirmed', Password::min(8)
                     ->letters()
@@ -46,11 +46,10 @@ class NewPasswordResetRequest extends FormRequest
     }
     public function failedValidation(Validator $validator)
     {
-        $old_password_token['old_password_token'] = session()->has('old_password_token') ? session('old_password_token') : null;
 
         throw new HttpResponseException(
 
-            $this->error($validator->errors(), 422, $old_password_token)
+            $this->error($validator->errors(), 422)
 
         );
     }

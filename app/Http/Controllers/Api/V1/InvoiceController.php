@@ -21,7 +21,7 @@ class InvoiceController extends Controller
         $this->invoiceService = $invoiceService;
         $this->calculateProductPriceService = $calculateProductPriceService;
     }
-    public function createPublicInvoice(Request $request)
+    public function createPublicInvoice(publicInvoiceRequest $request)
     {
         $request = $request->all();
         $request = $this->calculateProductPriceService->invoicePrice($request);

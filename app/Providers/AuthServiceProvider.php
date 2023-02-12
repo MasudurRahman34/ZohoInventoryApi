@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Laravel\Passport\Passport;
+use Illuminate\Auth\Notifications\ResetPassword;
 
 // use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
@@ -27,7 +28,9 @@ class AuthServiceProvider extends ServiceProvider
     {
         //return "boot";
         $this->registerPolicies();
-
+        // ResetPassword::createUrlUsing(function ($user, string $token) {
+        //     return 'https://example.com/reset-password?token=' . $token;
+        // });
         // expirartion auth token
         Passport::tokensExpireIn(now()->addDays(15));
         Passport::refreshTokensExpireIn(now()->addDays(30));

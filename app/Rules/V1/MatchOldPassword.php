@@ -27,16 +27,28 @@ class MatchOldPassword implements DataAwareRule, InvokableRule
         // if ($this->data['password'] == $this->data['email']) {
         //     $fail('does not match');
         // }
-        $old_password_token = session()->has('old_password_token') ? session('old_password_token') : null;
-        $payload_password_token = isset($this->data['old_password_token']) ? $this->data['old_password_token'] : 0;
-        if ($old_password_token !=  $payload_password_token) {
+        // $old_password_token = session()->has('old_password_token') ? session('old_password_token') : null;
+
+        // if ($old_password_token !=  $payload_password_token) {
+        //     $checkExist = OldPassword::where('email', $this->data['email'])->orderBy('id', 'desc')->get();
+        //     if (count($checkExist) > 0) {
+        //         foreach ($checkExist as $key => $value) {
+        //             Session::put('old_password_token', rand(0, 99999));
+        //             if (Hash::check($this->data['password'], $value['old_password'])) {
+
+        //                 $fail('Given Old Password ! You had Changed It ' . Carbon::parse($value['created_at'])->diffForHumans() . '.' . ' Would You like to keep it ?');
+        //             }
+        //         }
+        //     }
+        // }
+        $keep_old_password = isset($this->data['keep_old_password']) ? $this->data['keep_old_password'] : 0;
+        if ($keep_old_password == 0) {
             $checkExist = OldPassword::where('email', $this->data['email'])->orderBy('id', 'desc')->get();
             if (count($checkExist) > 0) {
                 foreach ($checkExist as $key => $value) {
-                    Session::put('old_password_token', rand(0, 99999));
                     if (Hash::check($this->data['password'], $value['old_password'])) {
 
-                        $fail('Given Old Password ! You had Changed It ' . Carbon::parse($value['created_at'])->diffForHumans() . '.' . ' Would You like to keep it ?');
+                        return $fail('Given Old Password ! You had Changed It ' . Carbon::parse($value['created_at'])->diffForHumans() . '.' . ' Would You like to keep it ?');
                     }
                 }
             }

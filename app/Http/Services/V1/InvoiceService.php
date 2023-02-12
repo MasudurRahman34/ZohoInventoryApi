@@ -19,7 +19,8 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Lcobucci\JWT\Token\Plain;
+use Illuminate\Support\Str;
+
 
 class InvoiceService
 {
@@ -153,8 +154,8 @@ class InvoiceService
 
                     $company_logo = $request['company_logo'];
                     $fileName = $company_logo->getClientOriginalName();
-                    $uploadTo = base_path('public/uploads/publicInvoice/' . date("Y-m-d"));
-                    $existLink = base_path('public/uploads/publicInvoice/' . date("Y-m-d")) . '/' . $fileName;
+                    $uploadTo = base_path('public/uploads/invoice/public/' . date("Ym"));
+                    $existLink = base_path('public/uploads/invoice/public/' . date("Ym")) . '/' . $fileName;
 
                     if (file_exists($existLink)) {
                         $increment = 0;
@@ -165,9 +166,11 @@ class InvoiceService
                             $existLink = $name . $increment . '.' . $ext;
                             $fileName = $name . $increment . '.' . $ext;
                         }
-                        // return throw new Exception('file exsist');
+
+                        $fileName = Str::afterLast($existLink, '/'); //get only filename after increament from the folder link
+
                     }
-                    $link =  'public/uploads/publicInvoice/' . date("Y-m-d") . '/' . $fileName;
+                    $link =  'uploads/invoice/public/' . date("Ym") . '/' . $fileName;
                     $company_logo->move($uploadTo, $fileName);
 
                     $addressData['company_logo'] = env('APP_URL') . '/' . $link;

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('email');
             $table->string('old_password');
+            $table->tinyInteger('keep_old_password')->nullable()->default(0)->comment('0=new, 1=old');
             $table->timestamps();
             $table->softDeletes();
         });

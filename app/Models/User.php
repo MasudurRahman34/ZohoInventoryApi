@@ -11,8 +11,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use DateTimeInterface;
 use App\Http\Controllers\Api\V1\Helper\IdIncreamentable;
 use App\Jobs\V1\QueuedVerifyEmailJob;
+use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Support\Facades\DB;
+
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -102,4 +104,7 @@ class User extends Authenticatable implements MustVerifyEmail
         // $this->notify( New CustomVerifyEmail);
         QueuedVerifyEmailJob::dispatch($this);
     }
+    // public function sendPasswordResetNotification($token)
+    // {
+    // }
 }
