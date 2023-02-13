@@ -61,7 +61,7 @@ class publicInvoiceRequest extends FormRequest
             // invoice item validation
 
             'invoiceItems.*.invoice_id' => 'invoice_id|integer|exists:invoices,id|nullable',
-            'invoiceItems.*.product_id' => 'required_without|product_name|integer|exists:products,id|distinct', //should check exists with product table //must not duplicate
+            // 'invoiceItems.*.product_id' => 'nullable|integer|exists:products,id|distinct', //should check exists with product table //must not duplicate
             'invoiceItems.*.product_name' => 'string|between:3,255|nullable',
             'invoiceItems.*.warehouse_id' => 'nullable|integer|exists:warehouses,id',
             'invoiceItems.*.serial_number' => 'nullable|string|between:3,20',
@@ -85,53 +85,54 @@ class publicInvoiceRequest extends FormRequest
 
 
             //sender address 
-            'sender.display_name' => 'string|nullable',
-            'sender.company_name' => 'required | regex:/^[a-zA-Z0-9@ ]+$/, between:3,255',
-            'sender.company_info' => 'string|nullable',
-            'sender.company_logo' => 'image|nullable',
-            'sender.attention' => 'string|nullable',
-            "sender.first_name" => 'nullable | regex:/^[\pL\s]+$/u',
-            "sender.last_name" => 'nullable | regex:/^[\pL\s]+$/u',
-            "sender.mobile" => 'nullable | digits_between:7,15',
-            "sender.mobile_country_code" => ['nullable', 'regex:/^\+\d{1,3}$/', 'between:2,6'],
-            "sender.email" => ['nullable', 'email:rfc,filter,dns', 'max:255'],
-            'sender.house' => 'string|between:5,255|nullable',
-            'sender.phone' => 'digits_between:7,11|nullable',
-            'sender.fax' => 'string|between:5,20|nullable',
-            'sender.country_id' => 'integer|exists:countries,id|nullable',
-            'sender.state_id' => 'integer|exists:states,id|nullable',
-            'sender.district_id' => 'integer|exists:districts,id|nullable',
-            'sender.thana_id' => 'integer|exists:thanas,id|nullable',
-            'sender.union_id' => 'integer|exists:unions,id|nullable',
-            'sender.zipcode' => 'integer|exists:zipcodes,id|nullable',
-            'sender.street_address_id' => 'integer|exists:street_addresses,id|nullable',
-            'sender.status' => 'integer|in:0,1|nullable', //0=invalid, 1=valid
+            //     'sender.display_name' => 'string|nullable',
+            //     'sender.company_name' => 'required | regex:/^[a-zA-Z0-9@ ]+$/, between:3,255',
+            //     'sender.company_info' => 'string|nullable',
+            //     'sender.company_logo' => 'image|nullable',
+            //     'sender.attention' => 'string|nullable',
+            //     "sender.first_name" => 'nullable | regex:/^[\pL\s]+$/u',
+            //     "sender.last_name" => 'nullable | regex:/^[\pL\s]+$/u',
+            //     "sender.mobile" => 'nullable | digits_between:7,15',
+            //     "sender.mobile_country_code" => ['nullable', 'regex:/^\+\d{1,3}$/', 'between:2,6'],
+            //     "sender.email" => ['nullable', 'email:rfc,filter,dns', 'max:255'],
+            //     'sender.house' => 'string|between:5,255|nullable',
+            //     'sender.phone' => 'digits_between:7,11|nullable',
+            //     'sender.fax' => 'string|between:5,20|nullable',
+            //     'sender.country_id' => 'integer|exists:countries,id|nullable',
+            //     'sender.state_id' => 'integer|exists:states,id|nullable',
+            //     'sender.district_id' => 'integer|exists:districts,id|nullable',
+            //     'sender.thana_id' => 'integer|exists:thanas,id|nullable',
+            //     'sender.union_id' => 'integer|exists:unions,id|nullable',
+            //     'sender.zipcode' => 'integer|exists:zipcodes,id|nullable',
+            //     'sender.street_address_id' => 'integer|exists:street_addresses,id|nullable',
+            //     'sender.status' => 'integer|in:0,1|nullable', //0=invalid, 1=valid
 
 
 
-            // //reciever address
+            //     // //reciever address
 
-            'reciever.display_name' => 'string|nullable',
-            'reciever.company_name' => 'required | regex:/^[a-zA-Z0-9@ ]+$/, between:3,255',
-            'reciever.company_info' => 'string|nullable',
-            'reciever.company_logo' => 'image|file|size:200|nullable',
-            'reciever.attention' => 'string|nullable',
-            "reciever.first_name" => 'nullable | regex:/^[\pL\s]+$/u',
-            "reciever.last_name" => 'nullable | regex:/^[\pL\s]+$/u',
-            "reciever.mobile" => 'nullable | digits_between:7,15|nullable',
-            "reciever.mobile_country_code" => ['nullable', 'regex:/^\+\d{1,3}$/', 'between:2,6'],
-            "reciever.email" => ['required', 'email:rfc,filter,dns', 'max:255'],
-            'reciever.house' => 'string|between:5,255|nullable',
-            'reciever.phone' => 'digits_between:7,11|nullable',
-            'reciever.fax' => 'string|between:5,20|nullable',
-            'reciever.country_id' => 'integer|exists:countries,id|nullable',
-            'reciever.state_id' => 'integer|exists:states,id|nullable',
-            'reciever.district_id' => 'integer|exists:districts,id|nullable',
-            'reciever.thana_id' => 'integer|exists:thanas,id|nullable',
-            'reciever.union_id' => 'integer|exists:unions,id|nullable',
-            'reciever.zipcode' => 'integer|exists:zipcodes,id|nullable',
-            'reciever.street_address_id' => 'integer|exists:street_addresses,id|nullable',
-            'reciever.status' => 'integer|in:0,1|nullable', //0=invalid, 1=valid
+            //     'reciever.display_name' => 'string|nullable',
+            //     'reciever.company_name' => 'required | regex:/^[a-zA-Z0-9@ ]+$/, between:3,255',
+            //     'reciever.company_info' => 'string|nullable',
+            //     'reciever.company_logo' => 'image|file|size:200|nullable',
+            //     'reciever.attention' => 'string|nullable',
+            //     "reciever.first_name" => 'nullable | regex:/^[\pL\s]+$/u',
+            //     "reciever.last_name" => 'nullable | regex:/^[\pL\s]+$/u',
+            //     "reciever.mobile" => 'nullable | digits_between:7,15|nullable',
+            //     "reciever.mobile_country_code" => ['nullable', 'regex:/^\+\d{1,3}$/', 'between:2,6'],
+            //     "reciever.email" => ['required', 'email:rfc,filter,dns', 'max:255'],
+            //     'reciever.house' => 'string|between:5,255|nullable',
+            //     'reciever.phone' => 'digits_between:7,11|nullable',
+            //     'reciever.fax' => 'string|between:5,20|nullable',
+            //     'reciever.country_id' => 'integer|exists:countries,id|nullable',
+            //     'reciever.state_id' => 'integer|exists:states,id|nullable',
+            //     'reciever.district_id' => 'integer|exists:districts,id|nullable',
+            //     'reciever.thana_id' => 'integer|exists:thanas,id|nullable',
+            //     'reciever.union_id' => 'integer|exists:unions,id|nullable',
+            //     'reciever.zipcode' => 'string|exists:zipcodes,id|nullable',
+            //     'reciever.street_address_id' => 'integer|exists:street_addresses,id|nullable',
+            //     'reciever.status' => 'integer|in:0,1|nullable', //0=invalid, 1=valid
+            // ];
         ];
     }
 }

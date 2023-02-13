@@ -79,8 +79,8 @@ class AddressService
     {
         //$add=Country::where('id',$request['country_id'])->select('id','countryName')->get();
         //return print_r($add);
-       
-            $address['country'] = Country::where('id', $request['country_id'])->select('id', 'country_name')->first();
+
+        $address['country'] = Country::where('id', $request['country_id'])->select('id', 'country_name')->first();
         $address['state_id'] = State::where('id', $request['state_id'])->select('id', 'state_name')->first();
         $address['district'] = District::where('id', $request['district_id'])->select('id', 'district_name')->first();
         $address['thana'] = Thana::where('id', $request['thana_id'])->select('id', 'thana_name')->first();
@@ -89,7 +89,6 @@ class AddressService
         $address['street_address'] = StreetAddress::where('id', $request['street_address_id'])->select('id', 'street_address_value')->first();
         //dd($address);
         return $address;
-        
     }
 
     public function setPlainAddress($fullAddress)

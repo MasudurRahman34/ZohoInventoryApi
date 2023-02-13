@@ -14,7 +14,7 @@ use App\Models\InvoiceSenderAddress;
 class Invoice extends Model
 {
 
-    use HasFactory, SoftDeletes, HasUuids, IdIncreamentable;
+    use HasFactory, SoftDeletes, HasUuids;
     protected $dates = [
         'creadted_at',
         'updated_at',
@@ -42,26 +42,26 @@ class Invoice extends Model
         'account_id', 'created_by', 'modified_by', 'created_at', 'updated_at', 'deleted_at',
 
     ];
-    public function IdIncreamentable(): array
-    {
-        return [
-            'source' => 'id',
-            'prefix' => 'INV' . date("y") . date("m") . date('d'),
-            'attribute' => 'invoice_number',
-        ];
-    }
+    // public function IdIncreamentable(): array
+    // {
+    //     return [
+    //         'source' => 'id',
+    //         'prefix' => 'INV' . date("y") . date("m") . date('d'),
+    //         'attribute' => 'invoice_number',
+    //     ];
+    // }
 
     public function invoiceItems()
     {
         return $this->hasMany(invoiceItem::class, 'invoice_id', 'id');
     }
 
-    public function recieverAddress()
+    public function receiverAddress()
     {
-        return $this->belongsTo(InvoiceReceiverAddress::class, 'id', 'invoice_id');
+        return $this->belongsTo(InvoiceAddress::class, 'id', 'invoice_id')->where('addressable_type', 'receiver');
     }
     public function senderAddress()
     {
-        return $this->belongsTo(InvoiceSenderAddress::class, 'id', 'invoice_id');
+        return $this->belongsTo(InvoiceAddress::class, 'id', 'invoice_id')->where('addressable_type', 'sender');
     }
 }

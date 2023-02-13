@@ -6,6 +6,7 @@ use App\Models\Address;
 use App\Models\Country;
 use App\Models\GlobalAddress;
 use App\Models\Invoice;
+use App\Models\InvoiceAddress;
 use App\Models\InvoiceItem;
 use App\Models\InvoiceReceiverAddress;
 use App\Models\InvoiceSenderAddress;
@@ -41,6 +42,7 @@ class InvoiceService
             'shipping_address' => isset($request['shipping_address']) ? $request['shipping_address'] : NULL,
             'billing_address' => isset($request['billing_address']) ? $request['billing_address'] : NULL,
             'order_number' => isset($request['order_number']) ? $request['order_number'] : NULL,
+            'invoice_number' => isset($request['invoice_number']) ? $request['invoice_number'] : NULL,
             'short_code' => $this->generateShorCode('invoices', 'short_code', 6), //generate from system
             'order_id' => isset($request['order_id']) ? $request['order_id'] : NULL,
             'invoice_date' => isset($request['invoice_date']) ? $request['invoice_date'] : Carbon::now(),
@@ -126,6 +128,9 @@ class InvoiceService
             'display_name' => isset($request['display_name']) ? $request['display_name'] : null,
             'company_name' => isset($request['company_name']) ? $request['company_name'] : null,
             'company_info' => isset($request['company_info']) ? $request['company_info'] : null,
+            'client_info' => isset($request['client_info']) ? $request['client_info'] : null,
+            'additional_info' => isset($request['additional_info']) ? $request['additional_info'] : null,
+            'tax_number' => isset($request['tax_number']) ? $request['tax_number'] : null,
 
             'first_name' => isset($request['first_name']) ? $request['first_name'] : null,
             'last_name' => isset($request['last_name']) ? $request['last_name'] : null,
@@ -135,22 +140,27 @@ class InvoiceService
             'email' => isset($request['email']) ? $request['email'] : null,
             'phone' => isset($request['phone']) ? $request['phone'] : null,
             'fax' => isset($request['fax']) ? $request['fax'] : null,
+            'website' => isset($request['website']) ? $request['website'] : null,
+
             'country_id' => isset($request['country_id']) ? $request['country_id'] : 0,
-            'state_id' => isset($request['state_id']) ? $request['state_id'] : 0,
-            'district_id' => isset($request['district_id']) ? $request['district_id'] : 0,
-            'thana_id' => isset($request['thana_id']) ? $request['thana_id'] : 0,
-            'union_id' => isset($request['union_id']) ? $request['union_id'] : 0,
-            'zipcode_id' => isset($request['zipcode_id']) ? $request['zipcode_id'] : 0,
-            'street_address_id' => isset($request['street_address_id']) ? $request['street_address_id'] : 0,
-            'house' => isset($request['house']) ? $request['house'] : 0,
+            'country_name' => isset($request['country_name']) ? $request['country_name'] : NULL,
+            'state_name' => isset($request['state_name']) ? $request['state_name'] : NULL,
+            'district_name' => isset($request['district_name']) ? $request['district_name'] : NULL,
+            'thana_name' => isset($request['thana_name']) ? $request['thana_name'] : NULL,
+            'union_name' => isset($request['union_name']) ? $request['union_name'] : NULL,
+            'zipcode' => isset($request['zipcode']) ? $request['zipcode'] : NULL,
+            'street_address_line_1' => isset($request['street_address_line_1']) ? $request['street_address_line_1'] : NULL,
+            'street_address_line_2' => isset($request['street_address_line_2']) ? $request['street_address_line_2'] : NULL,
+            'house' => isset($request['house']) ? $request['house'] : NULL,
             'status' => isset($request['status']) ? $request['status'] : 1,
-            'full_address' => $this->addressService->setAddress($request),
+            // 'full_address' => $this->addressService->setAddress($request),
 
         ];
 
-        $addressData['plain_address'] = $this->addressService->setPlainAddress($addressData['full_address']);
+        // $addressData['plain_address'] = $this->addressService->setPlainAddress($addressData['full_address']);
         if ($reference == 'sender') {
 
+            $addressData['addressable_type'] = "sender";
             //image upload
             if (isset($request['company_logo'])) {
                 if (file_exists($request['company_logo'])) {
@@ -158,10 +168,11 @@ class InvoiceService
                 }
             }
             //insert new sender address
-            $newSenderAddress = InvoiceSenderAddress::create($addressData);
+            $newSenderAddress = InvoiceAddress::create($addressData);
         }
-        if ($reference == 'reciever') {
-            $newRecieverAddress = InvoiceReceiverAddress::create($addressData);
+        if ($reference == 'receiver') {
+            $addressData['addressable_type'] = "receiver";
+            $newRecieverAddress = InvoiceAddress::create($addressData);
         }
 
         if (!\is_null($addressData['email'])) {

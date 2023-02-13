@@ -1,0 +1,96 @@
+customer_name:customer name
+order_number[0]:ORD-1001
+invoice_number:INV-1001
+invoice_date:2022-12-29 
+due_date:2023-12-15
+order_discount:10
+balance:0
+total_tax:0
+shipping_charge:1
+order_adjustment:15
+total_amount:123
+grand_total_amount:132
+adjustment_text: adjustment_text
+invoice_description:invoice_description
+invoice_terms: this is invoice terms
+invoice_type: general invoice
+invoice_currency: BDT
+status:1
+invoiceItems[0][product_id]:1
+invoiceItems[0][product_name]: SMUG Premium T-shirt Fabric soft and comfortable
+invoiceItems[0][warehouse_id]:1
+invoiceItems[0][order_id]:100
+invoiceItems[0][serial_number]:11111
+invoiceItems[0][product_description]:Tshirt Size Chart Size
+invoiceItems[0][order_number]: ord-10000
+invoiceItems[0][product_qty]:1
+invoiceItems[0][unit_price]:100
+invoiceItems[0][product_discount]:20
+invoiceItems[0][tax_name]:govt
+invoiceItems[0][tax_rate]:10
+invoiceItems[0][tax_amount]:10
+invoiceItems[0][whole_price]:100
+invoiceItems[0][subtotal]:90
+invoiceItems[0][is_taxable]:1
+invoiceItems[1][product_id]:2
+invoiceItems[1][product_name]: Stylish A To Z Alphabets Unisex White And Ash Color Tshirts - Tshirt For Men
+invoiceItems[1][serial_number]:22222
+invoiceItems[1][product_description]:Best Quality Sublimation (no glue) Print.
+invoiceItems[1][warehouse_id]:2
+invoiceItems[1][order_id]:200
+invoiceItems[1][order_number]:ord-20000
+invoiceItems[1][product_qty]:2
+invoiceItems[1][unit_price]:200
+invoiceItems[1][product_discount]:20
+invoiceItems[1][tax_name]:govt
+invoiceItems[1][tax_rate]:15
+invoiceItems[1][tax_amount]:30
+invoiceItems[1][whole_price]:200
+invoiceItems[1][subtotal]:210
+invoiceItems[1][is_taxable]:1
+
+sender[display_name]:display_name
+sender[company_name]:compnay_name
+sender[company_info]: company info
+sender[company_logo]:company_logo
+sender[attention]:attension
+sender[first_name]:first_name
+sender[last_name]:last_name
+sender[mobile]:01750658791
+sender[mobile_country_code]:+88
+sender[email]:mohammadmasud34@gmail.com
+sender[country_id]:1
+sender[country_name]:bd
+sender[state_name]:state_name
+sender[district_name]:district_name
+sender[thana_name]:thana_name
+sender[union_name]:union_name
+sender[zipcode]:zipcode
+sender[street_address_line_1]:street_address_line_1
+sender[street_address_line_2]:street_address_line_2
+sender[house]:1234 khulna
+sender[website]:www.google.com
+sender[tax_number]:12345678
+
+receiver[display_name]:display_name
+receiver[company_name]:compnay_name
+receiver[company_info]: company info
+receiver[company_logo]:company_logo
+receiver[attention]:attension
+receiver[first_name]:first_name
+receiver[last_name]:last_name
+receiver[mobile]:01750658791
+receiver[mobile_country_code]:+88
+receiver[email]:mohammadmasud34@gmail.com
+receiver[country_id]:1
+receiver[country_name]:bd
+receiver[state_name]:state_name
+receiver[district_name]:district_name
+receiver[thana_name]:thana_name
+receiver[union_name]:union_name
+receiver[zipcode]:zipcode
+receiver[street_address_line_1]:street_address_line_1
+receiver[street_address_line_2]:street_address_line_2
+receiver[house]:1234 khulna
+receiver[website]:www.google.com
+receiver[tax_number]:12345678

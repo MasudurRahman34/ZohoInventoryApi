@@ -27,6 +27,7 @@ class InvoiceController extends Controller
     public function createPublicInvoice(publicInvoiceRequest $request)
     {
         $request = $request->all();
+        // return $request;
         $request = $this->calculateProductPriceService->invoicePrice($request);
         try {
             DB::beginTransaction();
@@ -35,13 +36,13 @@ class InvoiceController extends Controller
                 if (isset($request['sender'])) {
                     $newSenderAddress = $this->invoiceService->invoiceAddress($request['sender'], 'sender', $newInvoice);
                 }
-                if (isset($request['reciever'])) {
-                    $newRecieverAddress = $this->invoiceService->invoiceAddress($request['reciever'], 'reciever', $newInvoice);
+                if (isset($request['receiver'])) {
+                    $newRecieverAddress = $this->invoiceService->invoiceAddress($request['receiver'], 'receiver', $newInvoice);
                 }
             }
             DB::commit();
 
-            $newInvoice = Invoice::with(['invoiceItems', 'recieverAddress', 'senderAddress'])->find($newInvoice->id);
+            $newInvoice = Invoice::with(['invoiceItems', 'receiverAddress', 'senderAddress'])->find($newInvoice->id);
             return $this->success($newInvoice);
         } catch (\Throwable $th) {
             DB::rollBack();
@@ -51,22 +52,22 @@ class InvoiceController extends Controller
 
     public function publicShow($shortCode)
     {
-        $invoice = Invoice::with(['invoiceItems', 'recieverAddress', 'senderAddress'])->where('short_code', $shortCode)->first();
+        $invoice = Invoice::with(['invoiceItems', 'receiverAddress', 'senderAddress'])->where('short_code', $shortCode)->first();
         if ($invoice) {
             return $this->success($invoice);
         }
         return $this->error("Data Not Found", 404);
     }
 
-    public function notification($shortCode)
+    // public function notification($shortCode)
 
-    {
-        try {
-            $invoice = Invoice::with(['invoiceItems', 'recieverAddress', 'senderAddress'])->where('short_code', $shortCode)->first();
-            Notification::route('mail', 'mohammadmasud34@gmail.com')->notify(new InvoiceNotification($invoice));
-            return $this->success('send');
-        } catch (\Throwable $th) {
-            return $this->error('not send', $th->getCode());
-        }
-    }
+    // {
+    //     try {
+    //         $invoice = Invoice::with(['invoiceItems', 'recieverAddress', 'senderAddress'])->where('short_code', $shortCode)->first();
+    //         Notification::route('mail', 'mohammadmasud34@gmail.com')->notify(new InvoiceNotification($invoice));
+    //         return $this->success('send');
+    //     } catch (\Throwable $th) {
+    //         return $this->error('not send', $th->getCode());
+    //     }
+    // }
 }
