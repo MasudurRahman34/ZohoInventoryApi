@@ -41,7 +41,7 @@ class InvoiceNotification extends Notification implements ShouldQueue
      */
     public function toMail($notifiable)
     {
-        $url = \env('APP_FRONTEND_URL') . '/invoices/' . $this->invoice->id;
+        $url = \env('APP_FRONTEND_URL') . '/invoices/' . $this->invoice->short_code;
         return (new MailMessage)
             ->greeting('Hello!')
             ->line('One of your invoices here!')

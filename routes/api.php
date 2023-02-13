@@ -15,6 +15,7 @@ use App\Http\Controllers\Api\V1\CustomerController;
 use App\Http\Controllers\Api\V1\GlobalAddressController;
 use App\Http\Controllers\Api\V1\InventoryAdjustmentController;
 use App\Http\Controllers\Api\V1\InvoiceController;
+use App\Http\Controllers\Api\V1\LocationController;
 use App\Http\Controllers\Api\V1\PurchaseController;
 use App\Http\Controllers\Api\V1\PurchaseItemController;
 use App\Http\Controllers\Api\V1\SaleController;
@@ -22,9 +23,7 @@ use App\Http\Controllers\Api\V1\SupplierController;
 use App\Http\Controllers\Api\V1\TestimonialController;
 use App\Http\Controllers\Api\V1\UserController;
 use App\Http\Controllers\Api\V1\UserPlanFeatureController;
-use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -129,50 +128,44 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
     });
 });
 
-Route::GET('v1/businesstypes', [BusinessTypeController::class, 'index'])->name('businesstypes.index');
-Route::GET('v1/features/plan', [PlanFeatureController::class, 'featurePlan'])->name('feature.plan');
-Route::GET('v1/plans/feature', [PlanFeatureController::class, 'planFeature'])->name('plan.feature');
-Route::GET('v1/plans', [PlanFeatureController::class, 'plans'])->name('plans');
-Route::GET('v1/prices/plan', [PlanFeatureController::class, 'pricePlan'])->name('price.plan');
-Route::GET('v1/plans/pricetype', [PlanFeatureController::class, 'planPrice'])->name('plan.price');
+//open api
 
-// Auth::routes(['verify'=>true]);
-//public route
-// Route::group(['middleware' => ['cors']], function () {
-
-
-//open api 
-Route::POST('login', [LoginController::class, 'login'])->name('login.api')->middleware(['guestApi']);
-Route::POST('register', [RegistrationController::class, 'register'])->name('register.api')->middleware(['guestApi']);
-
-Route::GET('v1/businesstypes', [BusinessTypeController::class, 'index'])->name('businesstypes.index');
-Route::GET('v1/countries', [CountryController::class, 'index'])->name('countries.index');
-Route::GET('v1/testimonials', [TestimonialController::class, 'index'])->name('testimonials.index');
-
-Route::POST('v1/invoices/', [InvoiceController::class, 'createPublicInvoice'])->name('invoices');
-Route::get('v1/invoices/{shortCode}', [InvoiceController::class, 'publicShow'])->name('invoices.show');
-Route::get('v1/invoices/notification/{shortCode}', [InvoiceController::class, 'notification'])->name('invoice.notification');
-
-Route::post('v1/forgot-password', [PasswordResetLinkController::class, 'store'])
-    ->name('password.email')->middleware(['guestApi']);
-
-Route::get('v1/reset-password/{token}', [NewPasswordController::class, 'create'])
-    ->name('password.reset')->middleware(['guestApi']);
-
-Route::post('v1/reset-password', [NewPasswordController::class, 'store'])
-    ->name('password.store')->middleware(['guestApi']);
+Route::group(['prefix' => 'v1'], function () {
+    Route::GET('businesstypes', [BusinessTypeController::class, 'index'])->name('businesstypes.index');
+    Route::GET('features/plan', [PlanFeatureController::class, 'featurePlan'])->name('feature.plan');
+    Route::GET('plans/feature', [PlanFeatureController::class, 'planFeature'])->name('plan.feature');
+    Route::GET('plans', [PlanFeatureController::class, 'plans'])->name('plans');
+    Route::GET('prices/plan', [PlanFeatureController::class, 'pricePlan'])->name('price.plan');
+    Route::GET('plans/pricetype', [PlanFeatureController::class, 'planPrice'])->name('plan.price');
 
 
+    Route::GET('testimonials', [TestimonialController::class, 'index'])->name('testimonials.index');
 
-//end open api
+    Route::POST('invoices/', [InvoiceController::class, 'createPublicInvoice'])->name('invoices');
+    Route::get('invoices/{shortCode}', [InvoiceController::class, 'publicShow'])->name('invoices.show');
+    Route::get('invoices/notification/{shortCode}', [InvoiceController::class, 'notification'])->name('invoice.notification');
+    //location api
+    Route::GET('countries', [CountryController::class, 'index'])->name('countries.index');
+    Route::GET('states', [LocationController::class, 'states'])->name('location.states');
+    Route::GET('districts', [LocationController::class, 'districts'])->name('location.districts');
+});
 
+//guest api
+Route::middleware(['guestApi'])->group(function () {
+    Route::group(['prefix' => 'v1'], function () {
+        Route::post('forgot-password', [PasswordResetLinkController::class, 'store'])->name('password.email')->middleware(['guestApi']);
 
-// verification
-//verify before login
-// Route::get('/email/verify/{id}/{hash}', [VerifyEmailController::class, 'verifyBeforeLogin'])
-//     ->name('verification.verify');
+        Route::get('reset-password/{token}', [NewPasswordController::class, 'create'])->name('password.reset')->middleware(['guestApi']);
 
-// });
+        Route::post('reset-password', [NewPasswordController::class, 'store'])->name('password.store')->middleware(['guestApi']);
+    });
+    Route::POST('login', [LoginController::class, 'login'])->name('login.api');
+    Route::POST('register', [RegistrationController::class, 'register'])->name('register.api');
+});
+
+//end guest api
+
+//email verification
 Route::get('/email/verify/{id}/{hash}', [VerifyEmailController::class, '__invoke'])
 
     ->middleware(['auth:api', 'signed', 'throttle:6,1'])
@@ -182,4 +175,4 @@ Route::post('email/verification-notification', [EmailVerificationNotificationCon
     ->middleware(['auth:api', 'throttle:6,1'])
     ->name('verification.send');
 
-    //end verification
+//end verification
