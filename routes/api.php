@@ -149,8 +149,9 @@ Route::GET('v1/businesstypes', [BusinessTypeController::class, 'index'])->name('
 Route::GET('v1/countries', [CountryController::class, 'index'])->name('countries.index');
 Route::GET('v1/testimonials', [TestimonialController::class, 'index'])->name('testimonials.index');
 
-Route::POST('v1/invoice/public', [InvoiceController::class, 'createPublicInvoice'])->name('invoice.public');
-Route::get('v1/invoice/public/{shortCode}', [InvoiceController::class, 'publicShow'])->name('invoice.public.show');
+Route::POST('v1/invoices/', [InvoiceController::class, 'createPublicInvoice'])->name('invoices');
+Route::get('v1/invoices/{shortCode}', [InvoiceController::class, 'publicShow'])->name('invoices.show');
+Route::get('v1/invoices/notification/{shortCode}', [InvoiceController::class, 'notification'])->name('invoice.notification');
 
 Route::post('v1/forgot-password', [PasswordResetLinkController::class, 'store'])
     ->name('password.email')->middleware(['guestApi']);

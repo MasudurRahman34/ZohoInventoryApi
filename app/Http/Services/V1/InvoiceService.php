@@ -15,8 +15,11 @@ use App\Models\Location\StreetAddress;
 use App\Models\Location\Thana;
 use App\Models\Location\Union;
 use App\Models\Location\Zipcode;
+use App\Notifications\V1\InvoiceNotification;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Support\Facades\Notification;;
+
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -69,10 +72,12 @@ class InvoiceService
         ];
         $newInvoice = Invoice::create($invoiceData);
 
+        //insert new invoice items
         if ($newInvoice) {
             if (isset($request['invoiceItems'])) {
                 if (count($request['invoiceItems']) > 0) {
                     foreach ($request['invoiceItems'] as $items) {
+
                         $this->storeinvoiceItem($items, $newInvoice);
                     }
                 }
@@ -115,10 +120,8 @@ class InvoiceService
     public function invoiceAddress($request, $reference, $newInvoice)
     {
 
-
-
         $addressData = [
-            'invoice_id' => $newInvoice,
+            'invoice_id' => $newInvoice->id,
             'attention' => isset($request['attention']) ? $request['attention'] : null,
             'display_name' => isset($request['display_name']) ? $request['display_name'] : null,
             'company_name' => isset($request['company_name']) ? $request['company_name'] : null,
@@ -144,99 +147,58 @@ class InvoiceService
             'full_address' => $this->addressService->setAddress($request),
 
         ];
-        // if($reference=="sender"){
-        // }
 
         $addressData['plain_address'] = $this->addressService->setPlainAddress($addressData['full_address']);
         if ($reference == 'sender') {
+
+            //image upload
             if (isset($request['company_logo'])) {
                 if (file_exists($request['company_logo'])) {
-
-                    $company_logo = $request['company_logo'];
-                    $fileName = $company_logo->getClientOriginalName();
-                    $uploadTo = base_path('public/uploads/invoice/public/' . date("Ym"));
-                    $existLink = base_path('public/uploads/invoice/public/' . date("Ym")) . '/' . $fileName;
-
-                    if (file_exists($existLink)) {
-                        $increment = 0;
-                        list($name, $ext) = explode('.', $existLink);
-                        while (file_exists($existLink)) {
-                            $increment++;
-                            // rename if exsist like example1.jpg, example2.jpg"
-                            $existLink = $name . $increment . '.' . $ext;
-                            $fileName = $name . $increment . '.' . $ext;
-                        }
-
-                        $fileName = Str::afterLast($existLink, '/'); //get only filename after increament from the folder link
-
-                    }
-                    $link =  'uploads/invoice/public/' . date("Ym") . '/' . $fileName;
-                    $company_logo->move($uploadTo, $fileName);
-
-                    $addressData['company_logo'] = env('APP_URL') . '/' . $link;
+                    $addressData['company_logo'] = $this->uploadCompanyLogo($request['company_logo']);
                 }
             }
+            //insert new sender address
             $newSenderAddress = InvoiceSenderAddress::create($addressData);
         }
         if ($reference == 'reciever') {
             $newRecieverAddress = InvoiceReceiverAddress::create($addressData);
         }
 
+        if (!\is_null($addressData['email'])) {
+            Notification::route('mail', $addressData['email'])->notify(new InvoiceNotification($newInvoice));
+        }
+
         return;
     }
 
-    public function renameFileIfExsist()
+    public function uploadCompanyLogo($company_logo): string
     {
-    }
-    public function delete()
-    {
-    }
+        $fileName = $company_logo->getClientOriginalName();
+        $uploadTo = base_path('public/uploads/invoice/public/' . date("Ym"));
+        $existLink = base_path('public/uploads/invoice/public/' . date("Ym")) . '/' . $fileName;
 
-    public function setAddress($request)
-    {
-        //$add=Country::where('id',$request['country_id'])->select('id','countryName')->get();
-        //return print_r($add);
+        if (file_exists($existLink)) {
+            $increment = 0;
+            list($name, $ext) = explode('.', $existLink);
+            while (file_exists($existLink)) {
+                $increment++;
+                // rename if exist like example1.jpg, example2.jpg"
+                $existLink = $name . $increment . '.' . $ext;
+                $fileName = $name . $increment . '.' . $ext;
+            }
 
-        $address['country'] = Country::where('id', $request['country_id'])->select('id', 'country_name')->first();
-        $address['state_id'] = State::where('id', $request['state_id'])->select('id', 'state_name')->first();
-        $address['district'] = District::where('id', $request['district_id'])->select('id', 'district_name')->first();
-        $address['thana'] = Thana::where('id', $request['thana_id'])->select('id', 'thana_name')->first();
-        $address['union'] = Union::where('id', $request['union_id'])->select('id', 'union_name')->first();
-        $address['zipcode'] = Zipcode::where('id', $request['zipcode_id'])->select('id', 'zip_code')->first();
-        $address['street_address'] = StreetAddress::where('id', $request['street_address_id'])->select('id', 'street_address_value')->first();
-        //dd($address);
-        return $address;
-    }
+            $fileName = Str::afterLast($existLink, '/'); //get only filename after increament from the folder link
 
-    public function setPlainAddress($fullAddress)
-    {
-        $plainAddress = $fullAddress['street_address']['street_address_value'] . '-' . $fullAddress['zipcode']['zip_code'] . ', ' . $fullAddress['union']['union_name'] . ', ' . $fullAddress['thana']['thana_name'] . ', ' . $fullAddress['district']['district_name'] . ', ' . $fullAddress['country']['country_name'];
-        return  $plainAddress;
-    }
-
-    public function storeGlobalAddress($address)
-    {
-        $is_find_global_address = GlobalAddress::where('full_address', json_encode($address->full_address))->first();
-        if (!$is_find_global_address) {
-            $globalAddress = new GlobalAddress();
-            $globalAddress->country_id = $address->country_id;
-            $globalAddress->state_id = $address->state_id;
-            $globalAddress->district_id = $address->district_id;
-            $globalAddress->thana_id = $address->thana_id;
-            $globalAddress->union_id = $address->union_id;
-            $globalAddress->zipcode_id = $address->zipcode_id;
-            $globalAddress->street_address_id = $address->street_address_id;
-            $globalAddress->full_address = $address->full_address;
-            $globalAddress->plain_address = $this->setPlainAddress($address->full_address);
-            $globalAddress->status = 1;
-            $globalAddress->save();
-            return $globalAddress;
-        } else {
-            return $address;
         }
+        $link =  'uploads/invoice/public/' . date("Ym") . '/' . $fileName;
+        $company_logo->move($uploadTo, $fileName);
+
+        $imageLocation = env('APP_URL') . '/' . $link;
+
+        return $imageLocation;
     }
 
-    public function generateShorCode($table, $coloumn, $length_of_string)
+    public function generateShorCode($table, $coloumn, $length_of_string): string
     {
         //for random string
         $str_result = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';

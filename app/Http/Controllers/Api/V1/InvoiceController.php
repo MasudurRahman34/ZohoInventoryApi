@@ -8,8 +8,11 @@ use App\Http\Requests\v1\publicInvoiceRequest;
 use App\Http\Services\V1\CalculateProductPriceService;
 use App\Http\Services\V1\InvoiceService;
 use App\Models\Invoice;
+use App\Notifications\V1\InvoiceNotification;
 use Illuminate\Http\Request;
+
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification;;
 
 class InvoiceController extends Controller
 {
@@ -30,10 +33,10 @@ class InvoiceController extends Controller
             $newInvoice = $this->invoiceService->store($request);
             if ($newInvoice) {
                 if (isset($request['sender'])) {
-                    $newSenderAddress = $this->invoiceService->invoiceAddress($request['sender'], 'sender', $newInvoice->id);
+                    $newSenderAddress = $this->invoiceService->invoiceAddress($request['sender'], 'sender', $newInvoice);
                 }
                 if (isset($request['reciever'])) {
-                    $newRecieverAddress = $this->invoiceService->invoiceAddress($request['reciever'], 'reciever', $newInvoice->id);
+                    $newRecieverAddress = $this->invoiceService->invoiceAddress($request['reciever'], 'reciever', $newInvoice);
                 }
             }
             DB::commit();
@@ -53,5 +56,17 @@ class InvoiceController extends Controller
             return $this->success($invoice);
         }
         return $this->error("Data Not Found", 404);
+    }
+
+    public function notification($shortCode)
+
+    {
+        try {
+            $invoice = Invoice::with(['invoiceItems', 'recieverAddress', 'senderAddress'])->where('short_code', $shortCode)->first();
+            Notification::route('mail', 'mohammadmasud34@gmail.com')->notify(new InvoiceNotification($invoice));
+            return $this->success('send');
+        } catch (\Throwable $th) {
+            return $this->error('not send', $th->getCode());
+        }
     }
 }
