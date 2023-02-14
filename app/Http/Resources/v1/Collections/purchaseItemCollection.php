@@ -1,5 +1,6 @@
 <?php
 
+
 namespace App\Http\Resources\v1\Collections;
 
 use Illuminate\Http\Resources\Json\ResourceCollection;
