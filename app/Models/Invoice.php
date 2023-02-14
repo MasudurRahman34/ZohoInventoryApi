@@ -39,7 +39,7 @@ class Invoice extends Model
         'grand_total_amount', 'due_amount', 'paid_amount', 'change_amount',
         'last_paid', 'adjustment_text', 'invoice_terms', 'invoice_type',
         'invoice_currency', 'status',
-        'account_id', 'created_by', 'modified_by', 'created_at', 'updated_at', 'deleted_at',
+        'account_id', 'created_by', 'modified_by', 'created_at', 'updated_at', 'deleted_at', 'download', 'user_ip'
 
     ];
     // public function IdIncreamentable(): array

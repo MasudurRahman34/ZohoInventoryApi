@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('serial_number')->default(NULL)->nullable();
             $table->string('group_number')->default(NULL)->nullable();
             $table->text('product_description')->default(NULL)->nullable();
+            $table->dataTime('service_date')->default(NULL)->nullable();
 
             $table->string('order_number')->default(NULL)->nullable();
             $table->float('product_qty')->default(1)->nullable();

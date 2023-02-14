@@ -12,6 +12,8 @@ class CalculateProductPriceService
     private $whole_price = 0;
     private $subtotal = 0;
     private $total_amount = 0;
+    private $paid_amount = 0;
+    private $balance = 0;
     private $grand_total_amount = 0;
     private $shipping_charge = 0;
     private $order_adjustment = 0;
@@ -21,7 +23,7 @@ class CalculateProductPriceService
     private $total_tax = 0;
 
 
-
+    //puchase section
     public function purchasePrice($request)
     {
 
@@ -74,7 +76,8 @@ class CalculateProductPriceService
         $subtotal = $subtotal - $item['product_discount'];
         return $subtotal;
     }
-
+    //end purchase section
+    //invoice
     public function invoicePrice($request)
     {
 
@@ -90,7 +93,7 @@ class CalculateProductPriceService
 
                 $request['invoiceItems'][$key]['tax_rate'] = $item['tax_rate'] = isset($item['tax_rate']) ? $item['tax_rate'] : 0;
 
-                $this->calculateSaleItemSubtotal($item);
+                $this->calculateInvoiceItem($item);
                 $request['invoiceItems'][$key]['subtotal'] = $this->subtotal; //calculating item subtotal
                 $request['invoiceItems'][$key]['tax_amount'] = $this->tax_amount; //calculating item tax
                 $request['invoiceItems'][$key]['whole_price'] = $this->whole_price; //calculating item tax
@@ -103,7 +106,7 @@ class CalculateProductPriceService
             $this->shipping_charge = $request['shipping_charge'] =  isset($request['shipping_charge']) ? $request['shipping_charge'] : 0;
             $this->order_adjustment = $request['order_adjustment'] =  isset($request['order_adjustment']) ? $request['order_adjustment'] : 0;
             $this->order_discount = $request['order_discount'] = isset($request['order_discount']) ? $request['order_discount'] : 0;
-            // $this->discount_currency = $request['discount_currency'] =  isset($request['discount_currency']) ? $request['discount_currency'] : 0;
+            $this->paid_amount = $request['paid_amount'] =  isset($request['paid_amount']) ? $request['paid_amount'] : 0;
             // $this->order_tax = $request['order_tax'] =  isset($request['order_tax']) ? $request['order_tax'] : 0;
             // $this->total_tax = $request['tax_rate'] =  isset($request['tax_rate']) ? $request['tax_rate'] : null;
         }
@@ -112,11 +115,12 @@ class CalculateProductPriceService
         $request['total_amount'] = $this->total_amount;
         $request['grand_total_amount'] = $this->grand_total_amount;
         $request['total_tax'] = $this->total_tax;
+        $request['balance'] = $this->balance;
 
         return $request;
     }
 
-    public function calculateSaleItemSubtotal($item): void
+    public function calculateInvoiceItem($item): void
     {
         $subtotal = $whole_price = ($item['unit_price'] * $item['product_qty']);
 
@@ -136,5 +140,6 @@ class CalculateProductPriceService
         $grand_total_amount = ($this->total_amount + $this->shipping_charge + $this->order_adjustment) - ($this->total_amount * ($this->order_discount / 100));
         // $grand_total_amount = $this->total_amount;
         $this->grand_total_amount = $grand_total_amount;
+        $this->balance = $this->grand_total_amount - $this->paid_amount;
     }
 }

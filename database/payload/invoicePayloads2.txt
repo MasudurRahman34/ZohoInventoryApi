@@ -5,6 +5,7 @@ invoice_date:2022-12-29
 due_date:2023-12-15
 order_discount:10
 balance:0
+paid_amount:10
 total_tax:0
 shipping_charge:1
 order_adjustment:15

@@ -29,6 +29,11 @@ use Illuminate\Support\Str;
 class InvoiceService
 {
     private $addressService;
+    private array $fullAddress;
+    private string $plainTextAddress;
+    public $addressKeys = [
+        'house', 'street_address_line_2', 'street_address_line_1', 'union_name', 'zipcode', 'thana_name', 'district_name', 'state_name', 'country_name',
+    ];
     public function __construct(AddressService $addressService)
     {
         $this->addressService = $addressService;
@@ -92,12 +97,12 @@ class InvoiceService
     {
         $invoiceItem = [
             'invoice_id' => $newInvoice->id,
+            'service_date' => isset($item['service_date']) ? $item['service_date'] : NULL,
             'product_id' => isset($item['product_id']) ? $item['product_id'] : NULL,
             'warehouse_id' => isset($item['warehouse_id']) ? $item['warehouse_id'] : NUll,
             'order_id' => isset($item['order_id']) ? $item['order_id'] : NULL,
             'product_name' => isset($item['product_name']) ? $item['product_name'] : NULL,
             'serial_number' => isset($item['serial_number']) ? $item['serial_number'] : NULL,
-
             'group_number' => isset($item['group_number']) ? $item['group_number'] : NULL,
 
             'product_description' => isset($item['product_description']) ? $item['product_description'] : NULL,
@@ -153,13 +158,13 @@ class InvoiceService
             'street_address_line_2' => isset($request['street_address_line_2']) ? $request['street_address_line_2'] : NULL,
             'house' => isset($request['house']) ? $request['house'] : NULL,
             'status' => isset($request['status']) ? $request['status'] : 1,
-            // 'full_address' => $this->addressService->setAddress($request),
 
         ];
+        $this->setPlainTextAndFullAddress($addressData); //set full and plain address , serialized by addressKey
+        $addressData['plain_address'] = $this->plainTextAddress;
+        $addressData['full_address'] = $this->fullAddress;
 
-        // $addressData['plain_address'] = $this->addressService->setPlainAddress($addressData['full_address']);
-        if ($reference == 'sender') {
-
+        if ($reference == 'sender') { //insert new sender address
             $addressData['addressable_type'] = "sender";
             //image upload
             if (isset($request['company_logo'])) {
@@ -167,15 +172,14 @@ class InvoiceService
                     $addressData['company_logo'] = $this->uploadCompanyLogo($request['company_logo']);
                 }
             }
-            //insert new sender address
             $newSenderAddress = InvoiceAddress::create($addressData);
         }
-        if ($reference == 'receiver') {
+        if ($reference == 'receiver') { //insert new reciever address
             $addressData['addressable_type'] = "receiver";
             $newRecieverAddress = InvoiceAddress::create($addressData);
         }
 
-        if (!\is_null($addressData['email'])) {
+        if (!\is_null($addressData['email'])) { //sending email to reciever and sender
             Notification::route('mail', $addressData['email'])->notify(new InvoiceNotification($newInvoice));
         }
 
@@ -222,5 +226,21 @@ class InvoiceService
         } else {
             return $string;
         }
+    }
+
+    public function setPlainTextAndFullAddress(array $addressData): void
+    {
+        $plainTextAddress = [];
+
+        foreach ($this->addressKeys as  $key) {
+
+            if (!\is_null($addressData[$key])) {
+
+                // $plainTextAddress += ' ' . $addressData[$key];
+                $this->fullAddress[$key] = $addressData[$key];
+                \array_push($plainTextAddress, $addressData[$key]);
+            }
+        }
+        $this->plainTextAddress = implode(",", $plainTextAddress);
     }
 }
