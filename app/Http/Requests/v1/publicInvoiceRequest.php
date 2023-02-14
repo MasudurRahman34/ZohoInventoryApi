@@ -26,7 +26,7 @@ class publicInvoiceRequest extends FormRequest
         return [
 
             //invoice validation
-            "customer_id" => 'required_without:customer_name|integer|exists:portal_customers,id|nullable',
+            "customer_id" => 'integer|exists:portal_customers,id|nullable',
             "customer_name" => 'nullable | regex:/^[\pL\s]+$/u',
             "shipping_address" => 'nullable | string | between: 5,512',
             "billing_address" => 'nullable | string | between: 5,512',

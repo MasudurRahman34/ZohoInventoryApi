@@ -53,6 +53,7 @@ return new class extends Migration
             $table->text('invoice_description')->default(NULL)->nullable();
             $table->string('invoice_type')->default(NULL)->nullable();
             $table->string('invoice_currency')->default(NULL)->nullable();
+            $table->string('pdf_link', 255)->default(NULL)->nullable();
 
 
             $table->tinyInteger('status')->nullable()->default(1)->comment('0 = Draft, 1 = Sent, 2 = Partially Paid, 3 = Overdue, 4 = Paid, 5 = Confirmed, 6 = Cancelled');
