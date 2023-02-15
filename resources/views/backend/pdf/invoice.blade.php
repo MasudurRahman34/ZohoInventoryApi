@@ -109,7 +109,7 @@
 			<div class="">
 				<h1><strong>From</strong></h1>
 				<h4>{{$invoice['sender_address']['company_name']}}</h4>
-				<h4>{{$invoice['sender_address']['first_name'] }} {{$invoice['sender_address']['first_name']}}</h4>
+				<h4>{{$invoice['sender_address']['first_name'] }} {{$invoice['sender_address']['last_name']}}</h4>
 				<h4>{{$invoice['sender_address']['plain_address']}}</h4>
 				<h4>{{$invoice['sender_address']['email']}}</h4>
 				<h4>{{$invoice['sender_address']['mobile_country_code']}}{{$invoice['sender_address']['mobile']}}</h4>
@@ -118,7 +118,7 @@
 			<div class="">
 				<h1><strong>To</strong></h1>
 				<h4>{{$invoice['receiver_address']['company_name']}}</h4>
-				<h4>{{$invoice['receiver_address']['first_name']}}  {{$invoice['receiver_address']['first_name']}}</h4>
+				<h4>{{$invoice['receiver_address']['first_name']}}  {{$invoice['receiver_address']['last_name']}}</h4>
 				<h4>{{$invoice['receiver_address']['plain_address']}}</h4>
 				<h4>{{$invoice['receiver_address']['email']}}</h4>
 				<h4>{{$invoice['receiver_address']['mobile_country_code']}}{{$invoice['sender_address']['mobile']}}</h4>

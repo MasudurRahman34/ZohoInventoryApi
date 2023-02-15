@@ -143,7 +143,7 @@ Route::group(['prefix' => 'v1'], function () {
 
     Route::POST('/invoice', [InvoiceController::class, 'createPublicInvoice'])->name('invoices');
     Route::get('invoices/{shortCode}', [InvoiceController::class, 'publicShow'])->name('invoices.show');
-    Route::get('invoices/download/{shortCode}', [InvoiceController::class, 'invoiceDownload'])->name('invoices.download');
+    Route::get('invoices/download/{shortCode}', [InvoiceController::class, 'createInvoicePdf'])->name('invoices.download');
     Route::get('invoices/notification/{shortCode}', [InvoiceController::class, 'notification'])->name('invoice.notification');
     //location api
     Route::GET('countries', [CountryController::class, 'index'])->name('countries.index');

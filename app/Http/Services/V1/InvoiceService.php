@@ -31,7 +31,7 @@ class InvoiceService
     private $addressService;
     private array $fullAddress;
     private string $plainTextAddress;
-    public $addressKeys = [
+    public $addressKeys = [  //serilized for geneatation plain text
         'house', 'street_address_line_2', 'street_address_line_1', 'union_name', 'zipcode', 'thana_name', 'district_name', 'state_name', 'country_name',
     ];
     public function __construct(AddressService $addressService)
@@ -76,8 +76,9 @@ class InvoiceService
             'invoice_type' => isset($request['invoice_type']) ? $request['invoice_type'] : NULL,
             'invoice_currency' => isset($request['invoice_currency']) ? $request['invoice_currency'] : NULL,
             'status' => isset($request['status']) ? $request['status'] : 0,
+            'user_ip' => isset($request['user_ip']) ? $request['user_ip'] : NULL,
         ];
-        $newInvoice = Invoice::create($invoiceData);
+        $newInvoice = Invoice::create($invoiceData); //store invoice
 
         //insert new invoice items
         if ($newInvoice) {
@@ -93,7 +94,7 @@ class InvoiceService
         return $newInvoice;
     }
 
-    public function storeinvoiceItem($item, $newInvoice)
+    public function storeinvoiceItem($item, $newInvoice) //store invoice item
     {
         $invoiceItem = [
             'invoice_id' => $newInvoice->id,
@@ -119,6 +120,7 @@ class InvoiceService
             'total_tax' => isset($item['total_amount']) ? $item['total_tax'] : 0,
             'is_taxable' => isset($item['is_taxable']) ? $item['is_taxable'] : 0,
             'is_serialized' => isset($item['is_serialized']) ? $item['is_serialized'] : 0,
+
         ];
         $newInvoiceItem = InvoiceItem::create($invoiceItem);
         return $newInvoice;
@@ -186,7 +188,7 @@ class InvoiceService
         return;
     }
 
-    public function uploadCompanyLogo($company_logo): string
+    public function uploadCompanyLogo($company_logo): string //upload image and return database link
     {
         $fileName = $company_logo->getClientOriginalName();
         $uploadTo = base_path('public/uploads/invoice/public/' . date("Ym"));
@@ -208,12 +210,12 @@ class InvoiceService
         $link =  'uploads/invoice/public/' . date("Ym") . '/' . $fileName;
         $company_logo->move($uploadTo, $fileName);
 
-        $imageLocation = env('APP_URL') . '/' . $link;
+        $imageLocation = env('APP_URL') . '/' . $link; //database link
 
         return $imageLocation;
     }
 
-    public function generateShorCode($table, $coloumn, $length_of_string): string
+    public function generateShorCode($table, $coloumn, $length_of_string): string  //generate shortcode
     {
         //for random string
         $str_result = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
@@ -222,13 +224,13 @@ class InvoiceService
         $isExistString =  DB::table($table)->where($coloumn, $string)->first();
 
         if ($isExistString) {
-            return $this->generateShorCode($table, $coloumn, $length_of_string);
+            return $this->generateShorCode($table, $coloumn, $length_of_string); //recurisuve if found generate new one
         } else {
             return $string;
         }
     }
 
-    public function setPlainTextAndFullAddress(array $addressData): void
+    public function setPlainTextAndFullAddress(array $addressData): void //set plain and full text serialized based on decalare array
     {
         $plainTextAddress = [];
 

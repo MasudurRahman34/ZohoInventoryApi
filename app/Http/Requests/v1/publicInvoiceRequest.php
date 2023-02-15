@@ -33,18 +33,18 @@ class publicInvoiceRequest extends FormRequest
             "invoice_number" => ['required', 'between: 3,20'], //need to check if login 
 
             "order_id.*" => 'nullable|string|between: 3,255',
-            "invoice_date" => 'nullable|date|date_format:Y-m-d H:i:s,Y-m-d',
-            "due_date" => 'nullable|date|date_format:Y-m-d H:i:s,Y-m-d',
+            "invoice_date" => 'nullable|date|date_format:Y-m-d',
+            "due_date" => 'nullable|date|date_format:Y-m-d',
 
             "order_tax" => 'nullable|numeric|min:0',
             "order_tax_amount" => 'nullable|numeric|min:0',
             "discount_type" => 'nullable|numeric|min:0',
 
-            "order_discount" => 'nullable|required|numeric|min:0',
-            "shipping_charge" => 'nullable|required|numeric|min:0',
-            "order_adjustment" => 'nullable|required|numeric|min:0',
+            "order_discount" => 'nullable|numeric|min:0',
+            "shipping_charge" => 'nullable|numeric|min:0',
+            "order_adjustment" => 'nullable|numeric|min:0',
             "total_amount" => 'required|numeric|min:0',
-            "total_tax" => 'required|numeric|min:0',
+            "total_tax" => 'nullable|numeric|min:0',
             "grand_total_amount" => 'required|numeric|min:0',
             "paid_amount" => 'nullable|numeric|min:0|lte:grand_total_amount',
             "balance" => 'required_with:paid_amount|nullable|numeric|min:0',
@@ -56,7 +56,7 @@ class publicInvoiceRequest extends FormRequest
             "invoice_description" => 'string|min:3|nullable',
             "invoice_type" => 'string|min:3|nullable',
             "invoice_currency" => 'string|min:3|nullable',
-            "status" => 'required|in:0,1,2,3,4,5,6|nullable',
+            "status" => 'in:0,1,2,3,4,5,6|nullable',
 
             // invoice item validation
 
@@ -123,7 +123,7 @@ class publicInvoiceRequest extends FormRequest
             "receiver.last_name" => 'nullable | regex:/^[\pL\s]+$/u',
             "receiver.mobile" => 'nullable | digits_between:7,15',
             "receiver.mobile_country_code" => ['nullable', 'regex:/^\+\d{1,3}$/', 'between:2,6'],
-            "receiver.email" => ['required', 'email:rfc,filter,dns', 'max:255'],
+            "receiver.email" => ['nullable', 'email:rfc,filter,dns', 'max:255'],
             'receiver.house' => 'string|between:3,255|nullable',
             'receiver.phone' => 'digits_between:7,11|nullable',
             'receiver.fax' => 'string|between:5,20|nullable',
