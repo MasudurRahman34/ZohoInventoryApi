@@ -96,7 +96,12 @@ class InvoiceController extends Controller
         $newInvoice = Invoice::with(['invoiceItems', 'receiverAddress', 'senderAddress'])->where('short_code', $shortCode)->first();
         if ($newInvoice) {
             $renderingData = $newInvoice->toArray();
-            // return view('backend.pdf.invoice', ['invoice' => $renderingData]);
+            //return view('backend.pdf.invoice', ['invoice' => $renderingData]);
+            // $pdf = App::make('dompdf.wrapper');
+            // $pdf =  $pdf->loadView('backend.pdf.invoice', ['invoice' => $renderingData]);
+            // // ->setPaper('a4', 'portrait')
+            // // ->setOption(['dpi' => 150, 'defaultFont' => 'sans-serif']);
+            // return $pdf->stream();
 
             $save_pdf_path = base_path('public/uploads/invoice/public/' . date("Ym"));
             if (!File::isDirectory($save_pdf_path)) {

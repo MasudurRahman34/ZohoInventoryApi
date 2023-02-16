@@ -10,6 +10,7 @@
 			font-size: 12px;
 			margin: 0;
 			padding: 0;
+			box-sizing: border-box;
 		}
 		.container {
 			width: 595px; /* A4 width */
@@ -17,9 +18,8 @@
 		}
 		.header {
 			padding: 20px;
-		
 			text-align: center;
-			overflow: hidden;
+	
 		}
 		.header h1 {
 			font-size: 24px;
@@ -35,6 +35,7 @@
 		}
 		.invoice-details {
 			padding: 10px;
+			margin-top: 20px;
 			background-color: #f9f9f9;
 			text-align: right;
 			margin-bottom: 20px;
@@ -75,16 +76,22 @@
 			padding: 5px;
 			
 		}
+		.information_section {
+			display: inline;
+		}
 		.reciever-details {
-			float: right;
+			width: 40%;
+			
 		}
 		.sender-details {
-			float: left;
+			width: 40%;
+			float: right;
 		}
 		.invoice-total-counter {
 			padding: 5px;
 			text-align: right;
 		}
+
 
 	</style>
 </head>
@@ -106,7 +113,7 @@
 			<p><strong>Due Date:</strong> {{$invoice['due_date']}}</p>
 		</div>
 		<div class="information-section">
-			<div class="">
+			<div class="sender-details">
 				<h1><strong>From</strong></h1>
 				<h4>{{$invoice['sender_address']['company_name']}}</h4>
 				<h4>{{$invoice['sender_address']['first_name'] }} {{$invoice['sender_address']['last_name']}}</h4>
@@ -115,7 +122,7 @@
 				<h4>{{$invoice['sender_address']['mobile_country_code']}}{{$invoice['sender_address']['mobile']}}</h4>
 				
 			</div>
-			<div class="">
+			<div class="reciever-details">
 				<h1><strong>To</strong></h1>
 				<h4>{{$invoice['receiver_address']['company_name']}}</h4>
 				<h4>{{$invoice['receiver_address']['first_name']}}  {{$invoice['receiver_address']['last_name']}}</h4>
