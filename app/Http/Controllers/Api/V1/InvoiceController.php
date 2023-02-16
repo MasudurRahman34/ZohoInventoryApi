@@ -70,7 +70,7 @@ class InvoiceController extends Controller
                     $newRecieverAddress = $this->invoiceService->invoiceAddress($request['receiver'], 'receiver', $newInvoice);
                 }
             }
-            $newInvoice = $this->createInvoicePdf($newInvoice->short_code); //creating invoice pdf
+            $newPdf = $this->createInvoicePdf($newInvoice->short_code); //creating invoice pdf
             DB::commit();
             $newInvoice = Invoice::with(['invoiceItems', 'receiverAddress', 'senderAddress'])->find($newInvoice->id);
 
