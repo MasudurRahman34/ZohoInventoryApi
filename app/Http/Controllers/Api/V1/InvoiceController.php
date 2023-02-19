@@ -8,6 +8,7 @@ use App\Http\Requests\v1\publicInvoiceRequest;
 use App\Http\Services\V1\CalculateProductPriceService;
 use App\Http\Services\V1\InvoiceService;
 use App\Models\Invoice;
+use App\Models\InvoiceItem;
 use App\Notifications\V1\InvoiceNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
@@ -16,6 +17,7 @@ use Illuminate\Support\Facades\Notification;;
 
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Support\Facades\File;
 
 class InvoiceController extends Controller
@@ -136,4 +138,50 @@ class InvoiceController extends Controller
     //         return $this->error('not send', $th->getCode());
     //     }
     // }
+
+    public function update(Request $request, $shortCode)
+    {
+
+        try {
+            DB::beginTransaction();
+            $invoice = Invoice::where('short_code', $shortCode)->first();
+
+            if (!$invoice) {
+                throw new Exception("Data Not Found", 404);
+            }
+
+            $request->merge(['user_ip' => $request->ip()]); //populate user_id
+            $request = $request->all();
+
+            $request = $this->calculateProductPriceService->invoicePrice($request); //at first step calculation invoice
+            $updatedInvoice = $this->invoiceService->update($request, $invoice);
+            //return $updatedInvoice;
+            if ($updatedInvoice) {
+
+                if (isset($request['sender'])) {  //insert sender information
+                    if (!\is_null($invoice['senderAddress'])) {
+                        $newSenderAddress = $this->invoiceService->updateInvoiceAddress($request['sender'], 'sender', $invoice['senderAddress'], $updatedInvoice);
+                    }
+                }
+                if (isset($request['receiver'])) { //insert receiver information
+                    $newRecieverAddress = $this->invoiceService->invoiceAddress($request['receiver'], 'receiver', $updatedInvoice);
+                    if (!\is_null($invoice['receiverAddress'])) {
+                        $updateRecieverAddress = $this->invoiceService->updateInvoiceAddress($request['receiver'], 'receiver', $invoice['receiverAddress'], $updatedInvoice,);
+                    }
+                }
+            }
+            $newPdf = $this->createInvoicePdf($invoice->short_code);
+            DB::commit();
+            $updatedInvoice = Invoice::with(['invoiceItems', 'receiverAddress', 'senderAddress'])->where('short_code', $shortCode)->first();
+            return $this->success($updatedInvoice);
+
+            // $invoice->delete();
+
+        } catch (\Exception $th) {
+            //return $th->getCode();
+            DB::rollBack();
+            return $this->error($th->getMessage(), 422);
+        }
+        return $shortCode;
+    }
 }
