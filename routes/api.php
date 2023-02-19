@@ -142,6 +142,7 @@ Route::group(['prefix' => 'v1'], function () {
     Route::GET('testimonials', [TestimonialController::class, 'index'])->name('testimonials.index');
 
     Route::POST('/invoice', [InvoiceController::class, 'createPublicInvoice'])->name('invoices');
+    Route::PUT('/invoice/{shortCode}', [InvoiceController::class, 'update'])->name('invoices.update');
     Route::get('invoices/{shortCode}', [InvoiceController::class, 'publicShow'])->name('invoices.show');
     Route::get('invoices/download/{shortCode}', [InvoiceController::class, 'createInvoicePdf'])->name('invoices.download');
     Route::get('invoices/notification/{shortCode}', [InvoiceController::class, 'notification'])->name('invoice.notification');
