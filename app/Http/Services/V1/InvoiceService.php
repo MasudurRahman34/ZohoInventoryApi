@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Notification;;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\File;
 
 
 class InvoiceService
@@ -193,6 +194,9 @@ class InvoiceService
         $fileName = $company_logo->getClientOriginalName();
         $uploadTo = base_path('public/uploads/invoice/public/' . date("Ym"));
         $existLink = base_path('public/uploads/invoice/public/' . date("Ym")) . '/' . $fileName;
+        if (!File::isDirectory($uploadTo)) {
+            File::makeDirectory($uploadTo, 0775, true, true); //making direcotry
+        }
 
         if (file_exists($existLink)) {
             $increment = 0;
@@ -208,6 +212,7 @@ class InvoiceService
 
         }
         $link =  'uploads/invoice/public/' . date("Ym") . '/' . $fileName;
+        //$company_logo->move($uploadTo, $fileName);
         $company_logo->move($uploadTo, $fileName);
 
         $imageLocation = env('APP_URL') . '/' . $link; //database link
