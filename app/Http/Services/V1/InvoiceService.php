@@ -233,7 +233,8 @@ class InvoiceService
             $addressData['addressable_type'] = "sender";
             //image upload
             if (isset($request['company_logo'])) {
-                if (file_exists($request['company_logo'])) {
+                if (file_exists($request['company_logo'])) { //check file has in request
+                    $this->deleteExistingFile($existAddress->company_logo); //delete existing logo
                     $addressData['company_logo'] = $this->uploadCompanyLogo($request['company_logo']);
                 }
             }
@@ -407,5 +408,14 @@ class InvoiceService
         ];
         $updateInvoiceItem = $existItem->update($invoiceItem);
         return $updateInvoiceItem;
+    }
+
+    public function deleteExistingFile($fileLink)
+    {
+        $pdf_link = implode(explode(\env('APP_URL'), $fileLink));
+        $pdf_link = \base_path('public' . $pdf_link);
+        if (File::exists($pdf_link)) {
+            File::delete($pdf_link);
+        }
     }
 }

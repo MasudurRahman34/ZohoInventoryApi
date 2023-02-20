@@ -105,6 +105,9 @@ class InvoiceController extends Controller
             // // ->setOption(['dpi' => 150, 'defaultFont' => 'sans-serif']);
             // return $pdf->stream();
 
+            $this->invoiceService->deleteExistingFile($newInvoice->pdf_link);
+
+
             $save_pdf_path = base_path('public/uploads/invoice/public/' . date("Ym"));
             if (!File::isDirectory($save_pdf_path)) {
                 File::makeDirectory($save_pdf_path, 0777, true, true); //making direcotry
@@ -141,11 +144,11 @@ class InvoiceController extends Controller
 
     public function update(Request $request, $shortCode)
     {
+        return $request;
 
         try {
             DB::beginTransaction();
             $invoice = Invoice::where('short_code', $shortCode)->first();
-
             if (!$invoice) {
                 throw new Exception("Data Not Found", 404);
             }
