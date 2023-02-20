@@ -30,7 +30,7 @@ use Illuminate\Support\Facades\File;
 class InvoiceService
 {
     private $addressService;
-    private array $fullAddress;
+    private array $fullAddress = [];
     private string $plainTextAddress;
     public $addressKeys = [  //serilized for geneatation plain text
         'house', 'street_address_line_2', 'street_address_line_1', 'union_name', 'zipcode', 'thana_name', 'district_name', 'state_name', 'country_name',
@@ -276,7 +276,7 @@ class InvoiceService
         }
         $link =  'uploads/invoice/public/' . date("Ym") . '/' . $fileName;
         //$company_logo->move($uploadTo, $fileName);
-        $company_logo->move($uploadTo, $fileName);
+        $company_logo->storeAs('public/', $fileName);
 
         $imageLocation = env('APP_URL') . '/' . $link; //database link
 
