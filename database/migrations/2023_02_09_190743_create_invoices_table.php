@@ -16,10 +16,11 @@ return new class extends Migration
     {
         Schema::create('invoices', function (Blueprint $table) {
             $table->id();
-            $table->uuid('uuid')->unique()->index()->default(NULL);
+            $table->uuid('uuid')->unique()->index()->default(NULL)->nullable();
             $table->unsignedBigInteger('customer_id')->default(NULL)->nullable();
 
             $table->string('customer_name', 255)->default(NULL)->nullable();
+            $table->ipAddress('user_ip', 255)->default(NULL)->nullable();
             $table->unsignedBigInteger('salesperson')->default(NULL)->nullable();
             $table->string('shipping_address', 512)->default(NULL)->nullable();
             $table->string('billing_address', 512)->default(NULL)->nullable();
@@ -32,27 +33,28 @@ return new class extends Migration
             $table->dateTime('invoice_date')->default(now())->nullable();
             $table->dateTime('due_date')->default(NULL)->nullable();
 
-            $table->float('order_tax')->default(0)->nullable();
-            $table->float('order_tax_amount')->default(0)->nullable();
-            $table->float('order_discount')->default(0)->nullable();
-            $table->float('discount_type')->default(0)->nullable();
-            $table->float('shipping_charge')->default(0)->nullable();
+            $table->float('order_tax', 14, 4)->default(0)->nullable();
+            $table->float('order_tax_amount', 14, 4)->default(0)->nullable();
+            $table->float('order_discount', 14, 4)->default(0)->nullable();
+            $table->float('discount_type', 14, 4)->default(0)->nullable();
+            $table->float('shipping_charge', 14, 4)->default(0)->nullable();
             $table->float('order_adjustment')->default(0)->nullable();
 
-            $table->float('total_amount')->default(0);
-            $table->float('total_tax')->default(0);
-            $table->float('grand_total_amount')->default(0);
-            $table->float('balance')->default(0)->nullable();
-            $table->float('due_amount')->default(0)->nullable();
-            $table->float('paid_amount')->default(0)->nullable();
-            $table->float('change_amount')->default(0)->nullable();
-            $table->float('last_paid')->default(0)->nullable();
+            $table->float('total_amount', 14, 4)->default(0);
+            $table->float('total_tax', 14, 4)->default(0)->nullable();
+            $table->float('grand_total_amount', 14, 4)->default(0);
+            $table->float('balance', 14, 4)->default(0)->nullable();
+            $table->float('due_amount', 14, 4)->default(0)->nullable();
+            $table->float('paid_amount', 14, 4)->default(0)->nullable();
+            $table->float('change_amount', 14, 4)->default(0)->nullable();
+            $table->float('last_paid', 14, 4)->default(0)->nullable();
 
             $table->string('adjustment_text')->default(NULL)->nullable();
             $table->text('invoice_terms')->default(NULL)->nullable();
             $table->text('invoice_description')->default(NULL)->nullable();
             $table->string('invoice_type')->default(NULL)->nullable();
             $table->string('invoice_currency')->default(NULL)->nullable();
+            $table->integer('download')->default(0)->nullable();
             $table->string('pdf_link', 255)->default(NULL)->nullable();
 
 

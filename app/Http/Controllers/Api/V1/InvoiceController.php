@@ -33,34 +33,35 @@ class InvoiceController extends Controller
     public function createPublicInvoice(publicInvoiceRequest $request)
     { //cheching existing  invoice
         //default setting
-        $recieverEmail = isset($request['receiver']['email']) ? $request['receiver']['email'] : null;
-        $recieverMobile = isset($request['receiver']['mobile']) ? $request['receiver']['mobile'] : null;
-        $invoice_number = isset($request['invoice_number']) ? $request['invoice_number'] : null;
+        // $recieverEmail = isset($request['receiver']['email']) ? $request['receiver']['email'] : null;
+        // $recieverMobile = isset($request['receiver']['mobile']) ? $request['receiver']['mobile'] : null;
+        // $invoice_number = isset($request['invoice_number']) ? $request['invoice_number'] : null;
 
-        //query
-        $is_exist_invoice = Invoice::with(['receiverAddress' => function ($query) use ($recieverEmail, $recieverMobile) {
-            $query->where('email', $recieverEmail)->orWhere('mobile', $recieverMobile);
-        }])->where('user_ip', $request->ip())
-            ->where('invoice_number', $invoice_number)
-            ->whereDate('invoice_date', Carbon::createFromFormat('Y-m-d', $request->invoice_date))
-            ->first();
+        // //query
+        // $is_exist_invoice = Invoice::with(['receiverAddress' => function ($query) use ($recieverEmail, $recieverMobile) {
+        //     $query->where('email', $recieverEmail)->orWhere('mobile', $recieverMobile);
+        // }])->where('user_ip', $request->ip())
+        //     ->where('invoice_number', $invoice_number)
+        //     ->whereDate('invoice_date', Carbon::createFromFormat('Y-m-d', $request->invoice_date))
+        //     ->first();
 
-        $update_is_exist_invoice = $is_exist_invoice;
-        if ($is_exist_invoice) {
-            $is_exist_invoice = $is_exist_invoice->toArray();
-            if (!is_null($is_exist_invoice['receiver_address'])) { //return if found existing
-                $download = $is_exist_invoice['download'];
-                $update_is_exist_invoice->download = $download + 1; //update $download
-                $update_is_exist_invoice->save();
-                return $this->success($update_is_exist_invoice);
-            };
-        }
+        // $update_is_exist_invoice = $is_exist_invoice;
+        // if ($is_exist_invoice) {
+        //     $is_exist_invoice = $is_exist_invoice->toArray();
+        //     if (!is_null($is_exist_invoice['receiver_address'])) { //return if found existing
+        //         $download = $is_exist_invoice['download'];
+        //         $update_is_exist_invoice->download = $download + 1; //update $download
+        //         $update_is_exist_invoice->save();
+        //         return $this->success($update_is_exist_invoice);
+        //     };
+        // }
 
 
         $request->merge(['user_ip' => $request->ip()]); //populate user_id
         $request = $request->all();
 
-        $request = $this->calculateProductPriceService->invoicePrice($request); //at first step calculation invoice
+        $request = $this->calculateProductPriceService->invoicePrice($request); //at first step calculation  
+
         try {
             DB::beginTransaction();
             $newInvoice = $this->invoiceService->store($request); //insert invoice and invoice item
@@ -105,6 +106,9 @@ class InvoiceController extends Controller
             // // ->setOption(['dpi' => 150, 'defaultFont' => 'sans-serif']);
             // return $pdf->stream();
 
+            $this->invoiceService->deleteExistingFile($newInvoice->pdf_link);
+
+
             $save_pdf_path = base_path('public/uploads/invoice/public/' . date("Ym"));
             if (!File::isDirectory($save_pdf_path)) {
                 File::makeDirectory($save_pdf_path, 0777, true, true); //making direcotry
@@ -139,13 +143,13 @@ class InvoiceController extends Controller
     //     }
     // }
 
-    public function update(Request $request, $shortCode)
+    public function update(publicInvoiceRequest $request, $shortCode)
     {
+
 
         try {
             DB::beginTransaction();
             $invoice = Invoice::where('short_code', $shortCode)->first();
-
             if (!$invoice) {
                 throw new Exception("Data Not Found", 404);
             }
@@ -182,6 +186,5 @@ class InvoiceController extends Controller
             DB::rollBack();
             return $this->error($th->getMessage(), 422);
         }
-        return $shortCode;
     }
 }
