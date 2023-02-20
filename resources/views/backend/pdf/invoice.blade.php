@@ -171,7 +171,7 @@
 			</div>
 			<section class="invoice-total-counter">
 				<p><strong>Subtotal:</strong> {{$invoice['total_amount']}}</p>
-			<p><strong>Tax:</strong> {{$invoice['total_tax']}}</p>
+			{{-- <p><strong>Tax:</strong> {{$invoice['total_tax']}}</p> --}}
 			<p><strong>Total:</strong> {{$invoice['grand_total_amount']}}</p>
 			<p><strong>Paid:</strong> {{$invoice['paid_amount']}}</p>
 			<p><strong>Balance:</strong> {{$invoice['balance']}}</p>
