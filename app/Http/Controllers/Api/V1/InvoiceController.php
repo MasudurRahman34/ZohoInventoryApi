@@ -19,6 +19,9 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Storage;
+use Symfony\Component\CssSelector\Node\FunctionNode;
 
 class InvoiceController extends Controller
 {
@@ -86,6 +89,12 @@ class InvoiceController extends Controller
 
     public function publicShow($shortCode) //show invoice by shortcode
     {
+
+        // return $link = ['links' => [
+        //     public_path('storage') => storage_path('app/public'),
+        //     public_path('images') => storage_path('app/images'),
+        // ]];
+
         $invoice = Invoice::with(['invoiceItems', 'receiverAddress', 'senderAddress'])->where('short_code', $shortCode)->first();
         if ($invoice) {
             return $this->success($invoice);
@@ -96,6 +105,10 @@ class InvoiceController extends Controller
 
     public function createInvoicePdf($shortCode) //creating invoice pdf
     {
+
+
+
+
         $newInvoice = Invoice::with(['invoiceItems', 'receiverAddress', 'senderAddress'])->where('short_code', $shortCode)->first();
         if ($newInvoice) {
             $renderingData = $newInvoice->toArray();
@@ -108,21 +121,31 @@ class InvoiceController extends Controller
 
             $this->invoiceService->deleteExistingFile($newInvoice->pdf_link);
 
+            $save_pdf_path = Invoice::$INVOICE_FILE_PATH . date("Ym");
 
-            $save_pdf_path = base_path('public/uploads/invoice/public/' . date("Ym"));
-            if (!File::isDirectory($save_pdf_path)) {
-                File::makeDirectory($save_pdf_path, 0777, true, true); //making direcotry
+            // return $save_pdf_path;
+            if (!Storage::directoryExists($save_pdf_path)) {
+                Storage::makeDirectory($save_pdf_path, 0777, true, true); //making direcotry
             }
             try {
                 $pdf = App::make('dompdf.wrapper');
                 $pdf =  $pdf->loadView('backend.pdf.invoice', ['invoice' => $renderingData]);
                 // ->setPaper('a4', 'portrait')
                 // ->setOption(['dpi' => 150, 'defaultFont' => 'sans-serif']);
-                $pdf->save($save_pdf_path . '/' . $shortCode . '.pdf');
+                //  $pdf->save($save_pdf_path . '/' . $shortCode . '.pdf');
+                $pdf = $pdf->download()->getOriginalContent();
 
-                $link = env('APP_URL') . '/' . 'uploads/invoice/public/' . date("Ym") . '/' . $shortCode . '.pdf'; //database link
-                $newInvoice->update(['pdf_link' => $link]);
-                return $newInvoice;
+
+
+                // $pdf->save(\storage_path($save_pdf_path) . '/' . $shortCode . '.pdf');
+                // $pdf = $pdf->stream();
+                $file = Storage::put($save_pdf_path . '/' . $shortCode . '.pdf', $pdf);
+                $filePath = Storage::url($save_pdf_path . '/' . $shortCode . '.pdf');
+
+
+                //$link = env('APP_URL') . '/' . 'uploads/invoice/public/' . date("Ym") . '/' . $shortCode . '.pdf'; //database link
+                $newInvoice->update(['pdf_link' => $filePath]);
+                return  $renderingData;
             } catch (\Throwable $th) {
                 return $this->error($th->getMessage(), 422);
             }
@@ -186,5 +209,23 @@ class InvoiceController extends Controller
             DB::rollBack();
             return $this->error($th->getMessage(), 422);
         }
+    }
+
+    public function downloadInvoicePdf($shortCode)
+    {
+        $invoice = Invoice::where('short_code', $shortCode)->first();
+        if ($invoice) {
+
+            function get_path($fileLink)
+            {
+                return \str_replace('/storage', '/public', $fileLink);
+            }
+
+            $fileLink = get_path($invoice->pdf_link);
+
+            return Storage::download($fileLink);
+            // return $this->success($invoice);
+        }
+        return $this->error("Data Not Found", 404);
     }
 }

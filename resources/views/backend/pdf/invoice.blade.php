@@ -30,7 +30,7 @@
 		.logo {
 			float: left;
 			margin-right: 20px;
-			max-width: 200px;
+			max-width: 100px;
 			max-height: 100px;
 		}
 		.invoice-details {

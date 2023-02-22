@@ -2,36 +2,24 @@
 
 namespace App\Http\Services\V1;
 
-use App\Models\Address;
-use App\Models\Country;
-use App\Models\GlobalAddress;
+
 use App\Models\Invoice;
 use App\Models\InvoiceAddress;
 use App\Models\InvoiceItem;
-use App\Models\InvoiceReceiverAddress;
-use App\Models\InvoiceSenderAddress;
-use App\Models\Location\District;
-use App\Models\Location\State;
-use App\Models\Location\StreetAddress;
-use App\Models\Location\Thana;
-use App\Models\Location\Union;
-use App\Models\Location\Zipcode;
 use App\Notifications\V1\InvoiceNotification;
 use Carbon\Carbon;
-use Exception;
 use Illuminate\Support\Facades\Notification;;
 
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\File;
-
+use Illuminate\Support\Facades\Storage;
 
 class InvoiceService
 {
     private $addressService;
     private array $fullAddress = [];
-    private string $plainTextAddress;
+    private string $plainTextAddress = "";
     public $addressKeys = [  //serilized for geneatation plain text
         'house', 'street_address_line_2', 'street_address_line_1', 'union_name', 'zipcode', 'thana_name', 'district_name', 'state_name', 'country_name',
     ];
@@ -255,16 +243,39 @@ class InvoiceService
     public function uploadCompanyLogo($company_logo): string //upload image and return database link
     {
         $fileName = $company_logo->getClientOriginalName();
-        $uploadTo = base_path('public/uploads/invoice/public/' . date("Ym"));
-        $existLink = base_path('public/uploads/invoice/public/' . date("Ym")) . '/' . $fileName;
-        if (!File::isDirectory($uploadTo)) {
-            File::makeDirectory($uploadTo, 0775, true, true); //making direcotry
-        }
+        // $uploadTo = base_path('public/uploads/invoice/public/' . date("Ym"));
+        // $existLink = base_path('public/uploads/invoice/public/' . date("Ym")) . '/' . $fileName;
 
-        if (file_exists($existLink)) {
+        $save_pdf_path = Invoice::$INVOICE_FILE_PATH . date("Ym");
+        $existLink = Invoice::$INVOICE_FILE_PATH . date("Ym") . '/' . $fileName;
+        if (!Storage::directoryExists($save_pdf_path)) {
+            Storage::makeDirectory($save_pdf_path, 0777, true, true); //making direcotry
+        }
+        // $existLink = base_path('public/uploads/invoice/public/' . date("Ym")) . '/' . $fileName;
+
+
+        // if (!File::isDirectory($uploadTo)) {
+        //     File::makeDirectory($uploadTo, 0775, true, true); //making direcotry
+        // }
+
+        // if (file_exists($existLink)) {
+        //     $increment = 0;
+        //     list($name, $ext) = explode('.', $existLink);
+        //     while (file_exists($existLink)) {
+        //         $increment++;
+        //         // rename if exist like example1.jpg, example2.jpg"
+        //         $existLink = $name . $increment . '.' . $ext;
+        //         $fileName = $name . $increment . '.' . $ext;
+        //     }
+
+        //     $fileName = Str::afterLast($existLink, '/'); //get only filename after increament from the folder link
+
+        // }
+
+        if (Storage::exists($existLink)) {
             $increment = 0;
             list($name, $ext) = explode('.', $existLink);
-            while (file_exists($existLink)) {
+            while (Storage::exists($existLink)) {
                 $increment++;
                 // rename if exist like example1.jpg, example2.jpg"
                 $existLink = $name . $increment . '.' . $ext;
@@ -274,13 +285,17 @@ class InvoiceService
             $fileName = Str::afterLast($existLink, '/'); //get only filename after increament from the folder link
 
         }
-        $link =  'uploads/invoice/public/' . date("Ym") . '/' . $fileName;
+        //$link =  'uploads/invoice/public/' . date("Ym") . '/' . $fileName;
         //$company_logo->move($uploadTo, $fileName);
-        $company_logo->storeAs('public/', $fileName);
+        Storage::putFileAs($save_pdf_path, $company_logo, $fileName);
 
-        $imageLocation = env('APP_URL') . '/' . $link; //database link
+        $filePath = Storage::url($save_pdf_path . '/' . $fileName);
 
-        return $imageLocation;
+        // $company_logo->storeAs('public/', $fileName);
+
+        // $imageLocation = env('APP_URL') . '/' . $link; //database link
+
+        return $filePath;
     }
 
     public function generateShorCode($table, $coloumn, $length_of_string): string  //generate shortcode
@@ -294,7 +309,7 @@ class InvoiceService
         if ($isExistString) {
             return $this->generateShorCode($table, $coloumn, $length_of_string); //recurisuve if found generate new one
         } else {
-            return $string;
+            return strtolower($string);
         }
     }
 
@@ -412,10 +427,11 @@ class InvoiceService
 
     public function deleteExistingFile($fileLink)
     {
-        $pdf_link = implode(explode(\env('APP_URL'), $fileLink));
-        $pdf_link = \base_path('public' . $pdf_link);
-        if (File::exists($pdf_link)) {
-            File::delete($pdf_link);
+        $currentLink = str_replace('/storage', '/public', $fileLink);
+
+
+        if (Storage::exists($currentLink)) {
+            Storage::delete($currentLink);
         }
     }
 }
