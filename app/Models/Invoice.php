@@ -14,7 +14,11 @@ use App\Models\InvoiceSenderAddress;
 class Invoice extends Model
 {
 
+
     use HasFactory, SoftDeletes, HasUuids;
+    public static $INVOICE_FILE_PATH = "public/uploads/invoice/";
+    protected $appends = ['pdf_full_link', 'download_pdf_url'];
+
     protected $dates = [
         'creadted_at',
         'updated_at',
@@ -53,7 +57,7 @@ class Invoice extends Model
 
     public function invoiceItems()
     {
-        return $this->hasMany(invoiceItem::class, 'invoice_id', 'id');
+        return $this->hasMany(InvoiceItem::class, 'invoice_id', 'id');
     }
 
     public function receiverAddress()
@@ -63,5 +67,16 @@ class Invoice extends Model
     public function senderAddress()
     {
         return $this->belongsTo(InvoiceAddress::class, 'id', 'invoice_id')->where('addressable_type', 'sender');
+    }
+
+    public function getPdfFullLinkAttribute()
+    {
+
+        return \asset($this->pdf_link);
+    }
+
+    public function getDownloadPdfUrlAttribute()
+    {
+        return env('APP_URL') . '/api/v1/invoices' . '/' . $this->short_code . '/download';
     }
 }

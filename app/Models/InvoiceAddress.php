@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class InvoiceAddress extends Model
 {
     use HasFactory, SoftDeletes;
+    protected $appends = ['compnay_logo_full_link'];
     protected $dates = [
         'creadted_at',
         'updated_at',
@@ -28,4 +29,12 @@ class InvoiceAddress extends Model
         'country_id', 'country_name', 'state_name', 'district_name', 'thana_name', 'union_name', 'zipcode', 'street_address_line_1', 'street_address_line_2', 'house',
         'full_address', 'plain_address', 'status', 'created_by', 'modified_by', 'account_id',
     ];
+
+    public function getCompnayLogoFullLinkAttribute()
+    {
+        if (!is_null($this->company_logo)) {
+            return \asset($this->company_logo);
+        }
+        return null;
+    }
 }
