@@ -16,6 +16,7 @@ use App\Http\Controllers\Api\V1\GlobalAddressController;
 use App\Http\Controllers\Api\V1\InventoryAdjustmentController;
 use App\Http\Controllers\Api\V1\InvoiceController;
 use App\Http\Controllers\Api\V1\LocationController;
+use App\Http\Controllers\Api\V1\MediaController;
 use App\Http\Controllers\Api\V1\PurchaseController;
 use App\Http\Controllers\Api\V1\PurchaseItemController;
 use App\Http\Controllers\Api\V1\SaleController;
@@ -140,10 +141,10 @@ Route::group(['prefix' => 'v1'], function () {
 
 
     Route::GET('testimonials', [TestimonialController::class, 'index'])->name('testimonials.index');
-
+    ///invoice
     Route::POST('/invoice', [InvoiceController::class, 'createPublicInvoice'])->name('invoices');
     Route::PUT('/invoice/{shortCode}', [InvoiceController::class, 'update'])->name('invoices.update');
-    Route::get('invoices/{shortCode}', [InvoiceController::class, 'publicShow'])->name('invoices.show');
+    Route::get('invoices/{shortCode}', [InvoiceController::class, 'show'])->name('invoices.show');
     Route::get('invoices/{shortCode}/download', [InvoiceController::class, 'downloadInvoicePdf'])->name('invoices.download');
     Route::get('invoices/{shortCode}/createPdf', [InvoiceController::class, 'createInvoicePdf'])->name('invoices.pdf.create');
     Route::get('invoices/notification/{shortCode}', [InvoiceController::class, 'notification'])->name('invoice.notification');
@@ -151,6 +152,10 @@ Route::group(['prefix' => 'v1'], function () {
     Route::GET('countries', [CountryController::class, 'index'])->name('countries.index');
     Route::GET('states', [LocationController::class, 'states'])->name('location.states');
     Route::GET('districts', [LocationController::class, 'districts'])->name('location.districts');
+
+    //media
+    Route::POST('/media', [MediaController::class, 'store'])->name('media.store');
+    Route::POST('/attachements', [MediaController::class, 'storeMediaAttachement'])->name('attachements.store');
 });
 
 //guest api

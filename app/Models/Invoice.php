@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\InvoiceReceiverAddress;
 use App\Models\InvoiceSenderAddress;
+use Illuminate\Contracts\Mail\Attachable;
 
 class Invoice extends Model
 {
@@ -43,7 +44,7 @@ class Invoice extends Model
         'grand_total_amount', 'due_amount', 'paid_amount', 'change_amount',
         'last_paid', 'adjustment_text', 'invoice_terms', 'invoice_type',
         'invoice_currency', 'status',
-        'account_id', 'created_by', 'modified_by', 'created_at', 'updated_at', 'deleted_at', 'download', 'user_ip', 'pdf_link'
+        'account_id', 'created_by', 'modified_by', 'created_at', 'updated_at', 'deleted_at', 'download', 'user_ip', 'pdf_link', 'total_whole_amount', 'payment_term', 'total_product_discount'
 
     ];
     // public function IdIncreamentable(): array
@@ -78,5 +79,11 @@ class Invoice extends Model
     public function getDownloadPdfUrlAttribute()
     {
         return env('APP_URL') . '/api/v1/invoices' . '/' . $this->short_code . '/download';
+    }
+
+    public function attachments()
+    {
+
+        return $this->hasMany(Attachment::class, 'attachmentable_id', 'id')->where('attachmentable_type', Media::$MEDIA_REFERENCE_TABLE['invoice'])->with('media');
     }
 }

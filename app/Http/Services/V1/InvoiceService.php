@@ -49,7 +49,9 @@ class InvoiceService
             'shipping_charge' => isset($request['shipping_charge']) ? $request['shipping_charge'] : 0,
             'order_adjustment' => isset($request['order_adjustment']) ? $request['order_adjustment'] : 0,
             'total_amount' => isset($request['total_amount']) ? $request['total_amount'] : 0,
-            'total_tax' => isset($request['total_amount']) ? $request['total_tax'] : 0,
+            'total_whole_amount' => isset($request['total_whole_amount']) ? $request['total_whole_amount'] : 0,
+            'total_tax' => isset($request['total_tax']) ? $request['total_tax'] : 0,
+            'total_product_discount' => isset($request['total_product_discount']) ? $request['total_product_discount'] : 0,
             'grand_total_amount' => isset($request['grand_total_amount']) ? $request['grand_total_amount'] : 0,
             'balance' => isset($request['balance']) ? $request['balance'] : 0,
             'due_amount' => isset($request['due_amount']) ? $request['due_amount'] : 0,
@@ -66,6 +68,7 @@ class InvoiceService
             'invoice_currency' => isset($request['invoice_currency']) ? $request['invoice_currency'] : NULL,
             'status' => isset($request['status']) ? $request['status'] : 0,
             'user_ip' => isset($request['user_ip']) ? $request['user_ip'] : NULL,
+            'payment_term' => isset($request['payment_term']) ? $request['payment_term'] : NULL,
         ];
         $newInvoice = Invoice::create($invoiceData); //store invoice
 
@@ -353,6 +356,8 @@ class InvoiceService
             'total_amount' => isset($request['total_amount']) ? $request['total_amount'] : $invoice->total_amount,
             'total_tax' => isset($request['total_amount']) ? $request['total_tax'] : $invoice->total_tax,
             'grand_total_amount' => isset($request['grand_total_amount']) ? $request['grand_total_amount'] : $invoice->grand_total_amount,
+            'total_product_discount' => isset($request['total_product_discount']) ? $request['total_product_discount'] : $invoice->total_product_discount,
+            'total_whole_amount' => isset($request['total_whole_amount']) ? $request['total_whole_amount'] : $invoice->total_whole_amount,
             'balance' => isset($request['balance']) ? $request['balance'] : $invoice->balance,
             'due_amount' => isset($request['due_amount']) ? $request['due_amount'] : $invoice->due_amount,
             'paid_amount' => isset($request['paid_amount']) ? $request['paid_amount'] : $invoice->paid_amount,
@@ -368,6 +373,7 @@ class InvoiceService
             'invoice_currency' => isset($request['invoice_currency']) ? $request['invoice_currency'] : $invoice->invoice_currency,
             'status' => isset($request['status']) ? $request['status'] : $invoice->status,
             'user_ip' => isset($request['user_ip']) ? $request['user_ip'] : $invoice->user_ip,
+            'payment_term' => isset($request['payment_term']) ? $request['payment_term'] : $invoice->payment_term,
         ];
         $updateInvoice = $invoice->update($invoiceData); //store invoice
         $invoice->invoiceItems()->delete();

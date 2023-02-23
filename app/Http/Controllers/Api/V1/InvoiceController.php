@@ -87,15 +87,11 @@ class InvoiceController extends Controller
         }
     }
 
-    public function publicShow($shortCode) //show invoice by shortcode
+    public function show($shortCode) //show invoice by shortcode
     {
 
-        // return $link = ['links' => [
-        //     public_path('storage') => storage_path('app/public'),
-        //     public_path('images') => storage_path('app/images'),
-        // ]];
-
-        $invoice = Invoice::with(['invoiceItems', 'receiverAddress', 'senderAddress'])->where('short_code', $shortCode)->first();
+        $invoice = Invoice::with(['invoiceItems', 'receiverAddress', 'senderAddress', 'attachments' => function ($query) {
+        }])->where('short_code', $shortCode)->first();
         if ($invoice) {
             return $this->success($invoice);
         }
@@ -105,9 +101,6 @@ class InvoiceController extends Controller
 
     public function createInvoicePdf($shortCode) //creating invoice pdf
     {
-
-
-
 
         $newInvoice = Invoice::with(['invoiceItems', 'receiverAddress', 'senderAddress'])->where('short_code', $shortCode)->first();
         if ($newInvoice) {

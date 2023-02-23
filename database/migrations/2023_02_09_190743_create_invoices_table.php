@@ -38,10 +38,12 @@ return new class extends Migration
             $table->float('order_discount', 14, 4)->default(0)->nullable();
             $table->float('discount_type', 14, 4)->default(0)->nullable();
             $table->float('shipping_charge', 14, 4)->default(0)->nullable();
-            $table->float('order_adjustment')->default(0)->nullable();
+            $table->float('order_adjustment', 14, 4)->default(0)->nullable();
 
-            $table->float('total_amount', 14, 4)->default(0);
+            $table->float('total_amount', 14, 4)->default(0)->comment("sum of each product subtotal");
+            $table->float('total_whole_amount', 14, 4)->default(0)->comment("sum of each product whole_price ");
             $table->float('total_tax', 14, 4)->default(0)->nullable();
+            $table->float('total_product_discount', 14, 4)->default(0)->nullable();
             $table->float('grand_total_amount', 14, 4)->default(0);
             $table->float('balance', 14, 4)->default(0)->nullable();
             $table->float('due_amount', 14, 4)->default(0)->nullable();
@@ -54,6 +56,7 @@ return new class extends Migration
             $table->text('invoice_description')->default(NULL)->nullable();
             $table->string('invoice_type')->default(NULL)->nullable();
             $table->string('invoice_currency')->default(NULL)->nullable();
+            $table->string('payment_term', 100)->default(NULL)->nullable()->comment('calculating due date eg: 7day due date with +7 from today');
             $table->integer('download')->default(0)->nullable();
             $table->string('pdf_link', 255)->default(NULL)->nullable();
 
