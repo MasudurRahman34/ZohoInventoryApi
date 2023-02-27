@@ -111,6 +111,7 @@
 			
 			<p><strong>Issue Date:</strong>{{$invoice['invoice_date']}}</p>
 			<p><strong>Due Date:</strong> {{$invoice['due_date']}}</p>
+			<p><strong>PO Number:</strong> {{json_encode($invoice['order_number'])}}</p>
 		</div>
 		<div class="information-section">
 			<div class="sender-details">

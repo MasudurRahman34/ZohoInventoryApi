@@ -2,10 +2,11 @@
 
 namespace App\Http\Services\V1;
 
-
+use App\Models\Attachment;
 use App\Models\Invoice;
 use App\Models\InvoiceAddress;
 use App\Models\InvoiceItem;
+use App\Models\Media;
 use App\Notifications\V1\InvoiceNotification;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Notification;;
@@ -18,14 +19,16 @@ use Illuminate\Support\Facades\Storage;
 class InvoiceService
 {
     private $addressService;
+    private $mediaService;
     private array $fullAddress = [];
     private string $plainTextAddress = "";
     public $addressKeys = [  //serilized for geneatation plain text
         'house', 'street_address_line_2', 'street_address_line_1', 'union_name', 'zipcode', 'thana_name', 'district_name', 'state_name', 'country_name',
     ];
-    public function __construct(AddressService $addressService)
+    public function __construct(AddressService $addressService, MediaService $mediaService)
     {
         $this->addressService = $addressService;
+        $this->mediaService = $mediaService;
     }
     public function store($request)
     {
@@ -76,13 +79,25 @@ class InvoiceService
         if ($newInvoice) {
             if (isset($request['invoiceItems'])) {
                 if (count($request['invoiceItems']) > 0) {
-                    foreach ($request['invoiceItems'] as $items) {
+                    foreach ($request['invoiceItems'] as $item) {
 
-                        $this->storeinvoiceItem($items, $newInvoice);
+                        $this->storeinvoiceItem($item, $newInvoice);
+                    }
+                }
+            }
+            if (isset($request['media'])) {
+                if (count($request['media']) > 0) {
+                    foreach ($request['media'] as $media) {
+                        $media['attachmentable_type'] = Media::$MEDIA_REFERENCE_TABLE['invoice'];
+                        $media['attachmentable_id'] = $newInvoice->id;
+
+                        $this->mediaService->storeMediaAttachement($media);
                     }
                 }
             }
         }
+
+
         return $newInvoice;
     }
 
@@ -376,8 +391,9 @@ class InvoiceService
             'payment_term' => isset($request['payment_term']) ? $request['payment_term'] : $invoice->payment_term,
         ];
         $updateInvoice = $invoice->update($invoiceData); //store invoice
-        $invoice->invoiceItems()->delete();
+        // $invoice->invoiceItems()->delete();
         if ($updateInvoice) {
+            //update invoice item
             $invoice->invoiceItems()->delete();
             if (isset($request['invoiceItems'])) {
                 if (count($request['invoiceItems']) > 0) {
@@ -393,9 +409,30 @@ class InvoiceService
                     }
                 }
             }
+
+            //update attachment
+            $attachment = Attachment::where('attachmentable_id', $invoice->id)->where('attachmentable_type', Media::$MEDIA_REFERENCE_TABLE['invoice'])->delete();
+            if (isset($request['media'])) {
+                if (count($request['media']) > 0) {
+
+                    foreach ($request['media'] as $media) {
+                        $media['media_id'] = isset($media['media_id']) ? $media['media_id'] : 0;
+                        $existMedia = Attachment::withTrashed()->where('attachmentable_id', $invoice->id)->where('attachmentable_type', Media::$MEDIA_REFERENCE_TABLE['invoice'])->where('media_id', $media['media_id'])->first();
+                        if ($existMedia) {
+                            $existMedia->update(['deleted_at' => NULL]);
+                        }
+                        if (!$existMedia) {
+                            $media['attachmentable_id'] = $invoice->id;
+                            $media['attachmentable_type'] = Media::$MEDIA_REFERENCE_TABLE['invoice'];
+                            $this->mediaService->storeMediaAttachement($media);
+                        }
+                    }
+                }
+            }
         }
         return $invoice;
     }
+
 
     public function updateInvoiceItem($item, $existItem)
     {

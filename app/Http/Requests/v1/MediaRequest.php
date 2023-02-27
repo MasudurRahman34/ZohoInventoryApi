@@ -24,8 +24,10 @@ class MediaRequest extends FormRequest
     public function rules()
     {
         return [
-            'media.file.*' => 'required|file|mimes:png,jpg,jpeg,gif,pdf,exel,docx,doc,txt|max:10240',
-            'media.status.*' => 'required|in:0,1',
+            'file' => 'required|file|mimes:png,jpg,jpeg,gif,pdf,exel,docx,doc,txt|max:10240',
+            'status' => 'required|in:0,1',
+            'description' => 'string|nullable',
+            'meta_description' => 'string|nullable',
         ];
     }
 }

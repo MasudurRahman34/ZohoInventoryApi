@@ -4,11 +4,15 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Api\V1\Helper\ApiResponse;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\v1\MediaRequest;
 use App\Http\Requests\v1\publicInvoiceRequest;
 use App\Http\Services\V1\CalculateProductPriceService;
 use App\Http\Services\V1\InvoiceService;
+use App\Http\Services\V1\MediaService;
+use App\Models\Attachment;
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
+use App\Models\Media;
 use App\Notifications\V1\InvoiceNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
@@ -78,7 +82,7 @@ class InvoiceController extends Controller
             }
             $newPdf = $this->createInvoicePdf($newInvoice->short_code); //creating invoice pdf
             DB::commit();
-            $newInvoice = Invoice::with(['invoiceItems', 'receiverAddress', 'senderAddress'])->find($newInvoice->id);
+            $newInvoice = Invoice::with(['invoiceItems', 'receiverAddress', 'senderAddress', 'media'])->find($newInvoice->id);
 
             return $this->success($newInvoice);
         } catch (\Throwable $th) {
@@ -90,8 +94,8 @@ class InvoiceController extends Controller
     public function show($shortCode) //show invoice by shortcode
     {
 
-        $invoice = Invoice::with(['invoiceItems', 'receiverAddress', 'senderAddress', 'attachments' => function ($query) {
-        }])->where('short_code', $shortCode)->first();
+        $invoice = Invoice::with(['invoiceItems', 'receiverAddress', 'senderAddress', 'media'])->where('short_code', $shortCode)->first();
+
         if ($invoice) {
             return $this->success($invoice);
         }
@@ -105,7 +109,7 @@ class InvoiceController extends Controller
         $newInvoice = Invoice::with(['invoiceItems', 'receiverAddress', 'senderAddress'])->where('short_code', $shortCode)->first();
         if ($newInvoice) {
             $renderingData = $newInvoice->toArray();
-            //return view('backend.pdf.invoice', ['invoice' => $renderingData]);
+            // return view('backend.pdf.invoice', ['invoice' => $renderingData]);
             // $pdf = App::make('dompdf.wrapper');
             // $pdf =  $pdf->loadView('backend.pdf.invoice', ['invoice' => $renderingData]);
             // // ->setPaper('a4', 'portrait')
@@ -127,16 +131,8 @@ class InvoiceController extends Controller
                 // ->setOption(['dpi' => 150, 'defaultFont' => 'sans-serif']);
                 //  $pdf->save($save_pdf_path . '/' . $shortCode . '.pdf');
                 $pdf = $pdf->download()->getOriginalContent();
-
-
-
-                // $pdf->save(\storage_path($save_pdf_path) . '/' . $shortCode . '.pdf');
-                // $pdf = $pdf->stream();
                 $file = Storage::put($save_pdf_path . '/' . $shortCode . '.pdf', $pdf);
                 $filePath = Storage::url($save_pdf_path . '/' . $shortCode . '.pdf');
-
-
-                //$link = env('APP_URL') . '/' . 'uploads/invoice/public/' . date("Ym") . '/' . $shortCode . '.pdf'; //database link
                 $newInvoice->update(['pdf_link' => $filePath]);
                 return  $renderingData;
             } catch (\Throwable $th) {
@@ -147,20 +143,9 @@ class InvoiceController extends Controller
         }
     }
 
-    // public function notification($shortCode)
-
-    // {
-    //     try {
-    //         $invoice = Invoice::with(['invoiceItems', 'recieverAddress', 'senderAddress'])->where('short_code', $shortCode)->first();
-    //         Notification::route('mail', 'mohammadmasud34@gmail.com')->notify(new InvoiceNotification($invoice));
-    //         return $this->success('send');
-    //     } catch (\Throwable $th) {
-    //         return $this->error('not send', $th->getCode());
-    //     }
-    // }
-
     public function update(publicInvoiceRequest $request, $shortCode)
     {
+        //return $request['media'];
 
 
         try {
@@ -192,7 +177,7 @@ class InvoiceController extends Controller
             }
             $newPdf = $this->createInvoicePdf($invoice->short_code);
             DB::commit();
-            $updatedInvoice = Invoice::with(['invoiceItems', 'receiverAddress', 'senderAddress'])->where('short_code', $shortCode)->first();
+            $updatedInvoice = Invoice::with(['invoiceItems', 'receiverAddress', 'senderAddress', 'media'])->where('short_code', $shortCode)->first();
             return $this->success($updatedInvoice);
 
             // $invoice->delete();
@@ -221,4 +206,21 @@ class InvoiceController extends Controller
         }
         return $this->error("Data Not Found", 404);
     }
+
+    // public function invoiceMedia(MediaRequest $request, MediaService $mediaService)
+    // {
+    //     try {
+    //         DB::BeginTransaction();
+    //         $request = $request->all();
+    //         // foreach ($request['media'] as $key => $item) {
+    //         $newMedia = $mediaService->store($request);
+    //         // }
+
+    //         DB::commit();
+    //         return $this->success($newMedia);
+    //     } catch (\Throwable $th) {
+    //         DB::rollBack();
+    //         return $this->error($th->getMessage(), 422);
+    //     }
+    // }
 }

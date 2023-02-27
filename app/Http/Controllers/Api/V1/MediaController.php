@@ -83,8 +83,11 @@ class MediaController extends Controller
 
 
 
-    public function destroy($id)
+    public function destroy($media_id, $attachement_id = \null)
+
     {
-        //
+
+
+        return $this->mediaService->destroy($media_id, $attachement_id);
     }
 }

@@ -29,4 +29,9 @@ class Media extends Model
     protected $fillable = [
         'uuid', 'name', 'slug', 'short_link', 'mime_type', 'description', 'meta_description', 'thumbanail_link', 'status', 'account_id', 'created_by', 'modified_by', 'created_at', 'deleted_at', 'updated_at'
     ];
+
+    public function invoice()
+    {
+        return $this->morphedByMany(Invoice::class, 'taggable', Attachment::class);
+    }
 }

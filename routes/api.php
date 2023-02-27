@@ -143,6 +143,7 @@ Route::group(['prefix' => 'v1'], function () {
     Route::GET('testimonials', [TestimonialController::class, 'index'])->name('testimonials.index');
     ///invoice
     Route::POST('/invoice', [InvoiceController::class, 'createPublicInvoice'])->name('invoices');
+    // Route::POST('/invoices/media', [InvoiceController::class, 'invoiceMedia'])->name('invoices.media');
     Route::PUT('/invoice/{shortCode}', [InvoiceController::class, 'update'])->name('invoices.update');
     Route::get('invoices/{shortCode}', [InvoiceController::class, 'show'])->name('invoices.show');
     Route::get('invoices/{shortCode}/download', [InvoiceController::class, 'downloadInvoicePdf'])->name('invoices.download');
@@ -155,6 +156,7 @@ Route::group(['prefix' => 'v1'], function () {
 
     //media
     Route::POST('/media', [MediaController::class, 'store'])->name('media.store');
+    Route::DELETE('/media/{media_id}/{attachment_id}', [MediaController::class, 'destroy'])->name('media.destroy');
     Route::POST('/attachements', [MediaController::class, 'storeMediaAttachement'])->name('attachements.store');
 });
 

@@ -20,6 +20,8 @@ class Invoice extends Model
     public static $INVOICE_FILE_PATH = "public/uploads/invoice/";
     protected $appends = ['pdf_full_link', 'download_pdf_url'];
 
+
+
     protected $dates = [
         'creadted_at',
         'updated_at',
@@ -81,9 +83,21 @@ class Invoice extends Model
         return env('APP_URL') . '/api/v1/invoices' . '/' . $this->short_code . '/download';
     }
 
-    public function attachments()
-    {
+    // public function attachments()
+    // {
 
-        return $this->hasMany(Attachment::class, 'attachmentable_id', 'id')->where('attachmentable_type', Media::$MEDIA_REFERENCE_TABLE['invoice'])->with('media');
+    //     return $this->hasMany(Attachment::class, 'attachmentable_id', 'id')->where('attachmentable_type', Media::$MEDIA_REFERENCE_TABLE['invoice'])->with('media');
+    // }
+
+    // public function attachments()
+    // {
+    //     return $this->morphMany(Attachment::class, 'attachmentable')->with(['media' => function ($query) {
+    //         $query->select('id', 'short_link');
+    //     }])->select('id', 'attachmentable_id', 'media_id');
+    // }
+
+    public function media()
+    {
+        return $this->morphToMany(Media::class, 'attachmentable', Attachment::class)->withPivot('id')->where('attachments.deleted_at', NULL);
     }
 }

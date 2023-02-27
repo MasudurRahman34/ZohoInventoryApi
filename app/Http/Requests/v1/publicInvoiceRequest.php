@@ -139,6 +139,9 @@ class publicInvoiceRequest extends FormRequest
             'receiver.street_address_line_1' => 'string|nullable', //'regex:/([- ,\/0-9a-zA-Z]+)/' including ,/-
             'receiver.street_address_line_1' => 'string|nullable',
             'receiver.status' => 'integer|in:0,1|nullable', //0=invalid, 1=valid
+
+            //invoice media
+            'media.*.media_id' => 'integer|exists:media,id|nullable'
         ];
 
 
