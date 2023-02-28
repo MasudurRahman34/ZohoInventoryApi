@@ -32,6 +32,6 @@ class Media extends Model
 
     public function invoice()
     {
-        return $this->morphedByMany(Invoice::class, 'taggable', Attachment::class);
+        return $this->morphedByMany(Invoice::class, 'attachmentable', Attachment::class);
     }
 }

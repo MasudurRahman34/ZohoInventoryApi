@@ -7,9 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Scope;
 use Illuminate\Support\Facades\Auth;
 
-Trait ScopeUuid
+trait ScopeUuid
 {
-    public static function scopeUuid($query, $uuid){
+    public static function scopeUuid($query, $uuid)
+    {
         return $query->where('uuid', $uuid);
-     }
+    }
 }

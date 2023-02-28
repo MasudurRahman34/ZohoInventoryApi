@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\V1\Auth\NewPasswordController;
 use App\Http\Controllers\Api\V1\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Api\V1\Auth\RegistrationController;
 use App\Http\Controllers\Api\V1\Auth\VerifyEmailController;
+use App\Http\Controllers\Api\V1\BillController;
 use App\Http\Controllers\Api\V1\BusinessTypeController;
 use App\Http\Controllers\Api\V1\ContactController;
 use App\Http\Controllers\Api\V1\CountryController;
@@ -126,6 +127,13 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
 
         //account plan feature
         Route::POST('user/plan/features', [UserPlanFeatureController::class, 'store'])->name('businesstypes.store');
+
+        //bill
+        Route::GET('bills', [BillController::class, 'index'])->name('bills.index');
+        Route::POST('bills', [BillController::class, 'store'])->name('bills.store');
+        // Route::GET('bills/{bill}', [BillController::class, 'show'])->name('bills.show');
+        // Route::PUT('bills/{bill}', [BillController::class, 'update'])->name('bills.update');
+        // Route::DELETE('bills/bill}', [BillController::class, 'delete'])->name('bills.delete');
     });
 });
 
