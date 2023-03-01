@@ -33,8 +33,8 @@ class publicInvoiceRequest extends FormRequest
             "invoice_number" => ['required', 'between: 3,20'], //need to check if login 
 
             "order_id.*" => 'nullable|string|between: 3,255',
-            "invoice_date" => 'nullable|date|date_format:Y-m-d',
-            "due_date" => 'nullable|date|date_format:Y-m-d',
+            "invoice_date" => 'nullable|date',
+            "due_date" => 'nullable|date',
 
             "order_tax" => 'nullable|numeric|between:0,100',
             "order_tax_amount" => 'nullable|numeric|between:0,9999999999.9999',

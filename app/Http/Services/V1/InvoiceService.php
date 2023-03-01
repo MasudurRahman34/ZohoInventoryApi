@@ -42,8 +42,8 @@ class InvoiceService
             'invoice_number' => isset($request['invoice_number']) ? $request['invoice_number'] : NULL,
             'short_code' => $this->generateShorCode('invoices', 'short_code', 6), //generate from system
             'order_id' => isset($request['order_id']) ? $request['order_id'] : NULL,
-            'invoice_date' => isset($request['invoice_date']) ? $request['invoice_date'] : Carbon::now(),
-            'due_date' => isset($request['due_date']) ? $request['due_date'] : NULL,
+            'invoice_date' => isset($request['invoice_date']) ? date_format(date_create($request['invoice_date']), 'Y-m-d') : Carbon::now(),
+            'due_date' => isset($request['due_date']) ? date_format(date_create($request['due_date']), 'Y-m-d') : NULL,
 
             'order_tax' => isset($request['order_tax']) ? $request['order_tax'] : 0,
             'order_tax_amount' => isset($request['order_tax_amount']) ? $request['order_tax_amount'] : 0,
@@ -359,8 +359,8 @@ class InvoiceService
             'invoice_number' => isset($request['invoice_number']) ? $request['invoice_number'] : $invoice->invoice_number,
             'short_code' => $invoice['short_code'], //generate from system
             'order_id' => isset($request['order_id']) ? $request['order_id'] : $invoice->order_id,
-            'invoice_date' => isset($request['invoice_date']) ? $request['invoice_date'] : $invoice->invoice_date,
-            'due_date' => isset($request['due_date']) ? $request['due_date'] : $invoice->due_date,
+            'invoice_date' => isset($request['invoice_date']) ? date_format(date_create($request['invoice_date']), 'Y-m-d') : $invoice->invoice_date,
+            'due_date' => isset($request['due_date']) ? date_format(date_create($request['due_date']), 'Y-m-d') : $invoice->due_date,
 
             'order_tax' => isset($request['order_tax']) ? $request['order_tax'] : $invoice->order_tax,
             'order_tax_amount' => isset($request['order_tax_amount']) ? $request['order_tax_amount'] : $invoice->order_tax_amount,

@@ -38,7 +38,10 @@ class InvoiceController extends Controller
         $this->calculateProductPriceService = $calculateProductPriceService;
     }
     public function createPublicInvoice(publicInvoiceRequest $request)
-    { //cheching existing  invoice
+    {
+
+
+        //cheching existing  invoice
         //default setting
         // $recieverEmail = isset($request['receiver']['email']) ? $request['receiver']['email'] : null;
         // $recieverMobile = isset($request['receiver']['mobile']) ? $request['receiver']['mobile'] : null;
@@ -145,7 +148,6 @@ class InvoiceController extends Controller
 
     public function update(publicInvoiceRequest $request, $shortCode)
     {
-        //return $request['media'];
 
 
         try {
@@ -169,7 +171,7 @@ class InvoiceController extends Controller
                     }
                 }
                 if (isset($request['receiver'])) { //insert receiver information
-                    $newRecieverAddress = $this->invoiceService->invoiceAddress($request['receiver'], 'receiver', $updatedInvoice);
+                    // $newRecieverAddress = $this->invoiceService->invoiceAddress($request['receiver'], 'receiver', $updatedInvoice);
                     if (!\is_null($invoice['receiverAddress'])) {
                         $updateRecieverAddress = $this->invoiceService->updateInvoiceAddress($request['receiver'], 'receiver', $invoice['receiverAddress'], $updatedInvoice,);
                     }

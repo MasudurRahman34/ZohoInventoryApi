@@ -131,6 +131,7 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
         //bill
         Route::GET('bills', [BillController::class, 'index'])->name('bills.index');
         Route::POST('bills', [BillController::class, 'store'])->name('bills.store');
+        Route::PUT('bills/{bill}', [BillController::class, 'update'])->name('bills.update');
         // Route::GET('bills/{bill}', [BillController::class, 'show'])->name('bills.show');
         // Route::PUT('bills/{bill}', [BillController::class, 'update'])->name('bills.update');
         // Route::DELETE('bills/bill}', [BillController::class, 'delete'])->name('bills.delete');

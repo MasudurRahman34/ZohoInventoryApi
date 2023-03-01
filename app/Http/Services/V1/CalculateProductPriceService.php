@@ -128,6 +128,8 @@ class CalculateProductPriceService
         return $request;
     }
 
+
+
     public function calculateInvoiceItem($item): void
     {
         $subtotal = $whole_price = ($item['unit_price'] * $item['product_qty']);
@@ -150,5 +152,52 @@ class CalculateProductPriceService
         // $grand_total_amount = $this->total_amount;
         $this->grand_total_amount = $grand_total_amount;
         $this->balance = $this->grand_total_amount - $this->paid_amount;
+    }
+
+    public function billPrice($request)
+    {
+
+
+        if (count($request['billItems']) > 0) {
+            foreach ($request['billItems'] as $key => $item) {
+
+                //initializing and overriding purchase item
+                $request['billItems'][$key]['unit_price'] = $item['unit_price'] = isset($item['unit_price']) ? $item['unit_price'] : 0;
+                $request['billItems'][$key]['product_qty'] = $item['product_qty'] = isset($item['product_qty']) ? $item['product_qty'] : 0;
+                $request['billItems'][$key]['product_discount'] = $item['product_discount'] = isset($item['product_discount']) ? $item['product_discount'] : 0;
+                $request['billItems'][$key]['is_taxable'] = $item['is_taxable'] = isset($item['is_taxable']) ? $item['is_taxable'] : 0;
+
+                $request['billItems'][$key]['tax_rate'] = $item['tax_rate'] = isset($item['tax_rate']) ? $item['tax_rate'] : 0;
+
+                $this->calculateInvoiceItem($item);
+                $request['billItems'][$key]['subtotal'] = $this->subtotal;
+                $request['billItems'][$key]['tax_amount'] = $this->tax_amount;
+                $request['billItems'][$key]['whole_price'] = $this->whole_price;
+                $request['billItems'][$key]['product_discount'] = $this->product_discount;
+
+                // $request['total_amount'] += $this->subtotal;
+                $this->total_amount += $this->subtotal;
+                $this->total_tax += $this->tax_amount;
+                $this->total_whole_amount += $this->whole_price;
+                $this->total_product_discount += $this->product_discount;
+            }
+            //initializing and overriding invoice Item
+            $this->shipping_charge = $request['shipping_charge'] =  isset($request['shipping_charge']) ? $request['shipping_charge'] : 0;
+            $this->order_adjustment = $request['order_adjustment'] =  isset($request['order_adjustment']) ? $request['order_adjustment'] : 0;
+            $this->order_discount = $request['order_discount'] = isset($request['order_discount']) ? $request['order_discount'] : 0;
+            $this->paid_amount = $request['paid_amount'] =  isset($request['paid_amount']) ? $request['paid_amount'] : 0;
+            // $this->order_tax = $request['order_tax'] =  isset($request['order_tax']) ? $request['order_tax'] : 0;
+            // $this->total_tax = $request['tax_rate'] =  isset($request['tax_rate']) ? $request['tax_rate'] : null;
+        }
+
+        $this->calculateInvoice(); //calculate and overiding grandttoal
+        $request['total_amount'] = $this->total_amount;
+        $request['grand_total_amount'] = $this->grand_total_amount;
+        $request['total_tax'] = $this->total_tax;
+        $request['balance'] = $this->balance;
+        $request['total_whole_amount'] = $this->total_whole_amount;
+        $request['total_product_discount'] = $this->total_product_discount;
+
+        return $request;
     }
 }

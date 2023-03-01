@@ -47,6 +47,15 @@ class Bill extends Model
         return $this->hasMany(BillItem::class, 'bill_id', 'id');
     }
 
+    public function receiverAddress()
+    {
+        return $this->belongsTo(BillAddress::class, 'id', 'bill_id')->where('addressable_type', 'receiver');
+    }
+    public function senderAddress()
+    {
+        return $this->belongsTo(BillAddress::class, 'id', 'bill_id')->where('addressable_type', 'sender');
+    }
+
     public function media()
     {
         return $this->morphToMany(Media::class, 'attachmentable', Attachment::class)->withPivot('id')->where('attachments.deleted_at', NULL);
