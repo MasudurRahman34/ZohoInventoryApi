@@ -2,10 +2,14 @@
 
 namespace App\Http\Requests\v1;
 
+use App\Http\Controllers\Api\V1\Helper\ApiResponse;
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class BillRequest extends FormRequest
 {
+    use ApiResponse;
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -37,9 +41,9 @@ class BillRequest extends FormRequest
 
             "order_tax" => 'nullable|numeric|between:0,100',
             "order_tax_amount" => 'nullable|numeric|between:0,9999999999.9999',
-            "discount_type" => 'nullable|numeric|min:0',
 
             "order_discount" => 'nullable|numeric|between:0,100',
+            "discount_amount" => 'nullable|numeric|between:0,9999999999.9999',
             "shipping_charge" => 'nullable|numeric|between:0,9999999999.9999',
             "order_adjustment" => 'nullable|numeric|between:-9999999999.9999,9999999999.9999',
             "total_amount" => 'required|numeric|between:0,9999999999.9999',
@@ -136,5 +140,14 @@ class BillRequest extends FormRequest
             'receiver.street_address_line_1' => 'string|nullable',
             'receiver.status' => 'integer|in:0,1|nullable'
         ];
+    }
+    public function failedValidation(Validator $validator)
+    {
+
+        throw new HttpResponseException(
+
+            $this->error($validator->errors(), 422)
+
+        );
     }
 }

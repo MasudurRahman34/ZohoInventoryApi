@@ -18,6 +18,7 @@ use App\Http\Controllers\Api\V1\InventoryAdjustmentController;
 use App\Http\Controllers\Api\V1\InvoiceController;
 use App\Http\Controllers\Api\V1\LocationController;
 use App\Http\Controllers\Api\V1\MediaController;
+use App\Http\Controllers\Api\V1\PaymentController;
 use App\Http\Controllers\Api\V1\PurchaseController;
 use App\Http\Controllers\Api\V1\PurchaseItemController;
 use App\Http\Controllers\Api\V1\SaleController;
@@ -131,10 +132,19 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
         //bill
         Route::GET('bills', [BillController::class, 'index'])->name('bills.index');
         Route::POST('bills', [BillController::class, 'store'])->name('bills.store');
-        Route::PUT('bills/{bill}', [BillController::class, 'update'])->name('bills.update');
-        // Route::GET('bills/{bill}', [BillController::class, 'show'])->name('bills.show');
+        Route::PUT('bills/{shortCode}', [BillController::class, 'update'])->name('bills.update');
+        Route::DELETE('bills/{uuid}', [BillController::class, 'delete'])->name('bills.delete');
+        Route::GET('bills/{uuid}', [BillController::class, 'show'])->name('bills.show');
         // Route::PUT('bills/{bill}', [BillController::class, 'update'])->name('bills.update');
-        // Route::DELETE('bills/bill}', [BillController::class, 'delete'])->name('bills.delete');
+
+        //payments
+
+        //bill
+        Route::GET('payments', [PaymentController::class, 'index'])->name('payments.index');
+        Route::POST('payments', [PaymentController::class, 'store'])->name('payments.store');
+        Route::PUT('payments/{payment}', [PaymentController::class, 'update'])->name('payments.update');
+        Route::DELETE('payments/{payment}', [PaymentController::class, 'destroy'])->name('payments.delete');
+        Route::GET('payments/{payment}', [PaymentController::class, 'show'])->name('payments.show');
     });
 });
 

@@ -32,7 +32,7 @@ class Bill extends Model
         'uuid', 'supplier_id', 'supplier_name', 'billing_person', 'shipping_address',
         'billing_address', 'bill_number', 'short_code', 'order_id',
         'order_number', 'bill_date', 'due_date', 'order_tax',
-        'order_tax_amount', 'order_discount', 'discount_type',
+        'order_tax_amount', 'order_discount', 'discount_amount',
         'shipping_charge', 'order_adjustment', 'total_amount',
         'total_tax', 'bill_description', 'balance',
         'grand_total_amount', 'due_amount', 'paid_amount', 'change_amount',
@@ -59,5 +59,10 @@ class Bill extends Model
     public function media()
     {
         return $this->morphToMany(Media::class, 'attachmentable', Attachment::class)->withPivot('id')->where('attachments.deleted_at', NULL);
+    }
+
+    public function payments()
+    {
+        return $this->morphMany(Payment::class, 'paymentable');
     }
 }

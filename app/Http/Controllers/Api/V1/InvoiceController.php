@@ -173,7 +173,7 @@ class InvoiceController extends Controller
                 if (isset($request['receiver'])) { //insert receiver information
                     // $newRecieverAddress = $this->invoiceService->invoiceAddress($request['receiver'], 'receiver', $updatedInvoice);
                     if (!\is_null($invoice['receiverAddress'])) {
-                        $updateRecieverAddress = $this->invoiceService->updateInvoiceAddress($request['receiver'], 'receiver', $invoice['receiverAddress'], $updatedInvoice,);
+                        $updateRecieverAddress = $this->invoiceService->updateInvoiceAddress($request['receiver'], 'receiver', $invoice['receiverAddress'], $updatedInvoice);
                     }
                 }
             }

@@ -36,7 +36,7 @@ return new class extends Migration
             $table->float('order_tax', 14, 4)->default(0)->nullable();
             $table->float('order_tax_amount', 14, 4)->default(0)->nullable();
             $table->float('order_discount', 14, 4)->default(0)->nullable();
-            $table->float('discount_type', 14, 4)->default(0)->nullable();
+            $table->float('discount_amount', 14, 4)->default(0)->nullable();
             $table->float('shipping_charge', 14, 4)->default(0)->nullable();
             $table->float('order_adjustment', 14, 4)->default(0)->nullable();
 

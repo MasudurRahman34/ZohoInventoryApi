@@ -38,9 +38,10 @@ class publicInvoiceRequest extends FormRequest
 
             "order_tax" => 'nullable|numeric|between:0,100',
             "order_tax_amount" => 'nullable|numeric|between:0,9999999999.9999',
-            "discount_type" => 'nullable|numeric|min:0',
+
 
             "order_discount" => 'nullable|numeric|between:0,100',
+            "discount_amount" => 'nullable|numeric|between:0,9999999999.9999',
             "shipping_charge" => 'nullable|numeric|between:0,9999999999.9999',
             "order_adjustment" => 'nullable|numeric|between:-9999999999.9999,9999999999.9999',
             "total_amount" => 'required|numeric|between:0,9999999999.9999',
@@ -60,7 +61,7 @@ class publicInvoiceRequest extends FormRequest
 
             // invoice item validation
 
-            'invoiceItems.*.invoice_id' => 'invoice_id|integer|exists:invoices,id|nullable',
+            'invoiceItems.*.id' => 'integer|exists:invoice_items,id|nullable',
             // 'invoiceItems.*.product_id' => 'nullable|integer|exists:products,id|distinct', //should check exists with product table //must not duplicate
             'invoiceItems.*.product_name' => 'string|between:3,255|nullable',
             'invoiceItems.*.warehouse_id' => 'nullable|integer|exists:warehouses,id',

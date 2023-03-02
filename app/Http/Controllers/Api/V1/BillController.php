@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Api\V1\Helper\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\v1\BillRequest;
+use App\Http\Resources\v1\BillResource;
+use App\Http\Resources\v1\Collections\BillCollection;
 use App\Http\Services\V1\BillService;
 use App\Http\Services\V1\CalculateProductPriceService;
 use App\Models\Bill;
@@ -24,8 +26,8 @@ class BillController extends Controller
     }
     public function index(Request $request)
     {
-        $bill = Bill::with(['billItems', 'receiverAddress', 'senderAddress', 'media'])->get();
-        return $this->success($bill);
+        $bill = Bill::with(['billItems', 'receiverAddress', 'senderAddress', 'media', 'payments'])->paginate(20);
+        return $this->success(new BillCollection($bill));
     }
 
     public function store(BillRequest $request)
@@ -50,7 +52,7 @@ class BillController extends Controller
             }
 
             DB::commit();
-            $newBill = Bill::with(['billItems', 'receiverAddress', 'senderAddress', 'media'])->where('id', $newBill)->first();
+            $newBill = Bill::with(['billItems', 'receiverAddress', 'senderAddress', 'media'])->where('id', $newBill->id)->first();
             return $this->success($newBill);
         } catch (\Throwable $th) {
             DB::rollBack();
@@ -99,5 +101,44 @@ class BillController extends Controller
             DB::rollBack();
             return $this->error($th->getMessage(), 422);
         }
+    }
+
+    public function show($uuid)
+    {
+        $bill = Bill::Uuid($uuid)->with(['billItems', 'receiverAddress', 'senderAddress', 'media'])->first();
+        if ($bill) {
+            try {
+
+                return $this->success(new BillResource($bill));
+            } catch (\Exception $th) {
+                DB::rollBack();
+                return $this->error($th->getMessage(), 422);
+            }
+        }
+
+        return $this->error("Data Not Found", 422);
+    }
+
+    public function delete($uuid)
+    {
+        $bill = Bill::Uuid($uuid)->first();
+        if ($bill) {
+            try {
+                DB::beginTransaction();
+                $bill->billItems()->delete();
+                $bill->receiverAddress()->delete();
+                $bill->senderAddress()->delete();
+                $bill->media()->delete();
+                $bill->payment()->delete();
+                $bill->delete();
+                DB::commit();
+                return $this->success(\null);
+            } catch (\Exception $th) {
+                DB::rollBack();
+                return $this->error($th->getMessage(), 422);
+            }
+        }
+
+        return $this->error("Data Not Found", 422);
     }
 }
