@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Http\Controllers\Api\V1\Helper\ApiFilter;
 use App\Http\Controllers\Api\V1\Helper\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\v1\BillRequest;
@@ -16,7 +17,7 @@ use Illuminate\Support\Facades\DB;
 
 class BillController extends Controller
 {
-    use ApiResponse;
+    use ApiResponse, ApiFilter;
     private $billService;
     private $calculateProductPrice;
     public function __construct(BillService $billService = null, CalculateProductPriceService $calculateProductPrice)
@@ -26,8 +27,12 @@ class BillController extends Controller
     }
     public function index(Request $request)
     {
-        $bill = Bill::with(['billItems', 'receiverAddress', 'senderAddress', 'media', 'payments'])->paginate(20);
-        return $this->success(new BillCollection($bill));
+        $this->setFilterProperty($request);
+        $query = Bill::with(['billItems', 'receiverAddress', 'senderAddress', 'media', 'payments']);
+        $this->dateRangeQuery($request, $query, 'bills.created_at');
+        $this->filterBy($request, $this->query);
+        $bill = $this->query->orderBy($this->column_name, $this->sort)->paginate($this->show_per_page)->withQueryString();
+        return (new BillCollection($bill));
     }
 
     public function store(BillRequest $request)
