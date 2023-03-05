@@ -40,7 +40,7 @@ class publicInvoiceRequest extends FormRequest
             "order_tax_amount" => 'nullable|numeric|between:0,9999999999.9999',
 
 
-            "order_discount" => 'nullable|numeric|between:0,100',
+            "discount_percentage" => 'nullable|numeric|between:0,100',
             "discount_amount" => 'nullable|numeric|between:0,9999999999.9999',
             "shipping_charge" => 'nullable|numeric|between:0,9999999999.9999',
             "order_adjustment" => 'nullable|numeric|between:-9999999999.9999,9999999999.9999',

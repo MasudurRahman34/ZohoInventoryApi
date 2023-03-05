@@ -2,7 +2,7 @@
 
 namespace App\Http\Services\V1;
 
-
+use App\Models\Invoice;
 use App\Models\Payment;
 use Exception;
 

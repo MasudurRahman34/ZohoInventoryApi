@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Http\Controllers\Api\V1\Helper\ApiFilter;
 use App\Http\Controllers\Api\V1\Helper\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\v1\MediaRequest;
 use App\Http\Requests\v1\publicInvoiceRequest;
+use App\Http\Resources\v1\Collections\InvoiceCollection;
 use App\Http\Services\V1\CalculateProductPriceService;
 use App\Http\Services\V1\InvoiceService;
 use App\Http\Services\V1\MediaService;
@@ -22,6 +24,7 @@ use Illuminate\Support\Facades\Notification;;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Storage;
@@ -29,7 +32,7 @@ use Symfony\Component\CssSelector\Node\FunctionNode;
 
 class InvoiceController extends Controller
 {
-    use ApiResponse;
+    use ApiResponse, ApiFilter;
     private $invoiceService;
     private $calculateProductPriceService;
     public function __construct(InvoiceService $invoiceService, CalculateProductPriceService $calculateProductPriceService)
@@ -37,6 +40,26 @@ class InvoiceController extends Controller
         $this->invoiceService = $invoiceService;
         $this->calculateProductPriceService = $calculateProductPriceService;
     }
+
+    public function index(Request $request)
+    {
+        $this->setFilterProperty($request);
+        if (Auth::guard('api')->check()) {
+            $query = Invoice::with(['invoiceItems', 'receiverAddress', 'senderAddress', 'media']);
+        } else {
+            $query = Invoice::with(['invoiceItems', 'receiverAddress', 'senderAddress', 'media'])->where('user_ip', $request->ip());
+        }
+
+
+        $this->dateRangeQuery($request, $query, 'invoices.created_at');
+        $this->filterBy($request, $this->query);
+        $invoice = $this->query->orderBy($this->column_name, $this->sort)->paginate($this->show_per_page)->withQueryString();
+        return $this->success(new InvoiceCollection($invoice));
+
+
+        return $invoice;
+    }
+
     public function createPublicInvoice(publicInvoiceRequest $request)
     {
 
@@ -94,15 +117,23 @@ class InvoiceController extends Controller
         }
     }
 
-    public function show($shortCode) //show invoice by shortcode
+    public function show(Request $request, $shortCode) //show invoice by shortcode
     {
+        try {
+            if (Auth::guard('api')->check()) {
+                $invoice = Invoice::with(['invoiceItems', 'receiverAddress', 'senderAddress', 'media'])->where('short_code', $shortCode)->first();
+            } else {
+                $invoice = Invoice::with(['invoiceItems', 'receiverAddress', 'senderAddress', 'media'])->where('user_ip', $request->ip())->where('short_code', $shortCode)->first();
+            }
 
-        $invoice = Invoice::with(['invoiceItems', 'receiverAddress', 'senderAddress', 'media'])->where('short_code', $shortCode)->first();
 
-        if ($invoice) {
-            return $this->success($invoice);
+            if ($invoice) {
+                return $this->success($invoice);
+            }
+            return $this->error("Data Not Found", 404);
+        } catch (\Throwable $th) {
+            return $this->error(throw $th, 500);
         }
-        return $this->error("Data Not Found", 404);
     }
 
 

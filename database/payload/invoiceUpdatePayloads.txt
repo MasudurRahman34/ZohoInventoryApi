@@ -3,7 +3,7 @@ order_number[0]:ORD-1002
 invoice_number:INv-udpate-005
 invoice_date:2023-02-17
 due_date:2023-12-15
-order_discount:100
+discount_percentage:100
 discount_amount:5
 balance:0
 paid_amount:10

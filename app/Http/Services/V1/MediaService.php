@@ -69,13 +69,11 @@ class MediaService
 
     public function destroy($media_id, $attachment_id = \null)
     {
-
-
-
         try {
             DB::beginTransaction();
             $attachement = Attachment::where('media_id', $media_id)->get();
-            if (count($attachement) > 1) {
+
+            if (count($attachement) > 0) {
                 $getOneAttachment = Attachment::find($attachment_id);
 
                 if ($getOneAttachment) {
@@ -84,17 +82,29 @@ class MediaService
                     return $this->success(null, 406);
                 }
                 return $this->error('Attachement Not Found', 404);
-            } elseif (count($attachement) == 1) {
+            }
+            // elseif (count($attachement) == 1) {
+            //     $media = Media::find($media_id);
+            //     if (($media)) {
+            //         $this->deleteExistingFile($media->short_link);
+            //         $media->delete();
+            //     }
+
+            //     $attachement[0]->delete();
+
+            //     DB::commit();
+            //     return $this->success(null);
+            // }
+            else {
                 $media = Media::find($media_id);
                 if (($media)) {
                     $this->deleteExistingFile($media->short_link);
                     $media->delete();
+                    DB::commit();
+                    return $this->success(null);
+                } else {
+                    return $this->error('Media Not Found', 404);
                 }
-
-                $attachement[0]->delete();
-
-                DB::commit();
-                return $this->success(null);
             }
             return $this->error('data not found', 404);
         } catch (\Exception $th) {
@@ -105,11 +115,13 @@ class MediaService
 
     public function deleteExistingFile($fileLink)
     {
-        $currentLink = str_replace('/storage', '/public', $fileLink);
+        if ($fileLink != null) {
+            $currentLink = str_replace('/storage', '/public', $fileLink);
 
 
-        if (Storage::exists($currentLink)) {
-            Storage::delete($currentLink);
+            if (Storage::exists($currentLink)) {
+                Storage::delete($currentLink);
+            }
         }
     }
 }

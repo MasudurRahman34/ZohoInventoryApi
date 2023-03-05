@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Observers;
+
 use Illuminate\Support\Facades\Auth;
 
 class AccountObserver
@@ -8,9 +9,10 @@ class AccountObserver
     protected $userID;
     protected $acountId;
 
-    public function __construct(){
-        $this->userID =  Auth::user()->id;
-        $this->acountId= Auth::User()->account_id;
+    public function __construct()
+    {
+        $this->userID =  Auth::guard('api')->check() ? (Auth::guard('api')->user()->id != null ? Auth::guard('api')->user()->id : 0) : 0;
+        $this->acountId = Auth::guard('api')->check() ? (Auth::guard('api')->user()->account_id != null ? Auth::guard('api')->user()->account_id : 1)  : 1;
     }
 
 

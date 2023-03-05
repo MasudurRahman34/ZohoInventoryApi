@@ -21,7 +21,7 @@ trait ApiFilter
         $this->setSortBy($request->sort_by);
         $this->setShowPerPage($request);
 
-        $this->setAccountId(Auth::user()->account_id);
+        $this->setAccountId(Auth::guard('api')->check() ? (Auth::guard('api')->user()->account_id != null ? Auth::guard('api')->user()->account_id : 1)  : 1);
     }
 
     public function setDate($request)

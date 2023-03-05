@@ -9,9 +9,10 @@ use Illuminate\Support\Facades\Auth;
 
 class AccountScope implements Scope
 {
-   
+
     public function apply(Builder $builder, Model $model)
     {
-        $builder->where($model->getTable().'.account_id',Auth::user()->account_id);
+        $account_id = Auth::guard('api')->check() ? (Auth::guard('api')->user()->account_id != null ? Auth::guard('api')->user()->account_id : 1)  : 1;
+        $builder->where($model->getTable() . '.account_id', $account_id);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Http\Controllers\Api\V1\Helper\AccountObservant;
 use App\Http\Controllers\Api\V1\Helper\HasUuids;
 use App\Http\Controllers\Api\V1\Helper\IdIncreamentable;
 use DateTimeInterface;
@@ -10,13 +11,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\InvoiceReceiverAddress;
 use App\Models\InvoiceSenderAddress;
-use Illuminate\Contracts\Mail\Attachable;
+
 
 class Invoice extends Model
 {
 
 
-    use HasFactory, SoftDeletes, HasUuids;
+    use HasFactory, SoftDeletes, HasUuids, AccountObservant;
     public static $INVOICE_FILE_PATH = "public/uploads/invoice/";
     protected $appends = ['pdf_full_link', 'download_pdf_url'];
 
@@ -40,7 +41,7 @@ class Invoice extends Model
         'uuid', 'customer_id', 'customer_name', 'salesperson', 'shipping_address',
         'billing_address', 'invoice_number', 'short_code', 'order_id',
         'order_number', 'invoice_date', 'due_date', 'order_tax',
-        'order_tax_amount', 'order_discount', 'discount_amount',
+        'order_tax_amount', 'discount_percentage', 'discount_amount',
         'shipping_charge', 'order_adjustment', 'total_amount',
         'total_tax', 'invoice_description', 'balance',
         'grand_total_amount', 'due_amount', 'paid_amount', 'change_amount',
