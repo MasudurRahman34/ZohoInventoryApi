@@ -47,7 +47,7 @@ class InvoiceService
 
             'order_tax' => isset($request['order_tax']) ? $request['order_tax'] : 0,
             'order_tax_amount' => isset($request['order_tax_amount']) ? $request['order_tax_amount'] : 0,
-            'order_discount' => isset($request['order_discount']) ? $request['order_discount'] : 0,
+            'discount_percentage' => isset($request['discount_percentage']) ? $request['discount_percentage'] : 0,
             'discount_amount' => isset($request['discount_amount']) ? $request['discount_amount'] : 0,
             'shipping_charge' => isset($request['shipping_charge']) ? $request['shipping_charge'] : 0,
             'order_adjustment' => isset($request['order_adjustment']) ? $request['order_adjustment'] : 0,
@@ -364,7 +364,7 @@ class InvoiceService
 
             'order_tax' => isset($request['order_tax']) ? $request['order_tax'] : $invoice->order_tax,
             'order_tax_amount' => isset($request['order_tax_amount']) ? $request['order_tax_amount'] : $invoice->order_tax_amount,
-            'order_discount' => isset($request['order_discount']) ? $request['order_discount'] : $invoice->order_discount,
+            'discount_percentage' => isset($request['discount_percentage']) ? $request['discount_percentage'] : $invoice->discount_percentage,
             'discount_amount' => isset($request['discount_amount']) ? $request['discount_amount'] : $invoice->discount_amount,
             'shipping_charge' => isset($request['shipping_charge']) ? $request['shipping_charge'] : $invoice->shipping_charge,
             'order_adjustment' => isset($request['order_adjustment']) ? $request['order_adjustment'] : $invoice->order_adjustment,

@@ -19,7 +19,7 @@ class CalculateProductPriceService
     private $grand_total_amount = 0;
     private $shipping_charge = 0;
     private $order_adjustment = 0;  //numeric
-    private $order_discount = 0;   //percentage
+    private $discount_percentage = 0;   //percentage
     private $discount_amount = 0;   //numeric
     private $total_product_discount = 0; //sum of product discount numeric arthmetic
     // private $discount_currency = 0;
@@ -112,8 +112,8 @@ class CalculateProductPriceService
             //initializing and overriding invoice Item
             $this->shipping_charge = $request['shipping_charge'] =  isset($request['shipping_charge']) ? $request['shipping_charge'] : 0;
             $this->order_adjustment = $request['order_adjustment'] =  isset($request['order_adjustment']) ? $request['order_adjustment'] : 0;
-            $this->order_discount = $request['order_discount'] = isset($request['order_discount']) ? $request['order_discount'] : 0; //percentage
-            $this->discount_amount = $request['discount_amount'] = isset($request['discount_amount']) ? $request['discount_amount'] : 0;
+            $this->discount_percentage = $request['discount_percentage'] = isset($request['discount_percentage']) ? $request['discount_percentage'] : 0; //percentage
+            // $this->discount_amount = $request['discount_amount'] = isset($request['discount_amount']) ? $request['discount_amount'] : 0;
             $this->paid_amount = $request['paid_amount'] =  isset($request['paid_amount']) ? $request['paid_amount'] : 0;
             // $this->order_tax = $request['order_tax'] =  isset($request['order_tax']) ? $request['order_tax'] : 0;
             // $this->total_tax = $request['tax_rate'] =  isset($request['tax_rate']) ? $request['tax_rate'] : null;
@@ -126,6 +126,7 @@ class CalculateProductPriceService
         $request['balance'] = $this->balance;
         $request['total_whole_amount'] = $this->total_whole_amount;
         $request['total_product_discount'] = $this->total_product_discount;
+        $request['discount_amount'] = $this->discount_amount;
 
         return $request;
     }
@@ -150,7 +151,8 @@ class CalculateProductPriceService
     }
     public function calculateInvoice(): void
     {
-        $grand_total_amount = ($this->total_amount + $this->shipping_charge + $this->order_adjustment) - ($this->total_amount * ($this->order_discount / 100));
+        $this->discount_amount = $this->total_amount * ($this->discount_percentage / 100);
+        $grand_total_amount = ($this->total_amount + $this->shipping_charge + $this->order_adjustment) - ($this->total_amount * ($this->discount_percentage / 100));
         // $grand_total_amount = $this->total_amount;
         $this->grand_total_amount = $grand_total_amount;
         $this->balance = $this->grand_total_amount - $this->paid_amount;

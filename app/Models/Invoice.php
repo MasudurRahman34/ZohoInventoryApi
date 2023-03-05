@@ -40,7 +40,7 @@ class Invoice extends Model
         'uuid', 'customer_id', 'customer_name', 'salesperson', 'shipping_address',
         'billing_address', 'invoice_number', 'short_code', 'order_id',
         'order_number', 'invoice_date', 'due_date', 'order_tax',
-        'order_tax_amount', 'order_discount', 'discount_amount',
+        'order_tax_amount', 'discount_percentage', 'discount_amount',
         'shipping_charge', 'order_adjustment', 'total_amount',
         'total_tax', 'invoice_description', 'balance',
         'grand_total_amount', 'due_amount', 'paid_amount', 'change_amount',

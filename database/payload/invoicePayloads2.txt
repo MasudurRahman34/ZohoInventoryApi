@@ -3,7 +3,7 @@ order_number[0]:ORD-1001
 invoice_number:INV-1001
 invoice_date:2022-12-29 
 due_date:2023-12-15
-order_discount:10
+discount_percentage:10
 balance:0
 paid_amount:10
 total_tax:0
