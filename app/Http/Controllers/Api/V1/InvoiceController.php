@@ -64,6 +64,7 @@ class InvoiceController extends Controller
     {
 
 
+
         //cheching existing  invoice
         //default setting
         // $recieverEmail = isset($request['receiver']['email']) ? $request['receiver']['email'] : null;

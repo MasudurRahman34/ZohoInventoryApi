@@ -60,10 +60,11 @@ class publicInvoiceRequest extends FormRequest
             "status" => 'in:0,1,2,3,4,5,6|nullable',
 
             // invoice item validation
-
+            'invoiceItems' => 'array|required|present',
             'invoiceItems.*.id' => 'integer|exists:invoice_items,id|nullable',
             // 'invoiceItems.*.product_id' => 'nullable|integer|exists:products,id|distinct', //should check exists with product table //must not duplicate
-            'invoiceItems.*.product_name' => 'string|between:3,255|nullable',
+            'invoiceItems.*.product_id' => 'nullable|integer|distinct', //should check exists with product table //must not duplicate
+            'invoiceItems.*.product_name' => 'string|between:3,255|nullable|required_without:invoiceItems.*.product_id',
             'invoiceItems.*.warehouse_id' => 'nullable|integer|exists:warehouses,id',
             'invoiceItems.*.serial_number' => 'nullable|string|between:3,20',
             'invoiceItems.*.product_description' => 'nullable|string|min:3',
