@@ -54,7 +54,7 @@ class InvoiceController extends Controller
         $this->dateRangeQuery($request, $query, 'invoices.created_at');
         $this->filterBy($request, $this->query);
         $invoice = $this->query->orderBy($this->column_name, $this->sort)->paginate($this->show_per_page)->withQueryString();
-        return $this->success(new InvoiceCollection($invoice));
+        return (new InvoiceCollection($invoice));
 
 
         return $invoice;
@@ -62,6 +62,7 @@ class InvoiceController extends Controller
 
     public function createPublicInvoice(publicInvoiceRequest $request)
     {
+
 
 
         //cheching existing  invoice
