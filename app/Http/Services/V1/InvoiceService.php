@@ -470,11 +470,13 @@ class InvoiceService
 
     public function deleteExistingFile($fileLink)
     {
-        $currentLink = str_replace('/storage', '/public', $fileLink);
+        if ($fileLink != null) {
+            $currentLink = str_replace('/storage', '/public', $fileLink);
 
 
-        if (Storage::exists($currentLink)) {
-            Storage::delete($currentLink);
+            if (Storage::exists($currentLink)) {
+                Storage::delete($currentLink);
+            }
         }
     }
 }

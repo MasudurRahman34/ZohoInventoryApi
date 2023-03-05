@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Http\Controllers\Api\V1\Helper\AccountObservant;
 use App\Http\Controllers\Api\V1\Helper\HasUuids;
 use App\Http\Controllers\Api\V1\Helper\IdIncreamentable;
 use DateTimeInterface;
@@ -10,13 +11,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\InvoiceReceiverAddress;
 use App\Models\InvoiceSenderAddress;
-use Illuminate\Contracts\Mail\Attachable;
+
 
 class Invoice extends Model
 {
 
 
-    use HasFactory, SoftDeletes, HasUuids;
+    use HasFactory, SoftDeletes, HasUuids, AccountObservant;
     public static $INVOICE_FILE_PATH = "public/uploads/invoice/";
     protected $appends = ['pdf_full_link', 'download_pdf_url'];
 
