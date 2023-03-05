@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\V1\Auth\NewPasswordController;
 use App\Http\Controllers\Api\V1\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Api\V1\Auth\RegistrationController;
 use App\Http\Controllers\Api\V1\Auth\VerifyEmailController;
+use App\Http\Controllers\Api\V1\BillController;
 use App\Http\Controllers\Api\V1\BusinessTypeController;
 use App\Http\Controllers\Api\V1\ContactController;
 use App\Http\Controllers\Api\V1\CountryController;
@@ -16,6 +17,8 @@ use App\Http\Controllers\Api\V1\GlobalAddressController;
 use App\Http\Controllers\Api\V1\InventoryAdjustmentController;
 use App\Http\Controllers\Api\V1\InvoiceController;
 use App\Http\Controllers\Api\V1\LocationController;
+use App\Http\Controllers\Api\V1\MediaController;
+use App\Http\Controllers\Api\V1\PaymentController;
 use App\Http\Controllers\Api\V1\PurchaseController;
 use App\Http\Controllers\Api\V1\PurchaseItemController;
 use App\Http\Controllers\Api\V1\SaleController;
@@ -125,6 +128,23 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
 
         //account plan feature
         Route::POST('user/plan/features', [UserPlanFeatureController::class, 'store'])->name('businesstypes.store');
+
+        //bill
+        Route::GET('bills', [BillController::class, 'index'])->name('bills.index');
+        Route::POST('bills', [BillController::class, 'store'])->name('bills.store');
+        Route::PUT('bills/{shortCode}', [BillController::class, 'update'])->name('bills.update');
+        Route::DELETE('bills/{uuid}', [BillController::class, 'delete'])->name('bills.delete');
+        Route::GET('bills/{uuid}', [BillController::class, 'show'])->name('bills.show');
+        // Route::PUT('bills/{bill}', [BillController::class, 'update'])->name('bills.update');
+
+        //payments
+
+        //bill
+        Route::GET('payments', [PaymentController::class, 'index'])->name('payments.index');
+        Route::POST('payments', [PaymentController::class, 'store'])->name('payments.store');
+        Route::PUT('payments/{payment}', [PaymentController::class, 'update'])->name('payments.update');
+        Route::DELETE('payments/{payment}', [PaymentController::class, 'destroy'])->name('payments.delete');
+        Route::GET('payments/{payment}', [PaymentController::class, 'show'])->name('payments.show');
     });
 });
 
@@ -140,10 +160,11 @@ Route::group(['prefix' => 'v1'], function () {
 
 
     Route::GET('testimonials', [TestimonialController::class, 'index'])->name('testimonials.index');
-
+    ///invoice
     Route::POST('/invoice', [InvoiceController::class, 'createPublicInvoice'])->name('invoices');
+    // Route::POST('/invoices/media', [InvoiceController::class, 'invoiceMedia'])->name('invoices.media');
     Route::PUT('/invoice/{shortCode}', [InvoiceController::class, 'update'])->name('invoices.update');
-    Route::get('invoices/{shortCode}', [InvoiceController::class, 'publicShow'])->name('invoices.show');
+    Route::get('invoices/{shortCode}', [InvoiceController::class, 'show'])->name('invoices.show');
     Route::get('invoices/{shortCode}/download', [InvoiceController::class, 'downloadInvoicePdf'])->name('invoices.download');
     Route::get('invoices/{shortCode}/createPdf', [InvoiceController::class, 'createInvoicePdf'])->name('invoices.pdf.create');
     Route::get('invoices/notification/{shortCode}', [InvoiceController::class, 'notification'])->name('invoice.notification');
@@ -151,6 +172,11 @@ Route::group(['prefix' => 'v1'], function () {
     Route::GET('countries', [CountryController::class, 'index'])->name('countries.index');
     Route::GET('states', [LocationController::class, 'states'])->name('location.states');
     Route::GET('districts', [LocationController::class, 'districts'])->name('location.districts');
+
+    //media
+    Route::POST('/media', [MediaController::class, 'store'])->name('media.store');
+    Route::DELETE('/media/{media_id}/{attachment_id}', [MediaController::class, 'destroy'])->name('media.destroy');
+    Route::POST('/attachements', [MediaController::class, 'storeMediaAttachement'])->name('attachements.store');
 });
 
 //guest api

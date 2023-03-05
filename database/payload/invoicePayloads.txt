@@ -1,16 +1,20 @@
 customer_name:customer name
-order_number[0]:INV-1001
-invoice_date:2022-12-29 
+order_number[0]:ORD-1001
+order_number[1]:ORD-1002
+invoice_number:INv-028
+invoice_date:15-03-2015
 due_date:2023-12-15
-order_discount:10
+order_discount:0
+discount_amount:5
 balance:0
+paid_amount:10
+total_tax:0
 shipping_charge:1
 order_adjustment:15
 total_amount:123
 grand_total_amount:132
 adjustment_text: adjustment_text
 invoice_description:invoice_description
-
 invoice_terms: this is invoice terms
 invoice_type: general invoice
 invoice_currency: BDT
@@ -18,13 +22,14 @@ status:1
 invoiceItems[0][product_id]:1
 invoiceItems[0][product_name]: SMUG Premium T-shirt Fabric soft and comfortable
 invoiceItems[0][warehouse_id]:1
+invoiceItems[0][service_date]:2023-12-1
 invoiceItems[0][order_id]:100
 invoiceItems[0][serial_number]:11111
 invoiceItems[0][product_description]:Tshirt Size Chart Size
 invoiceItems[0][order_number]: ord-10000
 invoiceItems[0][product_qty]:1
 invoiceItems[0][unit_price]:100
-invoiceItems[0][product_discount]:20
+invoiceItems[0][product_discount]:100
 invoiceItems[0][tax_name]:govt
 invoiceItems[0][tax_rate]:10
 invoiceItems[0][tax_amount]:10
@@ -47,40 +52,46 @@ invoiceItems[1][tax_amount]:30
 invoiceItems[1][whole_price]:200
 invoiceItems[1][subtotal]:210
 invoiceItems[1][is_taxable]:1
-
-sender[display_name]:display_name
-sender[company_name]:compnay_name
-sender[company_name]: company info
-sender[company_logo]:company_logo
-sender[attention]:attension
-sender[first_name]:first_name
-sender[last_name]:last_name
+sender[display_name]:display name
+sender[company_name]:company name
+sender[company_info]: company info
+sender[attention]:attention
+sender[first_name]:firstname
+sender[last_name]:lastname
 sender[mobile]:01750658791
 sender[mobile_country_code]:+88
 sender[email]:mohammadmasud34@gmail.com
 sender[country_id]:1
-sender[state_id]:2
-sender[district_id]:3
-sender[thana_id]:4
-sender[union_id]:5
-sender[zipcode_id]:6
-sender[street_address_id]:7
+sender[country_name]:bd
+sender[state_name]:state name
+sender[district_name]:district name
+sender[thana_name]:thana name
+sender[union_name]:union name
+sender[zipcode]:1234
+sender[street_address_line_1]:street_address_line_1
+sender[street_address_line_2]:street_address_line_2
 sender[house]:1234 khulna
-
-reciever[display_name]:display_name
-reciever[company_name]:compnay_name
-sender[company_name]: company info
-reciever[attention]:attention
-reciever[first_name]:first_name
-reciever[last_name]:last_name
-reciever[mobile]:01750658791
-reciever[mobile_country_code]:+88
-reciever[email]:mohammadmasud34@gmail.com
-reciever[country_id]:1
-reciever[state_id]:2
-reciever[district_id]:3
-reciever[thana_id]:4
-reciever[union_id]:5
-reciever[zipcode_id]:6
-reciever[street_address_id]:7
-reciever[house]:1234 khulna
+sender[website]:www.google.com
+sender[tax_number]:12345678
+receiver[display_name]:display_name
+receiver[company_name]:compnay name
+receiver[company_info]: company info
+receiver[attention]:attension
+receiver[first_name]:first name
+receiver[last_name]:last name
+receiver[mobile]:23423413244
+receiver[mobile_country_code]:+88
+receiver[email]:
+receiver[country_id]:1
+receiver[country_name]:bd
+receiver[state_name]:state name
+receiver[district_name]:district name
+receiver[thana_name]:thana name
+receiver[union_name]:union name
+receiver[zipcode]:1234
+receiver[street_address_line_1]:street_address_line_1
+receiver[street_address_line_2]:street_address_line_2
+receiver[house]:1234 khulna
+receiver[website]:www.google.com
+receiver[tax_number]:12345678
+media[0][media_id]:5

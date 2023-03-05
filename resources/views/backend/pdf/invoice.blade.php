@@ -99,7 +99,7 @@
 	<div class="container">
 		<div class="header">
 			<div class="logo">
-				<img src="{{$invoice['sender_address']['company_logo']}}" alt="Your Company Logo">
+				<img src="{{asset($invoice['sender_address']['company_logo'])}}" alt="Your Company Logo">
 			</div>
 			<div>
 		
@@ -111,6 +111,7 @@
 			
 			<p><strong>Issue Date:</strong>{{$invoice['invoice_date']}}</p>
 			<p><strong>Due Date:</strong> {{$invoice['due_date']}}</p>
+			<p><strong>PO Number:</strong> {{json_encode($invoice['order_number'])}}</p>
 		</div>
 		<div class="information-section">
 			<div class="sender-details">
@@ -170,10 +171,15 @@
 				<h1>Invoice Summary</h1>
 			</div>
 			<section class="invoice-total-counter">
-				<p><strong>Subtotal:</strong> {{$invoice['total_amount']}}</p>
+				<p><strong>Subtotal:</strong> {{$invoice['total_whole_amount']}}</p>
+				<p><strong>Total tax:</strong> {{ $invoice['total_tax']}}</p>
+				<p><strong>Total Product Discount:</strong> -{{ $invoice['total_product_discount']}}</p>
+				<p><strong>Total :</strong> {{ $invoice['total_amount']}}</p>
+				<p><strong>Shipping Charge:</strong> {{ $invoice['shipping_charge']}}</p>
+				<p><strong>Order Adjustment:</strong> {{ $invoice['order_adjustment']}}</p>
 			{{-- <p><strong>Tax:</strong> {{$invoice['total_tax']}}</p> --}}
-			<p><strong>Total:</strong> {{$invoice['grand_total_amount']}}</p>
-			<p><strong>Paid:</strong> {{$invoice['paid_amount']}}</p>
+			<p><strong>Grand Total:</strong> {{$invoice['grand_total_amount']}}</p>
+			<p><strong>Paid:</strong> -{{$invoice['paid_amount']}}</p>
 			<p><strong>Balance:</strong> {{$invoice['balance']}}</p>
 			</section>
 		</div>

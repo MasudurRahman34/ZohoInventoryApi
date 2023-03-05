@@ -1,6 +1,5 @@
 <?php
 
-use Carbon\Carbon;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -14,23 +13,23 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('invoices', function (Blueprint $table) {
+        Schema::create('bills', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid')->unique()->index()->default(NULL)->nullable();
-            $table->unsignedBigInteger('customer_id')->default(NULL)->nullable();
+            $table->unsignedBigInteger('supplier_id')->default(NULL)->nullable();
 
-            $table->string('customer_name', 255)->default(NULL)->nullable();
+            $table->string('supplier_name', 255)->default(NULL)->nullable();
             $table->ipAddress('user_ip', 255)->default(NULL)->nullable();
-            $table->unsignedBigInteger('salesperson')->default(NULL)->nullable();
+            $table->unsignedBigInteger('billing_person')->default(NULL)->nullable();
             $table->string('shipping_address', 512)->default(NULL)->nullable();
             $table->string('billing_address', 512)->default(NULL)->nullable();
-            $table->string('invoice_number', 255)->default(NULL)->nullable()->comment("generate from system serialized");
+            $table->string('bill_number', 255)->default(NULL)->nullable()->comment("generate from system random unique");
             $table->string('short_code', 255)->unique()->index()->default(NULL)->nullable()->comment("generate from system random unique use as guest user route");
 
-            $table->json('order_id', 255)->default(NULL)->nullable()->comment("invoice can be created from multiple order");
-            $table->json('order_number', 255)->default(NULL)->nullable()->comment("invoice can be created from multiple order, can input guest user");
+            $table->json('order_id', 255)->default(NULL)->nullable()->comment("bill can be created from multiple purchase");
+            $table->json('order_number', 255)->default(NULL)->nullable()->comment("bill can be created from multiple purchase, can input guest user");
 
-            $table->dateTime('invoice_date')->default(now())->nullable();
+            $table->dateTime('bill_date')->default(now())->nullable();
             $table->dateTime('due_date')->default(NULL)->nullable();
 
             $table->float('order_tax', 14, 4)->default(0)->nullable();
@@ -52,10 +51,10 @@ return new class extends Migration
             $table->float('last_paid', 14, 4)->default(0)->nullable();
 
             $table->string('adjustment_text')->default(NULL)->nullable();
-            $table->text('invoice_terms')->default(NULL)->nullable();
-            $table->text('invoice_description')->default(NULL)->nullable();
-            $table->string('invoice_type')->default(NULL)->nullable();
-            $table->string('invoice_currency')->default(NULL)->nullable();
+            $table->text('bill_terms')->default(NULL)->nullable();
+            $table->text('bill_description')->default(NULL)->nullable();
+            $table->string('bill_type')->default(NULL)->nullable();
+            $table->string('bill_currency')->default(NULL)->nullable();
             $table->string('payment_term', 100)->default(NULL)->nullable()->comment('calculating due date eg: 7day due date with +7 from today');
             $table->integer('download')->default(0)->nullable();
             $table->string('pdf_link', 255)->default(NULL)->nullable();
@@ -77,6 +76,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('invoices');
+        Schema::dropIfExists('bills');
     }
 };

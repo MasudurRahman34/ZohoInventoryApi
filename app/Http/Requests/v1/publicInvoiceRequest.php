@@ -33,14 +33,15 @@ class publicInvoiceRequest extends FormRequest
             "invoice_number" => ['required', 'between: 3,20'], //need to check if login 
 
             "order_id.*" => 'nullable|string|between: 3,255',
-            "invoice_date" => 'nullable|date|date_format:Y-m-d',
-            "due_date" => 'nullable|date|date_format:Y-m-d',
+            "invoice_date" => 'nullable|date',
+            "due_date" => 'nullable|date',
 
             "order_tax" => 'nullable|numeric|between:0,100',
             "order_tax_amount" => 'nullable|numeric|between:0,9999999999.9999',
-            "discount_type" => 'nullable|numeric|min:0',
+
 
             "order_discount" => 'nullable|numeric|between:0,100',
+            "discount_amount" => 'nullable|numeric|between:0,9999999999.9999',
             "shipping_charge" => 'nullable|numeric|between:0,9999999999.9999',
             "order_adjustment" => 'nullable|numeric|between:-9999999999.9999,9999999999.9999',
             "total_amount" => 'required|numeric|between:0,9999999999.9999',
@@ -60,7 +61,7 @@ class publicInvoiceRequest extends FormRequest
 
             // invoice item validation
 
-            'invoiceItems.*.invoice_id' => 'invoice_id|integer|exists:invoices,id|nullable',
+            'invoiceItems.*.id' => 'integer|exists:invoice_items,id|nullable',
             // 'invoiceItems.*.product_id' => 'nullable|integer|exists:products,id|distinct', //should check exists with product table //must not duplicate
             'invoiceItems.*.product_name' => 'string|between:3,255|nullable',
             'invoiceItems.*.warehouse_id' => 'nullable|integer|exists:warehouses,id',
@@ -139,6 +140,9 @@ class publicInvoiceRequest extends FormRequest
             'receiver.street_address_line_1' => 'string|nullable', //'regex:/([- ,\/0-9a-zA-Z]+)/' including ,/-
             'receiver.street_address_line_1' => 'string|nullable',
             'receiver.status' => 'integer|in:0,1|nullable', //0=invalid, 1=valid
+
+            //invoice media
+            'media.*.media_id' => 'integer|exists:media,id|nullable'
         ];
 
 

@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\InvoiceReceiverAddress;
 use App\Models\InvoiceSenderAddress;
+use Illuminate\Contracts\Mail\Attachable;
 
 class Invoice extends Model
 {
@@ -18,6 +19,8 @@ class Invoice extends Model
     use HasFactory, SoftDeletes, HasUuids;
     public static $INVOICE_FILE_PATH = "public/uploads/invoice/";
     protected $appends = ['pdf_full_link', 'download_pdf_url'];
+
+
 
     protected $dates = [
         'creadted_at',
@@ -37,13 +40,13 @@ class Invoice extends Model
         'uuid', 'customer_id', 'customer_name', 'salesperson', 'shipping_address',
         'billing_address', 'invoice_number', 'short_code', 'order_id',
         'order_number', 'invoice_date', 'due_date', 'order_tax',
-        'order_tax_amount', 'order_discount', 'discount_type',
+        'order_tax_amount', 'order_discount', 'discount_amount',
         'shipping_charge', 'order_adjustment', 'total_amount',
         'total_tax', 'invoice_description', 'balance',
         'grand_total_amount', 'due_amount', 'paid_amount', 'change_amount',
         'last_paid', 'adjustment_text', 'invoice_terms', 'invoice_type',
         'invoice_currency', 'status',
-        'account_id', 'created_by', 'modified_by', 'created_at', 'updated_at', 'deleted_at', 'download', 'user_ip', 'pdf_link'
+        'account_id', 'created_by', 'modified_by', 'created_at', 'updated_at', 'deleted_at', 'download', 'user_ip', 'pdf_link', 'total_whole_amount', 'payment_term', 'total_product_discount'
 
     ];
     // public function IdIncreamentable(): array
@@ -78,5 +81,23 @@ class Invoice extends Model
     public function getDownloadPdfUrlAttribute()
     {
         return env('APP_URL') . '/api/v1/invoices' . '/' . $this->short_code . '/download';
+    }
+
+    // public function attachments()
+    // {
+
+    //     return $this->hasMany(Attachment::class, 'attachmentable_id', 'id')->where('attachmentable_type', Media::$MEDIA_REFERENCE_TABLE['invoice'])->with('media');
+    // }
+
+    // public function attachments()
+    // {
+    //     return $this->morphMany(Attachment::class, 'attachmentable')->with(['media' => function ($query) {
+    //         $query->select('id', 'short_link');
+    //     }])->select('id', 'attachmentable_id', 'media_id');
+    // }
+
+    public function media()
+    {
+        return $this->morphToMany(Media::class, 'attachmentable', Attachment::class)->withPivot('id')->where('attachments.deleted_at', NULL);
     }
 }
