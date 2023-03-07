@@ -131,6 +131,9 @@ class PurchaseController extends Controller
     }
     public function update(PurchaseRequest $request, $uuid)
     {   //overriding and calculating purchase data
+        // return $request['deleteSerilized'];
+
+
         //return $request; 
         DB::beginTransaction();
         try {
@@ -148,13 +151,22 @@ class PurchaseController extends Controller
 
 
                     $inventoryAdjustmentItem = [];
+                    // if (isset($request['deleteSerilized'])) {
+                    //     if (count($request['deleteSerilized']) > 0) {
+                    //         $deleteSerialzed = PurchaseItem::whereIn('serial_number', $request['deleteSerilized'])->delete();
+                    //     }
+                    // }
+
+
                     if (count($request['purchaseItems']) > 0) {
+
 
                         foreach ($request['purchaseItems'] as $key => $item) {
                             //return $key;
                             $item['warehouse_id'] = $request['warehouse_id'];
                             $item['purchase_id'] = $purchase->id;
                             if ($item['is_serialized'] == 1) {
+
                                 $isExistSerializedItem = PurchaseItem::where('purchase_id', $purchase->id)->where('product_id', $item['product_id'])->where('is_serialized', 1)->get();
                                 $remain_quantity = $item['product_qty'] - count($isExistSerializedItem);
                                 if (count($isExistSerializedItem) > 0) {
