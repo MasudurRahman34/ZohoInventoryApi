@@ -95,6 +95,7 @@ class InvoiceController extends Controller
         $request = $request->all();
 
         $request = $this->calculateProductPriceService->invoicePrice($request); //at first step calculation  
+        return $request;
 
         try {
             DB::beginTransaction();

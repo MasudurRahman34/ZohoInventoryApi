@@ -122,10 +122,11 @@ class PurchaseController extends Controller
             DB::commit();
 
             $purchase = Purchase::with('purchaseItems')->with('inventoryAdjustment')->find($purchase->id);
+
             return $this->success(new PurchaseResource($purchase), 201);
         } catch (\Exception $e) {
             DB::rollBack();
-            return $this->error($e->getMessage(), 200);
+            return $this->error(throw $e, 200);
         }
     }
     public function update(PurchaseRequest $request, $uuid)

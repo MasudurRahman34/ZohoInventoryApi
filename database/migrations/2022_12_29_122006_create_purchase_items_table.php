@@ -5,7 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use SebastianBergmann\Type\NullType;
 
-return new class extends Migration  
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -16,18 +16,21 @@ return new class extends Migration
     {
         Schema::create('purchase_items', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('purchase_id')->comment('id value purchases table');
-            $table->unsignedBigInteger('warehouse_id')->comment('id value warhouses table');
-            $table->unsignedBigInteger('product_id')->comment('id value product table');
-            $table->string('product_name')->nullable()->default(NULL);
-            $table->string('serial_number')->nullable()->default(NULL);
-            $table->string('group_number',100)->default(NULL)->nullable()->comment('generate when product is serialized');
+            $table->unsignedBigInteger('purchase_id')->comment('id value purchases table')->index('purchase_id');
+            $table->unsignedBigInteger('warehouse_id')->comment('id value warhouses table')->index('warehouse_id');
+            $table->unsignedBigInteger('product_id')->comment('id value product table')->index('product_id');
+            $table->string('product_name')->nullable()->default(NULL)->index('product_name');
+            $table->string('serial_number')->nullable()->default(NULL)->index('serial_number')->comment('formate Ymd-string');
+            $table->string('group_number', 100)->default(NULL)->nullable()->comment('generate when product is serialized')->index('group_number')->comment('formate Ymd-string');
             $table->integer('product_qty')->default(0);
             $table->integer('received_qty')->default(0)->nullable();
             $table->integer('sold_qty')->default(0)->nullable();
             $table->float('unit_price')->default(0); //10 pricition , 4 fraction
             $table->float('product_discount')->default(0)->nullable(); //
-            $table->float('product_tax')->default(0)->nullable(); //8 precision, 4 fraction
+            $table->string('tax_name', 255)->default(NULL)->nullable();
+            $table->float('tax_rate', 14, 4)->default(0)->nullable(); //8 precision, 4 fraction
+            $table->float('tax_amount', 14, 4)->default(0)->nullable();
+            $table->float('whole_price', 14, 4)->default(0)->nullable()->comment('qty*unite_price');
             $table->float('subtotal')->default(0); //12 precision, 4 fraction
             $table->dateTime('package_date')->default(NULL)->nullable();
             $table->dateTime('expire_date')->default(NULL)->nullable();
@@ -40,7 +43,6 @@ return new class extends Migration
             $table->unsignedBigInteger('modified_by')->default(0);
             $table->timestamps();
             $table->softDeletes();
-            $table->index(['product_id','purchase_id','account_id']);
         });
     }
 
