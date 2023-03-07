@@ -34,7 +34,7 @@ return new class extends Migration
             $table->float('subtotal')->default(0); //12 precision, 4 fraction
             $table->dateTime('package_date')->default(NULL)->nullable();
             $table->dateTime('expire_date')->default(NULL)->nullable();
-            $table->tinyInteger('is_serialized')->default(0)->nullable()->comment('0=true, 1=false');
+            $table->tinyInteger('is_serialized')->default(0)->nullable()->comment('1=true, 0=false');
             $table->text('description')->nullable()->default(NULL);
             $table->tinyInteger('status')->default(0)->nullable()->comment('0=available, 1=sold out');
             $table->tinyInteger('is_taxable')->default(0)->nullable()->comment('0=no, 1=yes');

@@ -135,14 +135,17 @@ class PurchaseController extends Controller
         DB::beginTransaction();
         try {
             $purchase = Purchase::Uuid($uuid)->with('purchaseItems')->with('inventoryAdjustment')->first();
+            $purchaseItemsWithoutSerialized = PurchaseItem::where('purchase_id', $purchase->id)->where('is_serialized', 0)->delete();
+
             if ($purchase) {
                 $inventoryAdjustment = InventoryAdjustment::where('inventory_adjustmentable_id', $purchase->id)->where('inventory_adjustmentable_type', InventoryAdjustment::$purchase_table)->first();
                 $request = $this->calculateProductPriceService->purchasePrice($request->all());
                 $updatedPurchase = $this->purchaseService->update($request, $purchase);
 
-                return $updatedPurchase;
+                //return $updatedPurchase;
 
                 if ($updatedPurchase) {
+
 
                     $inventoryAdjustmentItem = [];
                     if (count($request['purchaseItems']) > 0) {
@@ -195,7 +198,7 @@ class PurchaseController extends Controller
                                 }
                             } else {
 
-                                $isExistItem = PurchaseItem::where('purchase_id', $purchase->id)->where('product_id', $item['product_id'])->first();
+                                $isExistItem = PurchaseItem::withTrashed()->where('purchase_id', $purchase->id)->where('product_id', $item['product_id'])->first();
                                 if ($isExistItem) {
 
                                     $this->purchaseItemService->update($item, $isExistItem);
@@ -206,7 +209,7 @@ class PurchaseController extends Controller
                                 }
                             }
 
-                            //check item exist in adjustment item
+
 
                             if ($inventoryAdjustment) {
                                 $adjustmentItems = [];
@@ -220,7 +223,7 @@ class PurchaseController extends Controller
                                 $adjustmentItems['new_quantity_on_hand'] = 0;
                                 $adjustmentItems['description'] = 'Item adjustment update based on purchased';
                                 $adjustmentItems['status'] = 0;
-
+                                //check item exist in adjustment item
                                 $adjustmentItem = AdjustmentItem::where('inventory_adjustment_id', $inventoryAdjustment->id)->where('product_id', $item['product_id'])->first(); //check adjustment item exist or not
 
                                 if ($adjustmentItem) {
@@ -239,6 +242,7 @@ class PurchaseController extends Controller
             }
 
             DB::commit();
+            $purchase->refresh();
             return $purchase;
         } catch (\Throwable $th) {
             DB::rollBack();

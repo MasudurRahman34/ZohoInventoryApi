@@ -27,9 +27,9 @@ class PurchaseItem extends Model
     }
 
     protected $fillable = [
-        'purchase_id', 'warehouse_id', 'product_id', 'product_name', 'serial_number', 'group_number', 'product_qty', 'received_qty', 'unit_price', 'product_discount', 'tax_name', 'tax_rate', 'tax_amount', 'package_date', 'is_serialized', 'expire_date', 'subtotal', 'whole_price',
-        'description', 'account_id', 'created_by', 'modified_by',
-        'sold_qty', 'status', 'is_taxable'
+        'purchase_id', 'warehouse_id', 'product_id', 'product_name', 'serial_number', 'group_number', 'product_qty', 'received_qty', 'sold_qty', 'unit_price', 'product_discount', 'tax_name', 'tax_rate', 'tax_amount', 'whole_price', 'subtotal', 'package_date', 'is_serialized', 'expire_date',
+        'description', 'account_id', 'created_by', 'modified_by', 'updated_at', 'deleted_at', 'created_at',
+        'status', 'is_taxable'
     ];
 
     public function product()

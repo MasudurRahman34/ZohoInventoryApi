@@ -19,6 +19,7 @@ return new class extends Migration
             $table->unsignedBigInteger('supplier_id')->comment('id value suppliers table');
             $table->string('supplier_name', 100)->default(NULL)->nullable();
             $table->unsignedBigInteger('warehouse_id')->default(NULL)->nullable()->comment('id value warhouses table');
+            $table->unsignedBigInteger('payment_term')->default(NULL)->nullable()->comment('id payment term table, calculating due date eg: 7day due date with +7 from today');
             $table->string('purchase_number', 50)->nullable()->default(NULL)->comment('generate from system');
             // $table->string('invoice_no', 50)->nullable()->default(NULL);
             $table->string('reference', 50)->nullable()->default(NULL);
@@ -38,10 +39,12 @@ return new class extends Migration
             $table->float('order_adjustment', 14, 4)->default(0)->nullable();
             $table->float('last_paid_amount', 14, 4)->default(0)->nullable();
             $table->string('adjustment_text')->nullable()->default(NULL);
+
             $table->dateTime('purchase_date')->nullable()->default(NULL);
             $table->dateTime('delivery_date')->nullable()->default(NULL);
 
             $table->text('purchase_terms')->default(NULL)->nullable();
+
             $table->text('purchase_description')->default(NULL)->nullable();
             $table->string('purchase_type')->default(NULL)->nullable();
             $table->string('purchase_currency')->default(NULL)->nullable();

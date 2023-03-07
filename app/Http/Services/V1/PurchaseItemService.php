@@ -81,6 +81,7 @@ class PurchaseItemService
                 'tax_amount' => isset($purchaseItem['tax_amount']) ? $request['tax_amount'] : $item['tax_amount'],
                 'whole_price' => isset($purchaseItem['whole_price']) ? $request['whole_price'] : $item['whole_price'],
                 'is_taxable' => isset($purchaseItem['is_taxable']) ? $item['is_taxable'] : 0,
+                'deleted_at' => isset($purchaseItem['deleted_at']) ? $item['deleted_at'] : \null,
             ]
         );
         return $item;
