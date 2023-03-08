@@ -12,7 +12,7 @@ use App\Http\Controllers\Api\V1\BillController;
 use App\Http\Controllers\Api\V1\BusinessTypeController;
 use App\Http\Controllers\Api\V1\ContactController;
 use App\Http\Controllers\Api\V1\CountryController;
-use App\Http\Controllers\Api\V1\CustomerController;
+
 use App\Http\Controllers\Api\V1\GlobalAddressController;
 use App\Http\Controllers\Api\V1\InventoryAdjustmentController;
 use App\Http\Controllers\Api\V1\InvoiceController;
@@ -22,10 +22,10 @@ use App\Http\Controllers\Api\V1\PaymentController;
 use App\Http\Controllers\Api\V1\PurchaseController;
 use App\Http\Controllers\Api\V1\PurchaseItemController;
 use App\Http\Controllers\Api\V1\SaleController;
-use App\Http\Controllers\Api\V1\SupplierController;
 use App\Http\Controllers\Api\V1\TestimonialController;
 use App\Http\Controllers\Api\V1\UserController;
 use App\Http\Controllers\Api\V1\UserPlanFeatureController;
+use App\Http\Controllers\Api\V1\PlanFeatureController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -64,23 +64,15 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
         Route::GET('user/{uuid}', [UserController::class, 'user'])->name('user');
 
         //supplier
-        Route::POST('suppliers/create', [SupplierController::class, 'create'])->name('suppliers.create');
-        Route::GET('suppliers', [SupplierController::class, 'index'])->name('suppliers.index');
-        Route::GET('suppliers/{supplier}', [SupplierController::class, 'show'])->name('suppliers.show');
-        Route::DELETE('suppliers/{supplier}', [SupplierController::class, 'delete'])->name('suppliers.delete');
-        Route::post('suppliers/store', [SupplierController::class, 'store'])->name('suppliers.store');
-        Route::PUT('suppliers/{supplier}', [SupplierController::class, 'update'])->name('suppliers.update');
-        Route::GET('suppliers/{supplier}/addresses', [SupplierController::class, 'getAddresses'])->name('suppliers.addresses');
-        Route::GET('suppliers/{supplier}/contacts', [SupplierController::class, 'getContacts'])->name('suppliers.contacts');
+        Route::prefix('suppliers')->group(
+            base_path('routes/suppliers.php')
+        );
+
         //customer
-        Route::POST('customers/create', [CustomerController::class, 'create'])->name('customer.create');
-        Route::GET('customers', [CustomerController::class, 'index'])->name('customers.index');
-        Route::GET('customers/{customer}', [CustomerController::class, 'show'])->name('customer.show');
-        Route::DELETE('customers/{customer}', [CustomerController::class, 'delete'])->name('customers.delete');
-        Route::POST('customers', [CustomerController::class, 'store'])->name('customer.store');
-        Route::PUT('customers/{customer}', [CustomerController::class, 'update'])->name('customer.update');
-        Route::GET('customers/{customer}/addresses', [CustomerController::class, 'getAddresses'])->name('customers.addresses');
-        Route::GET('customers/{customer}/contacts', [CustomerController::class, 'getContacts'])->name('customers.contacts');
+        Route::prefix('customers')->group(
+            base_path('routes/customers.php')
+        );
+
         //address
         //Route::POST('set/address', [AddressController::class,'setAddress'])->name('setaddress');
         Route::POST('addresses/create', [AddressController::class, 'create'])->name('addresses.create');
