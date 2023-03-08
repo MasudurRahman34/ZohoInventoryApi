@@ -26,7 +26,6 @@ use App\Http\Controllers\Api\V1\SaleController;
 use App\Http\Controllers\Api\V1\TestimonialController;
 use App\Http\Controllers\Api\V1\UserController;
 use App\Http\Controllers\Api\V1\UserPlanFeatureController;
-use App\Http\Controllers\Api\V1\PlanFeatureController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
