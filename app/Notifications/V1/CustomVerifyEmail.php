@@ -79,7 +79,7 @@ class CustomVerifyEmail extends Notification
                 'hash' => sha1($notifiable->getEmailForVerification()),
             ]
         );
-        return $fronendUrl . '?verify_url=' . urlencode($verifyUrl);
+        return $fronendUrl . '/' . 'email-verify' . '?verify_url=' . urlencode($verifyUrl);
     }
 
     public static function createUrlUsing($callback)

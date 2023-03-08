@@ -10,9 +10,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class PurchaseAddress extends Model
 {
-    use HasFactory,SoftDeletes,AccountObservant;
-   
-    protected $hidden=[
+    use HasFactory, SoftDeletes, AccountObservant;
+
+    protected $hidden = [
         'account_id'
     ];
     protected $dates = [
@@ -25,11 +25,12 @@ class PurchaseAddress extends Model
         return $date->format('Y-m-d H:i:s');
     }
     protected $casts = [
-        'billing_address' => 'array',
-        'shipping_address' => 'array',
+        'full_address' => 'array',
     ];
 
     protected $fillable = [
-        'supplier_id','purchase_id','display_name','company_name','attension','billing_address','shipping_address','account_id','created_by','modified_by'
+        'purchase_id', 'addressable_type', 'addressable_id', 'deliver_to', 'attention', 'display_name', 'company_name', 'company_info', 'company_logo', 'first_name', 'last_name', 'mobile', 'mobile_country_code', 'email', 'phone', 'fax', 'website', 'tax_number',
+        'country_id', 'country_name', 'state_name', 'district_name', 'thana_name', 'union_name', 'zipcode', 'street_address_line_1', 'street_address_line_2', 'house',
+        'full_address', 'plain_address', 'status', 'created_by', 'modified_by', 'account_id', 'updated_at', 'deleted_at'
     ];
 }

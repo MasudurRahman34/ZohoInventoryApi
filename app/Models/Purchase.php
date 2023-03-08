@@ -33,9 +33,12 @@ class Purchase extends Model
     //     'full_address' => 'array'
     // ];
     protected $fillable = [
-        'id', 'uuid', 'supplier_id', 'warehouse_id', 'invoice_no', 'reference', 'total_amount', 'due_amount', 'paid_amount', 'grand_total_amount', 'order_discount', 'discount_currency', 'order_tax',
-        'order_tax_amount', 'shipping_charge', 'order_adjustment', 'last_paid_amount', 'adjustment_text', 'purchase_date',
-        'delivery_date', 'attachment_file', 'image', 'status', 'payment_status', 'account_id', 'created_by', 'modified_by'
+        'id', 'uuid', 'supplier_id', 'supplier_name', 'warehouse_id', 'purchase_number', 'reference', 'total_amount', 'total_whole_amount', 'total_tax', 'total_product_discount', 'discount_percentage', 'discount_amount', 'due_amount', 'paid_amount',
+        'grand_total_amount', 'order_tax', 'order_tax_amount',
+        'shipping_charge', 'order_adjustment', 'last_paid_amount', 'adjustment_text', 'purchase_date',
+        'delivery_date', 'purchase_terms', 'balance',
+        'purchase_description', 'purchase_type', 'purchase_currency', 'pdf_link',
+        'status', 'payment_status', 'account_id', 'created_by', 'modified_by', 'payment_term'
     ];
 
 
