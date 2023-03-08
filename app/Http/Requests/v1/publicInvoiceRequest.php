@@ -73,7 +73,7 @@ class publicInvoiceRequest extends FormRequest
             'invoiceItems.*.product_qty' => 'required|integer|between:1,9999999999.99',
             'invoiceItems.*.unit_price' => 'required|numeric|between:1,9999999999.99',
             'invoiceItems.*.product_discount' => 'nullable|numeric|lte:invoiceItems.*.unit_price',
-            'invoiceItems.*.tax_name' => 'nullable|regex:/^[\pL\s]+$/u|between:3,20',
+            'invoiceItems.*.tax_name' => 'nullable|string|between:3,20',
             'invoiceItems.*.tax_rate' => 'nullable|numeric|between:0,100',
             'invoiceItems.*.tax_amount' => 'nullable|numeric|between:0,9999999999.9999',
             'invoiceItems.*.whole_price' => 'nullable|numeric|between:0,9999999999.9999',
@@ -86,11 +86,11 @@ class publicInvoiceRequest extends FormRequest
 
             //sender address 
             'sender.display_name' => 'string|nullable',
-            'sender.company_name' => 'required | regex:/^[a-zA-Z0-9@ ]+$/, between:3,255',
+            'sender.company_name' => 'nullable|required_without:sender.first_name| regex:/^[a-zA-Z0-9@ ]+$/, between:3,255',
             'sender.company_info' => 'string|nullable',
             'sender.company_logo' => 'image|mimes:jpg,png,jpeg,gif,svg|max:2048|nullable',
             'sender.attention' => 'string|nullable',
-            "sender.first_name" => 'nullable | regex:/^[\pL\s]+$/u',
+            "sender.first_name" => 'nullable|required_without:sender.company_name| regex:/^[\pL\s]+$/u',
             "sender.last_name" => 'nullable | regex:/^[\pL\s]+$/u',
             "sender.mobile" => 'required_without:sender.email | digits_between:7,15',
             "sender.mobile_country_code" => ['nullable', 'regex:/^\+\d{1,3}$/', 'between:2,6'],
@@ -117,11 +117,11 @@ class publicInvoiceRequest extends FormRequest
 
 
             'receiver.display_name' => 'string|nullable',
-            'receiver.company_name' => 'required | regex:/^[a-zA-Z0-9@ ]+$/, between:3,255',
+            'receiver.company_name' => 'nullable|required_without:receiver.first_name| regex:/^[a-zA-Z0-9@ ]+$/, between:3,255',
             'receiver.company_info' => 'string|nullable',
             'receiver.company_logo' => 'image|nullable',
             'receiver.attention' => 'string|nullable',
-            "receiver.first_name" => 'nullable | regex:/^[\pL\s]+$/u',
+            "receiver.first_name" => 'nullable|required_without:receiver.company_name| regex:/^[\pL\s]+$/u',
             "receiver.last_name" => 'nullable | regex:/^[\pL\s]+$/u',
             "receiver.mobile" => 'required_without:receiver.email|nullable | digits_between:7,15',
             "receiver.mobile_country_code" => ['nullable', 'regex:/^\+\d{1,3}$/', 'between:2,6'],

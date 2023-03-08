@@ -19,6 +19,7 @@ use App\Http\Controllers\Api\V1\InvoiceController;
 use App\Http\Controllers\Api\V1\LocationController;
 use App\Http\Controllers\Api\V1\MediaController;
 use App\Http\Controllers\Api\V1\PaymentController;
+use App\Http\Controllers\Api\V1\PlanFeatureController;
 use App\Http\Controllers\Api\V1\PurchaseController;
 use App\Http\Controllers\Api\V1\PurchaseItemController;
 use App\Http\Controllers\Api\V1\SaleController;
@@ -155,12 +156,13 @@ Route::group(['prefix' => 'v1'], function () {
     ///invoice
     Route::POST('/invoice', [InvoiceController::class, 'createPublicInvoice'])->name('invoices.store');
     Route::get('/invoices', [InvoiceController::class, 'index'])->name('invoices.index');
+    Route::DELETE('/invoices/{shortCode}', [InvoiceController::class, 'destroy'])->name('invoices.destroy');
     // Route::POST('/invoices/media', [InvoiceController::class, 'invoiceMedia'])->name('invoices.media');
     Route::PUT('/invoice/{shortCode}', [InvoiceController::class, 'update'])->name('invoices.update');
     Route::get('invoices/{shortCode}', [InvoiceController::class, 'show'])->name('invoices.show');
     Route::get('invoices/{shortCode}/download', [InvoiceController::class, 'downloadInvoicePdf'])->name('invoices.download');
-    Route::get('invoices/{shortCode}/createPdf', [InvoiceController::class, 'createInvoicePdf'])->name('invoices.pdf.create');
-    Route::get('invoices/notification/{shortCode}', [InvoiceController::class, 'notification'])->name('invoice.notification');
+    //Route::get('invoices/{shortCode}/createPdf', [InvoiceController::class, 'createInvoicePdf'])->name('invoices.pdf.create');
+    // Route::get('invoices/notification/{shortCode}', [InvoiceController::class, 'notification'])->name('invoice.notification');
     //location api
     Route::GET('countries', [CountryController::class, 'index'])->name('countries.index');
     Route::GET('states', [LocationController::class, 'states'])->name('location.states');
@@ -168,6 +170,7 @@ Route::group(['prefix' => 'v1'], function () {
 
     //media
     Route::POST('/media', [MediaController::class, 'store'])->name('media.store');
+    Route::GET('/media', [MediaController::class, 'index'])->name('media.index');
     Route::DELETE('/media/{media_id}/{attachment_id}', [MediaController::class, 'destroy'])->name('media.destroy');
     Route::POST('/attachements', [MediaController::class, 'storeMediaAttachement'])->name('attachements.store');
 });

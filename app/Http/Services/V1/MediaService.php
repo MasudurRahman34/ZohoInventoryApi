@@ -79,7 +79,7 @@ class MediaService
                 if ($getOneAttachment) {
                     $getOneAttachment->delete();
                     DB::commit();
-                    return $this->success(null, 406);
+                    return $this->success(null);
                 }
                 return $this->error('Attachement Not Found', 404);
             }
