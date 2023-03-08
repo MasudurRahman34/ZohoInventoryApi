@@ -1,6 +1,6 @@
 supplier_id:6
 supplier_name:suplier name
-warehouse_id:1
+warehouse_id:2
 purchase_number:PUR-1001
 reference:/2022/06/0010
 total_amount:0
@@ -95,3 +95,9 @@ purchaseItems[3][is_serialized]:1
 purchaseItems[3][is_taxable]:0
 purchaseItems[3][status]:1
 purchaseItems[3][sold_qty]:1
+
+supplierBillAddressId:1
+wareHouseBillAddressId:1
+customerBillAddressId:1
+cusotmerShipAddressId:1
+deliverTo:1
