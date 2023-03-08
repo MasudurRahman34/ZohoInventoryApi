@@ -276,12 +276,14 @@ class PurchaseController extends Controller
                                 $adjustmentItemsRequest['description'] = 'Item adjustment update based on purchased';
                                 $adjustmentItemsRequest['status'] = 0;
                                 //check item exist in adjustment item
-                                $adjustmentItem = AdjustmentItem::withTrashed()->where('inventory_adjustment_id', $inventoryAdjustment->id)->where('product_id', $item['product_id'])->where('status', '!=', 1)->first(); //check adjustment item exist or not
+                                $adjustmentItem = AdjustmentItem::withTrashed()->where('inventory_adjustment_id', $inventoryAdjustment->id)->where('product_id', $item['product_id'])->first(); //check adjustment item exist or not
 
                                 if ($adjustmentItem) {
                                     // return ([$adjustmentItem, $adjustmentItemsRequest]);
                                     //update if exist adjustment item
-                                    $this->adjustmentItemService->update($adjustmentItemsRequest, $adjustmentItem);
+                                    if ($adjustmentItem->status != 1) { //not approved item
+                                        $this->adjustmentItemService->update($adjustmentItemsRequest, $adjustmentItem);
+                                    }
                                 } else {
                                     //store if not exsist inventory adjustment item
                                     $this->adjustmentItemService->store($adjustmentItemsRequest);

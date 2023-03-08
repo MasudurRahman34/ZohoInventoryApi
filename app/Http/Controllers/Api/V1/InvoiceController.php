@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Notification;;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Exception;
+use GrahamCampbell\ResultType\Success;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Response;
@@ -95,7 +96,7 @@ class InvoiceController extends Controller
         $request = $request->all();
 
         $request = $this->calculateProductPriceService->invoicePrice($request); //at first step calculation  
-        return $request;
+        // return $request;
 
         try {
             DB::beginTransaction();
@@ -121,21 +122,15 @@ class InvoiceController extends Controller
 
     public function show(Request $request, $shortCode) //show invoice by shortcode
     {
-        try {
-            if (Auth::guard('api')->check()) {
-                $invoice = Invoice::with(['invoiceItems', 'receiverAddress', 'senderAddress', 'media'])->where('short_code', $shortCode)->first();
-            } else {
-                $invoice = Invoice::with(['invoiceItems', 'receiverAddress', 'senderAddress', 'media'])->where('user_ip', $request->ip())->where('short_code', $shortCode)->first();
-            }
 
 
-            if ($invoice) {
-                return $this->success($invoice);
-            }
-            return $this->error("Data Not Found", 404);
-        } catch (\Throwable $th) {
-            return $this->error(throw $th, 500);
+
+        $invoice = Invoice::with(['invoiceItems', 'receiverAddress', 'senderAddress', 'media'])->where('short_code', $shortCode)->first();
+
+        if ($invoice) {
+            return $this->success($invoice);
         }
+        return $this->error("Data Not Found", 404);
     }
 
 
@@ -258,4 +253,55 @@ class InvoiceController extends Controller
     //         return $this->error($th->getMessage(), 422);
     //     }
     // }
+
+
+    public function destroy($shortCode)
+    {
+
+        $invoice = Invoice::where('short_code', $shortCode)->first();
+        if ($invoice) {
+            try {
+                DB::beginTransaction();
+                if ($invoice->has("senderAddress")) {
+                    if (!\is_null($invoice['senderAddress']['company_logo'])) {
+                        $this->invoiceService->deleteExistingFile($invoice['senderAddress']['company_logo']);
+                        //return $invoice['senderAddress']['company_logo'];
+                    }
+                }
+                // if ($invoice->has("media")) {
+                //     $media_id = $invoice['media']['id'];
+                //     $attachment_id = $invoice['media']['pivot']['id'];
+                //     $attachement = Attachment::where('media_id', $media_id)->get();
+
+                //     if (count($attachement) > 0) {
+                //         $getOneAttachment = Attachment::find($attachment_id);
+
+                //         if ($getOneAttachment) {
+                //             $this->invoiceService->deleteExistingFile($invoice['media']['short_link']);
+                //             $getOneAttachment->delete();
+                //         }
+                //     } else {
+
+                //         $this->invoiceService->deleteExistingFile($invoice['media']['short_link']);
+                //         $invoice->media()->delete();
+                //         DB::commit();
+                //     }
+
+                //     return $invoice['media'];
+                // } else {
+                //     return 'not found';
+                // }
+                $invoice->invoiceItems()->delete();
+                $invoice->receiverAddress()->delete();
+                $invoice->senderAddress()->delete();
+                $invoice->delete();
+                DB::commit();
+                return $this->success(null, 200);
+            } catch (\Throwable $th) {
+                return $this->error($th->getMessage(), 422);
+            }
+        } else {
+            return $this->error('Data Not Found', 201);
+        };
+    }
 }
