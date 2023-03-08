@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Services\V1;
 
 use App\Models\Address;
@@ -8,31 +9,48 @@ use App\Models\PurchaseAddress;
 
 use function PHPUnit\Framework\throwException;
 
-class PurchaseService{
+class PurchaseService
+{
 
 
-    public function store($request){
-      //return $request['grand_total_amount'];
+    public function store($request)
+    {
+        //return $request['grand_total_amount'];
         $purchaseData = [
             'supplier_id' => $request['supplier_id'],
+            'supplier_name' => isset($request['supplier_name']) ? $request['supplier_name'] : NULL,
             'warehouse_id' => $request['warehouse_id'],
-            'invoice_no' => isset($request['invoice_no']) ? $request['invoice_no'] : NULL,
+            // 'invoice_no' => isset($request['invoice_no']) ? $request['invoice_no'] : NULL,
+            'purchase_number' => isset($request['purchase_number']) ? $request['purchase_number'] : NULL,
+            'total_tax' => isset($request['total_tax']) ? $request['total_tax'] : 0,
+            'total_whole_amount' => isset($request['total_whole_amount']) ? $request['total_whole_amount'] : 0,
+            'total_product_discount' => isset($request['total_product_discount']) ? $request['total_product_discount'] : 0,
+            'balance' => isset($request['balance']) ? $request['balance'] : 0,
+            'order_tax_amount' => isset($request['order_tax_amount']) ? $request['order_tax_amount'] : 0,
+            'purchase_terms' => isset($request['purchase_terms']) ? $request['purchase_terms'] : null,
+            'purchase_description' => isset($request['purchase_description']) ? $request['purchase_description'] : null,
+            'purchase_type' => isset($request['purchase_type']) ? $request['purchase_type'] : null,
+            'purchase_currency' => isset($request['purchase_currency']) ? $request['purchase_currency'] : null,
+            'pdf_link' => isset($request['pdf_link']) ? $request['pdf_link'] : null,
+
             'reference' => isset($request['reference']) ? $request['reference'] : NULL,
             'total_amount' => isset($request['total_amount']) ? $request['total_amount'] : 0,
             'due_amount' => isset($request['due_amount']) ? $request['due_amount'] : 0,
             'paid_amount' => isset($request['paid_amount']) ? $request['paid_amount'] : 0,
             'grand_total_amount' => isset($request['grand_total_amount']) ? $request['grand_total_amount'] : 0,
-            'order_discount' => isset($request['order_discount']) ? $request['order_discount'] : 0,
-            'discount_currency' => isset($request['discount_currency']) ? $request['discount_currency'] : 0,
+            'discount_amount' => isset($request['discount_amount']) ? $request['discount_amount'] : 0,
+            'discount_percentage' => isset($request['discount_percentage']) ? $request['discount_percentage'] : 0,
             'order_tax' => isset($request['order_tax']) ? $request['order_tax'] : 0,
+
             'shipping_charge' => isset($request['shipping_charge']) ? $request['shipping_charge'] : 0,
             'order_adjustment' => isset($request['order_adjustment']) ? $request['order_adjustment'] : 0,
             'last_paid_amount' => isset($request['last_paid_amount']) ? $request['last_paid_amount'] : 0,
             'adjustment_text' => isset($request['adjustment_text']) ? $request['adjustment_text'] : NULL,
             'purchase_date' => isset($request['purchase_date']) ? $request['purchase_date'] : NULL,
             'delivery_date' => isset($request['delivery_date']) ? $request['delivery_date'] : NULL,
-            'attachment_file' => isset($request['attachment_file']) ? $request['attachment_file'] : NULL,
-            'image' => isset($request['image']) ? $request['image'] : NULL,
+            'payment_term' => isset($request['payment_term']) ? $request['payment_term'] : null,
+            // 'attachment_file' => isset($request['attachment_file']) ? $request['attachment_file'] : NULL,
+            // 'image' => isset($request['image']) ? $request['image'] : NULL,
             'status' => isset($request['status']) ? $request['status'] : 0,
             // 'payment_status' => isset($request['payment_status']) ? $request['payment_status'] : '0',
 
@@ -44,47 +62,62 @@ class PurchaseService{
         // return $billingAddress->full_address;
         $purchase = Purchase::create($purchaseData);
 
-        if($purchase){
-            $billingAddressId=isset($request['bill_address']) ? $request['bill_address'] : NULL;
-            $shippingAddressId=isset($request['ship_address']) ? $request['ship_address'] : NULL;
-            $billingAddress=Address::where('id',$billingAddressId)->where('ref_id', $request['supplier_id'])->where('ref_object_key',Address::$ref_supplier_key)->first();
-            $shippingAddress=Address::where('id',$shippingAddressId)->where('ref_id', $request['supplier_id'])->where('ref_object_key',Address::$ref_supplier_key)->first();
-            if($billingAddress || $shippingAddress){
-                $contactDetails=Contact::where('ref_id', $request['supplier_id'])->where('ref_object_key',Address::$ref_supplier_key)->where('is_primary_contact',1)->first();
-                $billingAddress= $billingAddress ? $billingAddress->full_address : NULL;
-                $shippingAddress= $shippingAddress ? $shippingAddress->full_address : NULL;
-                $display_name= isset($contactDetails->display_name) ? $contactDetails->display_name : NULL;
-                $company_name= isset($contactDetails->company_name) ? $contactDetails->company_name : NULL;
-            
-                $purchaseAddressData=[
-                    'supplier_id' =>$request['supplier_id'],
-                    'purchase_id' =>$purchase->id,
+        if ($purchase) {
+            $billingAddressId = isset($request['bill_address']) ? $request['bill_address'] : NULL;
+            $shippingAddressId = isset($request['ship_address']) ? $request['ship_address'] : NULL;
+            $billingAddress = Address::where('id', $billingAddressId)->where('ref_id', $request['supplier_id'])->where('ref_object_key', Address::$ref_supplier_key)->first();
+            $shippingAddress = Address::where('id', $shippingAddressId)->where('ref_id', $request['supplier_id'])->where('ref_object_key', Address::$ref_supplier_key)->first();
+            if ($billingAddress || $shippingAddress) {
+                $contactDetails = Contact::where('ref_id', $request['supplier_id'])->where('ref_object_key', Address::$ref_supplier_key)->where('is_primary_contact', 1)->first();
+                $billingAddress = $billingAddress ? $billingAddress->full_address : NULL;
+                $shippingAddress = $shippingAddress ? $shippingAddress->full_address : NULL;
+                $display_name = isset($contactDetails->display_name) ? $contactDetails->display_name : NULL;
+                $company_name = isset($contactDetails->company_name) ? $contactDetails->company_name : NULL;
+
+                $purchaseAddressData = [
+                    'supplier_id' => $request['supplier_id'],
+                    'purchase_id' => $purchase->id,
                     'display_name' => $display_name,
-                    'company_name' =>$company_name,
-                    'billing_address' =>$billingAddress,
-                    'shipping_address' =>$shippingAddress,
+                    'company_name' => $company_name,
+                    'billing_address' => $billingAddress,
+                    'shipping_address' => $shippingAddress,
                 ];
 
-                $createPurchaseAddress=PurchaseAddress::create($purchaseAddressData);
+                $createPurchaseAddress = PurchaseAddress::create($purchaseAddressData);
             }
         }
         return $purchase;
     }
 
-    public function update($request, $purchase){
+    public function update($request, $purchase)
+    {
 
         try {
             $updatePurchaseData = [
                 'supplier_id' => isset($request['supplier_id']) ? $request['supplier_id'] : $purchase->supplier_id,
-                'warehouse_id' =>isset($request['warehouse_id']) ? $request['warehouse_id'] : $purchase->warehouse_id,
-                'invoice_no' => isset($request['invoice_no']) ? $request['invoice_no'] :  $purchase->invoice_no,
+                'supplier_name' => isset($request['supplier_name']) ? $request['supplier_name'] : $purchase->supplier_name,
+                'warehouse_id' => isset($request['warehouse_id']) ? $request['warehouse_id'] : $purchase->warehouse_id,
+                'purchase_number' => isset($request['purchase_number']) ? $request['purchase_number'] :  $purchase->purchase_number,
+
+                'total_tax' => isset($request['total_tax']) ? $request['total_tax'] : $purchase->total_tax,
+                'total_whole_amount' => isset($request['total_whole_amount']) ? $request['total_whole_amount'] : $purchase->total_whole_amount,
+                'total_product_discount' => isset($request['total_product_discount']) ? $request['total_product_discount'] : $purchase->total_product_discount,
+                'balance' => isset($request['balance']) ? $request['balance'] : $purchase->balance,
+                'order_tax_amount' => isset($request['order_tax_amount']) ? $request['order_tax_amount'] : $purchase->order_tax_amount,
+                'purchase_terms' => isset($request['purchase_terms']) ? $request['purchase_terms'] : $purchase->purchase_terms,
+                'purchase_description' => isset($request['purchase_description']) ? $request['purchase_description'] : $purchase->purchase_description,
+                'purchase_type' => isset($request['purchase_type']) ? $request['purchase_type'] : $purchase->purchase_type,
+                'purchase_currency' => isset($request['purchase_currency']) ? $request['purchase_currency'] : $purchase->purchase_currency,
+                'pdf_link' => isset($request['pdf_link']) ? $request['pdf_link'] : $purchase->pdf_link,
+                'payment_term' => isset($request['payment_term']) ? $request['payment_term'] : $purchase->payment_term,
+
                 'reference' => isset($request['reference']) ? $request['reference'] :  $purchase->reference,
                 'total_amount' => isset($request['total_amount']) ? $request['total_amount'] : $purchase->total_amount,
                 'due_amount' => isset($request['due_amount']) ? $request['due_amount'] : $purchase->due_amount,
                 'paid_amount' => isset($request['paid_amount']) ? $request['paid_amount'] : $purchase->paid_amount,
                 'grand_total_amount' => isset($request['grand_total_amount']) ? $request['grand_total_amount'] : $purchase->grand_total_amount,
-                'order_discount' => isset($request['order_discount']) ? $request['order_discount'] : $purchase->order_discount,
-                'discount_currency' => isset($request['discount_currency']) ? $request['discount_currency'] : $purchase->discount_currency,
+                'discount_amount' => isset($request['discount_amount']) ? $request['discount_amount'] : $purchase->discount_amount,
+                'discount_percentage' => isset($request['discount_percentage']) ? $request['discount_percentage'] : $purchase->discount_currency,
                 'order_tax' => isset($request['order_tax']) ? $request['order_tax'] : $purchase->order_tax,
                 'shipping_charge' => isset($request['shipping_charge']) ? $request['shipping_charge'] : $purchase->shipping_charge,
                 'order_adjustment' => isset($request['order_adjustment']) ? $request['order_adjustment'] : $purchase->order_adjustment,
@@ -92,51 +125,46 @@ class PurchaseService{
                 'adjustment_text' => isset($request['adjustment_text']) ? $request['adjustment_text'] :  $purchase->adjustment_text,
                 'purchase_date' => isset($request['purchase_date']) ? $request['purchase_date'] :  $purchase->purchase_date,
                 'delivery_date' => isset($request['delivery_date']) ? $request['delivery_date'] :  $purchase->delivery_date,
-                'attachment_file' => isset($request['attachment_file']) ? $request['attachment_file'] :  $purchase->attachment_file,
-                'image' => isset($request['image']) ? $request['image'] :  $purchase->image,
+                // 'attachment_file' => isset($request['attachment_file']) ? $request['attachment_file'] :  $purchase->attachment_file,
+                // 'image' => isset($request['image']) ? $request['image'] :  $purchase->image,
                 'status' => isset($request['status']) ? $request['status'] : $purchase->status,
-                // 'payment_status' => isset($request['payment_status']) ? $request['payment_status'] : '0',
-    
+                'payment_status' => isset($request['payment_status']) ? $request['payment_status'] : $purchase->payment_status,
+
             ];
             $update = $purchase->update($updatePurchaseData);
 
-            if($update){
-                $purchaseAddress=PurchaseAddress::where('purchase_id',$purchase->id)->first();
-               
-                if($purchaseAddress){
-                    $billingAddressId=isset($request['bill_address']) ? $request['bill_address'] : NULL;
-                    $shippingAddressId=isset($request['ship_address']) ? $request['ship_address'] : NULL;
-                    $billingAddress=Address::where('id',$billingAddressId)->where('ref_id', $request['supplier_id'])->where('ref_object_key',Address::$ref_supplier_key)->first();
-                    $shippingAddress=Address::where('id',$shippingAddressId)->where('ref_id', $request['supplier_id'])->where('ref_object_key',Address::$ref_supplier_key)->first();
-                    if($billingAddress || $shippingAddress){
-                        
-                        $contactDetails=Contact::where('ref_id', $request['supplier_id'])->where('ref_object_key',Address::$ref_supplier_key)->where('is_primary_contact',1)->first();
-                        $billingAddress= $billingAddress ? $billingAddress->full_address : NULL;
-                        $shippingAddress= $shippingAddress ? $shippingAddress->full_address : NULL;
-                        $display_name= isset($contactDetails->display_name) ? $contactDetails->display_name : NULL;
-                        $company_name= isset($contactDetails->company_name) ? $contactDetails->company_name : NULL;
-                    
-                        $purchaseAddressData=[
-                            'supplier_id' =>$request['supplier_id'],
-                            'purchase_id' =>$purchase->id,
+            if ($update) {
+                $purchaseAddress = PurchaseAddress::where('purchase_id', $purchase->id)->first();
+
+                if ($purchaseAddress) {
+                    $billingAddressId = isset($request['bill_address']) ? $request['bill_address'] : NULL;
+                    $shippingAddressId = isset($request['ship_address']) ? $request['ship_address'] : NULL;
+                    $billingAddress = Address::where('id', $billingAddressId)->where('ref_id', $request['supplier_id'])->where('ref_object_key', Address::$ref_supplier_key)->first();
+                    $shippingAddress = Address::where('id', $shippingAddressId)->where('ref_id', $request['supplier_id'])->where('ref_object_key', Address::$ref_supplier_key)->first();
+                    if ($billingAddress || $shippingAddress) {
+
+                        $contactDetails = Contact::where('ref_id', $request['supplier_id'])->where('ref_object_key', Address::$ref_supplier_key)->where('is_primary_contact', 1)->first();
+                        $billingAddress = $billingAddress ? $billingAddress->full_address : NULL;
+                        $shippingAddress = $shippingAddress ? $shippingAddress->full_address : NULL;
+                        $display_name = isset($contactDetails->display_name) ? $contactDetails->display_name : NULL;
+                        $company_name = isset($contactDetails->company_name) ? $contactDetails->company_name : NULL;
+
+                        $purchaseAddressData = [
+                            'supplier_id' => $request['supplier_id'],
+                            'purchase_id' => $purchase->id,
                             'display_name' => $display_name,
-                            'company_name' =>$company_name,
-                            'billing_address' =>$billingAddress,
-                            'shipping_address' =>$shippingAddress,
+                            'company_name' => $company_name,
+                            'billing_address' => $billingAddress,
+                            'shipping_address' => $shippingAddress,
                         ];
-        
-                        $updatePurchaseAddress=$purchase->update($purchaseAddressData);
-                         
-                    } 
+
+                        $updatePurchaseAddress = $purchase->update($purchaseAddressData);
+                    }
                 }
-                
             }
             return $purchase;
-            
         } catch (\Throwable $th) {
             return $th->getMessage();
         }
-       
-        
     }
 }

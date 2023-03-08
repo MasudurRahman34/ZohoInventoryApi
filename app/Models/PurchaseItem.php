@@ -11,9 +11,9 @@ use Illuminate\Support\Facades\Auth;
 
 class PurchaseItem extends Model
 {
-    use HasFactory,SoftDeletes,AccountObservant;
+    use HasFactory, SoftDeletes, AccountObservant;
     protected $table = 'purchase_items';
-    protected $hidden=[
+    protected $hidden = [
         'account_id'
     ];
     protected $dates = [
@@ -27,20 +27,22 @@ class PurchaseItem extends Model
     }
 
     protected $fillable = [
-        'purchase_id','warehouse_id','product_id','product_name','serial_number','group_number','product_qty','received_qty','unit_price','product_discount','product_tax','package_date','is_serialized','expire_date','subtotal',
-        'description','account_id','created_by','modified_by',
-        'sold_qty','status','is_taxable'
+        'purchase_id', 'warehouse_id', 'product_id', 'product_name', 'serial_number', 'group_number', 'product_qty', 'received_qty', 'sold_qty', 'unit_price', 'product_discount', 'tax_name', 'tax_rate', 'tax_amount', 'whole_price', 'subtotal', 'package_date', 'is_serialized', 'expire_date',
+        'description', 'account_id', 'created_by', 'modified_by', 'updated_at', 'deleted_at', 'created_at',
+        'status', 'is_taxable'
     ];
 
-    public function product(){
+    public function product()
+    {
         return 'belongsTo(Product::class, product_id, id)';
     }
-    public function warehouse(){
-        return $this->belongsTo(Warehouse::class,'warehouse_id','id');
+    public function warehouse()
+    {
+        return $this->belongsTo(Warehouse::class, 'warehouse_id', 'id');
     }
     // public function stock(){
     //     return $this->hasOneThrough(Stock::class,PurchaseItem::class,'product_id','warehouse_id');
     // }
 
-    
+
 }
