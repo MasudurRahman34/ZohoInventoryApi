@@ -169,7 +169,7 @@ Route::group(['prefix' => 'v1'], function () {
     Route::PUT('/invoice/{shortCode}', [InvoiceController::class, 'update'])->name('invoices.update');
     Route::get('invoices/{shortCode}', [InvoiceController::class, 'show'])->name('invoices.show');
     Route::get('invoices/{shortCode}/download', [InvoiceController::class, 'downloadInvoicePdf'])->name('invoices.download');
-    //Route::get('invoices/{shortCode}/createPdf', [InvoiceController::class, 'createInvoicePdf'])->name('invoices.pdf.create');
+    Route::get('invoices/{shortCode}/createPdf', [InvoiceController::class, 'createInvoicePdf'])->name('invoices.pdf.create');
     // Route::get('invoices/notification/{shortCode}', [InvoiceController::class, 'notification'])->name('invoice.notification');
     //location api
     Route::GET('countries', [CountryController::class, 'index'])->name('countries.index');

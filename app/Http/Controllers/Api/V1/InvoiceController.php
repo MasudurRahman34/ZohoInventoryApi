@@ -15,6 +15,7 @@ use App\Models\Attachment;
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
 use App\Models\Media;
+use App\Models\Scopes\AccountScope;
 use App\Notifications\V1\InvoiceNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
@@ -125,7 +126,7 @@ class InvoiceController extends Controller
 
 
 
-        $invoice = Invoice::with(['invoiceItems', 'receiverAddress', 'senderAddress', 'media'])->where('short_code', $shortCode)->first();
+        $invoice = Invoice::with(['invoiceItems', 'receiverAddress', 'senderAddress', 'media'])->where('short_code', $shortCode)->withoutGlobalScope(AccountScope::class)->first();
 
         if ($invoice) {
             return $this->success($invoice);
@@ -137,7 +138,7 @@ class InvoiceController extends Controller
     public function createInvoicePdf($shortCode) //creating invoice pdf
     {
 
-        $newInvoice = Invoice::with(['invoiceItems', 'receiverAddress', 'senderAddress'])->where('short_code', $shortCode)->first();
+        $newInvoice = Invoice::with(['invoiceItems', 'receiverAddress', 'senderAddress'])->where('short_code', $shortCode)->withoutGlobalScope(AccountScope::class)->first();
         if ($newInvoice) {
             $renderingData = $newInvoice->toArray();
             // return view('backend.pdf.invoice', ['invoice' => $renderingData]);
@@ -221,7 +222,7 @@ class InvoiceController extends Controller
 
     public function downloadInvoicePdf($shortCode)
     {
-        $invoice = Invoice::where('short_code', $shortCode)->first();
+        $invoice = Invoice::where('short_code', $shortCode)->withoutGlobalScope(AccountScope::class)->first();
         if ($invoice) {
 
             function get_path($fileLink)
