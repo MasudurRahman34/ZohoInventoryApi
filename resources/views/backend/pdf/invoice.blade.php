@@ -165,6 +165,7 @@
 		<table class="invoice-items">
 			<thead>
 				<tr>
+					<th>Service Date</th>
 					<th>Name</th>
 					<th>Quantity</th>
 					<th>Unit Price</th>
@@ -178,15 +179,18 @@
                 
            
 				<tr>
+					<td>{{$item['service_date']}}</td>
 					<td>
+						
 						<p>{{$item['product_name']}}</p>
 						<p>{{$item['product_description']}}</p>
 					</td>
-					<td>{{$item['unit_price']}}</td>
 					<td>{{$item['product_qty']}}</td>
+					<td>{{$invoice['invoice_currency']}}{{$item['unit_price']}}</td>
+					
 					<td>{{$item['tax_rate']}}</td>
 					
-					<td>{{$item['whole_price']}}</td>
+					<td>{{$invoice['invoice_currency']}}{{$item['whole_price']}}</td>
 				</tr>
                 @endforeach
 				
@@ -200,36 +204,36 @@
 				<h1>Invoice Summary</h1>
 			</div>
 			<section class="invoice-total-counter">
-				<p><strong>Subtotal:</strong> {{$invoice['total_whole_amount']}}</p>
+				<p><strong>Subtotal: </strong>{{$invoice['invoice_currency']}} {{$invoice['total_whole_amount'],2}}</p>
 				@if (($invoice['total_tax']>0))
-					<p><strong>Total tax:</strong> {{ $invoice['total_tax']}}</p>
+					<p><strong>Total tax: </strong>{{$invoice['invoice_currency']}} {{ $invoice['total_tax']}}</p>
 				@endif
 				@if (($invoice['total_product_discount']>0))
-					<p><strong>Total Product Discount: </strong> {{ -$invoice['total_product_discount']}}</p>
+					<p><strong>Total Product Discount:  </strong>{{$invoice['invoice_currency']}} -{{$invoice['total_product_discount']}}</p>
 				@endif
 				<hr>
-				<p><strong>Total :</strong> {{ $invoice['total_amount']}}</p>
+				<p><strong>Total : </strong>{{$invoice['invoice_currency']}} {{ $invoice['total_amount']}}</p>
 				
 
 				@if (($invoice['shipping_charge']>0))
-					<p><strong>Shipping Charge:</strong> {{ $invoice['shipping_charge']}}</p>
+					<p><strong>Shipping Charge: </strong>{{$invoice['invoice_currency']}} {{ $invoice['shipping_charge']}}</p>
 				@endif
 
 				@if (($invoice['order_adjustment']>0))
-					<p><strong>Order Adjustment:</strong> {{ $invoice['order_adjustment']}}</p>
+					<p><strong>Order Adjustment: </strong>{{$invoice['invoice_currency']}} {{ $invoice['order_adjustment']}}</p>
 				@endif
 				@if (($invoice['discount_amount']>0))
-					<p><strong>Order Discount:</strong> {{ -$invoice['discount_amount']}}</p>
+					<p><strong>Order Discount: </strong>{{$invoice['invoice_currency']}} -{{ $invoice['discount_amount']}}</p>
 				@endif
 				<hr>
 				
 			{{-- <p><strong>Tax:</strong> {{$invoice['total_tax']}}</p> --}}
-			<p><strong>Grand Total:</strong> {{$invoice['grand_total_amount']}}</p>
+			<p><strong>Grand Total: </strong>{{$invoice['invoice_currency']}} {{$invoice['grand_total_amount']}}</p>
 			
 			@if (($invoice['paid_amount']>0))
-					<p><strong>Paid:</strong> {{ -$invoice['paid_amount']}}</p>
+					<p><strong>Paid: </strong>{{$invoice['invoice_currency']}} {{ -$invoice['paid_amount']}}</p>
 					<hr>
-					<p><strong>Balance:</strong> {{$invoice['balance']}}</p>
+					<p><strong>Balance: </strong>{{$invoice['invoice_currency']}} {{$invoice['balance']}}</p>
 			@endif
 			</section>
 		</div>

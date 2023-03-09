@@ -30,7 +30,20 @@ class Invoice extends Model
     ];
     protected $casts = [
         'order_id' => 'array',
-        'order_number' => 'array'
+        'order_number' => 'array',
+        'total_amount' => 'decimal:2',
+        'discount_percentage' => 'decimal:2',
+
+        'order_adjustment' => 'decimal:2',
+        'total_tax' => 'decimal:2',
+        'shipping_charge' => 'decimal:2',
+        'balance' => 'decimal:2',
+        'grand_total_amount' => 'decimal:2',
+        'due_amount' => 'decimal:2',
+        'paid_amount' => 'decimal:2',
+        'total_whole_amount' => 'decimal:2',
+        'total_product_discount' => 'decimal:2',
+        'discount_amount' => 'decimal:2'
     ];
 
     public function serializeDate(DateTimeInterface $date)

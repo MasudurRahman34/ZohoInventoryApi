@@ -17,7 +17,13 @@ class InvoiceItem extends Model
     ];
 
     protected $casts = [
-        'full_address' => 'array'
+        'full_address' => 'array',
+        'unit_price' => 'decimal:2',
+        'product_discount' => 'decimal:2',
+        'tax_rate' => 'decimal:2',
+        'tax_amount' => 'decimal:2',
+        'whole_price' => 'decimal:2',
+        'subtotal' => 'decimal:2',
     ];
     public function serializeDate(DateTimeInterface $date)
     {
