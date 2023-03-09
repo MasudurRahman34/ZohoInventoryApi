@@ -111,25 +111,54 @@
 			
 			<p><strong>Issue Date:</strong>{{$invoice['invoice_date']}}</p>
 			<p><strong>Due Date:</strong> {{$invoice['due_date']}}</p>
-			<p><strong>PO Number:</strong> {{json_encode($invoice['order_number'])}}</p>
+			<p><strong>PO Number:</strong>@if (!is_null($invoice['order_number']))
+				{{json_encode($invoice['order_number'])}}
+			@endif </p>
 		</div>
 		<div class="information-section">
 			<div class="sender-details">
 				<h1><strong>From</strong></h1>
-				<h4>{{$invoice['sender_address']['company_name']}}</h4>
-				<h4>{{$invoice['sender_address']['first_name'] }} {{$invoice['sender_address']['last_name']}}</h4>
-				<h4>{{$invoice['sender_address']['plain_address']}}</h4>
-				<h4>{{$invoice['sender_address']['email']}}</h4>
-				<h4>{{$invoice['sender_address']['mobile_country_code']}}{{$invoice['sender_address']['mobile']}}</h4>
+				@if (!is_null($invoice['sender_address']['company_name']))
+					<h4>{{$invoice['sender_address']['company_name']}}</h4>
+				@endif
+				@if (!is_null($invoice['sender_address']['first_name']))
+					<h4>{{$invoice['sender_address']['first_name'] }} {{$invoice['sender_address']['last_name']}}</h4>
+				@endif
+				
+				@if (!is_null($invoice['sender_address']['plain_address']))
+					<h4>{{$invoice['sender_address']['plain_address']}}</h4>
+				@endif
+
+				@if (!is_null($invoice['sender_address']['email']))
+					<h4>{{$invoice['sender_address']['email']}}</h4>
+				@endif
+				@if (!is_null($invoice['sender_address']['mobile']))
+					<h4>{{$invoice['sender_address']['mobile_country_code']}}{{$invoice['sender_address']['mobile']}}</h4>
+				@endif
+				
+				
+				
 				
 			</div>
 			<div class="reciever-details">
 				<h1><strong>To</strong></h1>
-				<h4>{{$invoice['receiver_address']['company_name']}}</h4>
-				<h4>{{$invoice['receiver_address']['first_name']}}  {{$invoice['receiver_address']['last_name']}}</h4>
-				<h4>{{$invoice['receiver_address']['plain_address']}}</h4>
-				<h4>{{$invoice['receiver_address']['email']}}</h4>
-				<h4>{{$invoice['receiver_address']['mobile_country_code']}}{{$invoice['sender_address']['mobile']}}</h4>
+				@if (!is_null($invoice['receiver_address']['company_name']))
+					<h4>{{$invoice['receiver_address']['company_name']}}</h4>
+				@endif
+				@if (!is_null($invoice['receiver_address']['first_name']))
+					<h4>{{$invoice['receiver_address']['first_name'] }} {{$invoice['receiver_address']['last_name']}}</h4>
+				@endif
+				
+				@if (!is_null($invoice['receiver_address']['plain_address']))
+					<h4>{{$invoice['receiver_address']['plain_address']}}</h4>
+				@endif
+
+				@if (!is_null($invoice['receiver_address']['email']))
+					<h4>{{$invoice['receiver_address']['email']}}</h4>
+				@endif
+				@if (!is_null($invoice['receiver_address']['mobile']))
+					<h4>{{$invoice['receiver_address']['mobile_country_code']}}{{$invoice['receiver_address']['mobile']}}</h4>
+				@endif
 				
 			</div>
 		</div>
@@ -172,15 +201,36 @@
 			</div>
 			<section class="invoice-total-counter">
 				<p><strong>Subtotal:</strong> {{$invoice['total_whole_amount']}}</p>
-				<p><strong>Total tax:</strong> {{ $invoice['total_tax']}}</p>
-				<p><strong>Total Product Discount:</strong> -{{ $invoice['total_product_discount']}}</p>
+				@if (($invoice['total_tax']>0))
+					<p><strong>Total tax:</strong> {{ $invoice['total_tax']}}</p>
+				@endif
+				@if (($invoice['total_product_discount']>0))
+					<p><strong>Total Product Discount: </strong> {{ -$invoice['total_product_discount']}}</p>
+				@endif
+				<hr>
 				<p><strong>Total :</strong> {{ $invoice['total_amount']}}</p>
-				<p><strong>Shipping Charge:</strong> {{ $invoice['shipping_charge']}}</p>
-				<p><strong>Order Adjustment:</strong> {{ $invoice['order_adjustment']}}</p>
+				
+
+				@if (($invoice['shipping_charge']>0))
+					<p><strong>Shipping Charge:</strong> {{ $invoice['shipping_charge']}}</p>
+				@endif
+
+				@if (($invoice['order_adjustment']>0))
+					<p><strong>Order Adjustment:</strong> {{ $invoice['order_adjustment']}}</p>
+				@endif
+				@if (($invoice['discount_amount']>0))
+					<p><strong>Order Discount:</strong> {{ -$invoice['discount_amount']}}</p>
+				@endif
+				<hr>
+				
 			{{-- <p><strong>Tax:</strong> {{$invoice['total_tax']}}</p> --}}
 			<p><strong>Grand Total:</strong> {{$invoice['grand_total_amount']}}</p>
-			<p><strong>Paid:</strong> -{{$invoice['paid_amount']}}</p>
-			<p><strong>Balance:</strong> {{$invoice['balance']}}</p>
+			
+			@if (($invoice['paid_amount']>0))
+					<p><strong>Paid:</strong> {{ -$invoice['paid_amount']}}</p>
+					<hr>
+					<p><strong>Balance:</strong> {{$invoice['balance']}}</p>
+			@endif
 			</section>
 		</div>
 	</div>
