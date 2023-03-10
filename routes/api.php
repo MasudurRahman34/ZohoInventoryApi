@@ -26,6 +26,7 @@ use App\Http\Controllers\Api\V1\SaleController;
 use App\Http\Controllers\Api\V1\TestimonialController;
 use App\Http\Controllers\Api\V1\UserController;
 use App\Http\Controllers\Api\V1\UserPlanFeatureController;
+use App\Models\InventoryAdjustment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -110,6 +111,7 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
 
         //inventory adjustment
         Route::POST('inventory/adjustment', [InventoryAdjustmentController::class, 'store'])->name('inventory.adjustment.store');
+        Route::put('inventory/adjustment-item/{itemId}', [InventoryAdjustmentController::class, 'itemStatusUpdate'])->name('inventory.adjustment.item.update');
 
         //Purchase
         // Route::GET('businesstypes', [BusinessTypeController::class, 'index'])->name('businesstypes.index');
@@ -160,7 +162,7 @@ Route::group(['prefix' => 'v1'], function () {
     Route::PUT('/invoice/{shortCode}', [InvoiceController::class, 'update'])->name('invoices.update');
     Route::get('invoices/{shortCode}', [InvoiceController::class, 'show'])->name('invoices.show');
     Route::get('invoices/{shortCode}/download', [InvoiceController::class, 'downloadInvoicePdf'])->name('invoices.download');
-    //Route::get('invoices/{shortCode}/createPdf', [InvoiceController::class, 'createInvoicePdf'])->name('invoices.pdf.create');
+    Route::get('invoices/{shortCode}/createPdf', [InvoiceController::class, 'createInvoicePdf'])->name('invoices.pdf.create');
     // Route::get('invoices/notification/{shortCode}', [InvoiceController::class, 'notification'])->name('invoice.notification');
     //location api
     Route::GET('countries', [CountryController::class, 'index'])->name('countries.index');

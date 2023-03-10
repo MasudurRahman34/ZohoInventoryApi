@@ -37,6 +37,7 @@ class AdjustmentItemService
         ];
         $adjustmentItem = AdjustmentItem::create($insertData);
 
+
         if ($adjustmentItem['status'] == 1) {
             $this->stockUpdate($adjustmentItem['quantity'], $adjustmentItem['product_id'], $adjustmentItem['warehouse_id']);
         };
@@ -45,6 +46,7 @@ class AdjustmentItemService
 
     public function update($request, $adjustmentItem)
     {
+        // return 'working';
         $stock = Stock::where('product_id', $adjustmentItem['product_id'])->where('warehouse_id', $adjustmentItem['warehouse_id'])->first();
         if ($stock) {
             $stock_on_hand = $stock->quantity_on_hand;
@@ -72,6 +74,15 @@ class AdjustmentItemService
             $this->stockUpdate($adjustmentItem['quantity'], $adjustmentItem['product_id'], $adjustmentItem['warehouse_id']);
         };
         return $adjustmentItem;
+    }
+
+    public function updateStatus($request, $adjustmentItem)
+    {
+        $update = $adjustmentItem->update(["status" => $request['status']]);
+        if ($request['status'] == 1) {
+            $this->stockUpdate($adjustmentItem['quantity'], $adjustmentItem['product_id'], $adjustmentItem['warehouse_id']);
+        };
+        return $update;
     }
 
     public function stockUpdate($quantity, $product_id, $warehouse_id)

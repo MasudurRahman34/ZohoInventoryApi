@@ -28,7 +28,7 @@ class InventoryAdjustmentService
 
             // $id=DB::select("SHOW TABLE STATUS LIKE 'inventory_adjustments'");
             // $request['inventory_adjustmentable_id']=$id[0]->Auto_increment;
-            $request['inventory_adjustmentable_id'] = InventoryAdjustment::nextId(); // used to add seft adjustment  and has problem of getting next id
+            $request['inventory_adjustmentable_id'] = 0; // InventoryAdjustment::nextId() used to add seft adjustment  and has problem of getting next id
 
         } else {
             $message['source'][] = "The source value deos not match.";
@@ -46,7 +46,12 @@ class InventoryAdjustmentService
             'description' => $request['description'],
 
         ];
+
         $inventoryAdjustment = InventoryAdjustment::create($insertData);
+        if ($inventory_adjustmentable_type == InventoryAdjustment::$inventory_adjustment_table) {
+            $inventoryAdjustment->update(['inventory_adjustmentable_id' => $inventoryAdjustment->id]);
+        }
+
         if ((count($request['adjustmentItems'])) > 0) {
             foreach ($request['adjustmentItems'] as $key => $item) {
                 $item['inventory_adjustment_id'] = $inventoryAdjustment->id;
