@@ -25,7 +25,7 @@ class VerifyEmailController extends Controller
 
         if ($request->user()->hasVerifiedEmail()) {
             //  return redirect()->intended(RouteServiceProvider::HOME.'?verified=1');
-            return $this->success(null, 200, 'Email is Already Verified . Thank You !');
+            return $this->success(null, 'Email is Already Verified . Thank You !');
         }
 
         if ($request->user()->markEmailAsVerified()) {
@@ -34,7 +34,7 @@ class VerifyEmailController extends Controller
 
         //return redirect()->intended(RouteServiceProvider::HOME.'?verified=1');
 
-        return $this->success(null, 200, 'Email is Verified . Thank You !');
+        return $this->success(null, 'Email is Verified . Thank You !');
     }
 
     public function verifyBeforeLogin(Request $request)
@@ -51,14 +51,14 @@ class VerifyEmailController extends Controller
             }
 
             if ($user->hasVerifiedEmail()) {
-                return $this->success(null, 200, 'Email is Already Verified . Thank You !');
+                return $this->success(null, 'Email is Already Verified . Thank You !');
             }
 
             if ($user->markEmailAsVerified()) {
                 event(new Verified($request->user()));
             }
 
-            return $this->success(null, 200, 'Email is Verified . Thank You !');
+            return $this->success(null, 'Email is Verified . Thank You !');
         } else {
             return $this->error("Something Wrong !", 204);
         }

@@ -50,7 +50,7 @@ class BusinessTypeController extends Controller
                 $unpdatedBusinessType = $this->businessTypeService->update($request, $businessType);
                 //return $unpdatedBusinessType;
                 DB::commit();
-                return $this->success(new BusinessTypeResource($businessType), 200);
+                return $this->success(new BusinessTypeResource($businessType), '',200);
             } catch (\Throwable $th) {
                 return $this->error($th->getMessage(), 200);
             }

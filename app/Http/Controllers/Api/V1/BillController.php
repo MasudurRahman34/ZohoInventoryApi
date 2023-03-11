@@ -137,7 +137,7 @@ class BillController extends Controller
                 $bill->payment()->delete();
                 $bill->delete();
                 DB::commit();
-                return $this->success(\null);
+                return $this->success();
             } catch (\Exception $th) {
                 DB::rollBack();
                 return $this->error($th->getMessage(), 422);

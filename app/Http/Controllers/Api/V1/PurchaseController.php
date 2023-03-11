@@ -154,7 +154,7 @@ class PurchaseController extends Controller
 
             $purchase = Purchase::with('purchaseItems')->with('inventoryAdjustment')->find($purchase->id);
 
-            return $this->success(new PurchaseResource($purchase), 201);
+            return $this->success(new PurchaseResource($purchase), '',201);
         } catch (\Exception $e) {
             DB::rollBack();
             return $this->error(throw $e, 200);
@@ -221,7 +221,7 @@ class PurchaseController extends Controller
                                     //delete if remain_quanity = existinQunatity-Item[quantity] if deleted serial not provide this function will delete randomly
                                     // if ($remain_quantity < 0) {
                                     //     $loopWhile = abs($remain_quantity);
-                                    //     $x = 0; //initial 
+                                    //     $x = 0; //initial
                                     //     while ($x < $loopWhile) {
                                     //         if ($isExistSerializedItem[$x]->status != 1) { //delete except sold product
                                     //             $this->purchaseItemService->delete($isExistSerializedItem[$x]->id);
@@ -316,7 +316,7 @@ class PurchaseController extends Controller
                 $purchase->purchaseItems()->delete();
                 $purchase->delete();
                 DB::commit();
-                return $this->success(null, 200);
+                return $this->success(null, '',200);
             } catch (\Throwable $th) {
                 return $this->error($th->getMessage(), 422);
             }

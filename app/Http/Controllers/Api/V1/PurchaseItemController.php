@@ -20,9 +20,9 @@ class PurchaseItemController extends Controller
     }
 
 
-    
+
     public function showBySerialNumber($serialNumber){
-      
+
         return $this->purchaseItemService->showBySerialNumber($serialNumber);
     }
 
@@ -31,7 +31,7 @@ class PurchaseItemController extends Controller
         $purchaseItem = PurchaseItem::find($id);
         if ($purchaseItem) {
             $purchaseItem->delete();
-            return $this->success(null, 200);
+            return $this->success(null, '',200);
         } else {
             return $this->error('Data Not Found', 404 );
         };

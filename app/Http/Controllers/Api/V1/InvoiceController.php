@@ -96,7 +96,7 @@ class InvoiceController extends Controller
         $request->merge(['user_ip' => $request->ip()]); //populate user_id
         $request = $request->all();
 
-        $request = $this->calculateProductPriceService->invoicePrice($request); //at first step calculation  
+        $request = $this->calculateProductPriceService->invoicePrice($request); //at first step calculation
         // return $request;
 
         try {
@@ -297,7 +297,7 @@ class InvoiceController extends Controller
                 $invoice->senderAddress()->delete();
                 $invoice->delete();
                 DB::commit();
-                return $this->success(null, 200);
+                return $this->success(null, '',200);
             } catch (\Throwable $th) {
                 return $this->error($th->getMessage(), 422);
             }

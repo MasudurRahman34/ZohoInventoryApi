@@ -104,7 +104,7 @@ class CustomerController extends Controller
         try {
             $customer = $this->customerService->store($request);
             DB::commit();
-            return $this->success(new CustomerResource($customer), 201);
+            return $this->success(new CustomerResource($customer), '',201);
         } catch (\Exception $e) {
             DB::rollBack();
             return $this->error($e->getMessage(), 200);
@@ -121,7 +121,7 @@ class CustomerController extends Controller
             try {
                 $customer = $this->customerService->update($request, $customer);
                 DB::commit();
-                return $this->success(new CustomerResource($customer), 200);
+                return $this->success(new CustomerResource($customer), '',200);
             } catch (\Exception $e) {
                 DB::rollBack();
                 return $this->error($e->getMessage(), 200);
@@ -231,7 +231,7 @@ class CustomerController extends Controller
             }
             DB::commit();
             $customer = Customer::with('PrimaryContact')->with('otherContacts')->with('shipAddress')->with('billAddress')->with('otherAddresses')->find($customer_id);
-            return $this->success(new CustomerResource($customer), 201);
+            return $this->success(new CustomerResource($customer), '', 201);
         } catch (\Exception $e) {
             DB::rollBack();
             return $this->error($e->getMessage(), 200);
@@ -246,7 +246,7 @@ class CustomerController extends Controller
         $customer = Customer::Uuid($uuid)->first();
         if ($customer) {
             $customer->destroy($uuid);
-            return $this->success(null, 200);
+            return $this->success(null, '',200);
         } else {
             return $this->error('Data Not Found', 201);
         };

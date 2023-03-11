@@ -23,7 +23,7 @@ class ContactController extends Controller
 
     public function __construct(ContactService $contactService)
     {
-    
+
         $this->contactService= $contactService;
     }
 
@@ -42,13 +42,13 @@ class ContactController extends Controller
             return $this->success(new ContactResource($contact));
         }else{
             return $this->error('Data Not Found',404);
-        } 
+        }
     }
     public function create(ContactRequest $request)
     {
         //return $request;
 
-       
+
         if ($request['source'] === 'supplier') {
             $ref_object_key = Address::$ref_supplier_key;
         } elseif ($request['source'] === 'customer') {
@@ -70,7 +70,7 @@ class ContactController extends Controller
             $contact = $this->contactService->store($ContactData);
 
             DB::commit();
-            return $this->success(new ContactResource($contact), 201);
+            return $this->success(new ContactResource($contact), '', 201);
         } catch (\Exception $e) {
             DB::rollBack();
             return $this->error($e->getMessage(), 422);
@@ -113,7 +113,7 @@ class ContactController extends Controller
         $contact=Contact::where('account_id', Auth::user()->account_id)->find($id);
         if($contact){
             $contact->destroy($id);
-            return $this->success(null,200);
+            return $this->success(null,'',200);
         }else{
             return $this->error('Data Not Found',200);
         };

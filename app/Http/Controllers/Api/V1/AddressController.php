@@ -35,7 +35,7 @@ class AddressController extends Controller
     {
         $address = Address::where('account_id', Auth::user()->account_id)->find($id);
         if ($address) {
-            return $this->success(new AddressResource($address));
+            return $this->success( new AddressResource($address));
         } else {
             return $this->error('Data Not Found', 404);
         }
@@ -109,7 +109,7 @@ class AddressController extends Controller
         $address = Address::where('account_id', Auth::user()->account_id)->find($id);
         if ($address) {
             $address->destroy($id);
-            return $this->success(null, 200);
+            return $this->success();
         } else {
             return $this->error('Data Not Found', 200);
         };

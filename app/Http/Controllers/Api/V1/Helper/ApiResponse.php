@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api\V1\Helper;
 
 Trait ApiResponse{
-    
+
     public function coreResponse($message, $statusCode, $data = null, $isSuccess = true)
     {
         // Check the params
@@ -29,21 +29,21 @@ Trait ApiResponse{
 
     /**
      * Send any success response
-     * 
+     *
      * @param   string          $message
      * @param   array|object    $data
      * @param   integer         $statusCode
      */
-    public function success($data, $statusCode = 200, $message="Operation Successful")
+    public function success($data = null, $message="Operation Successful", $statusCode = 200)
     {
         return $this->coreResponse($message, $statusCode, $data);
     }
 
     /**
      * Send any error response
-     * 
+     *
      * @param   string          $message
-     * @param   integer         $statusCode    
+     * @param   integer         $statusCode
      */
     public function error($message, $statusCode,$data=Null)
     {

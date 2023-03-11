@@ -94,7 +94,7 @@ class PurchaseItemService
         try {
             $purchaseItem = PurchaseItem::where('serial_number', $serialNumeber)->with(['warehouse'])->first();
             if ($purchaseItem) {
-                return $this->success(new PurchaseItemResource($purchaseItem), 200);
+                return $this->success(new PurchaseItemResource($purchaseItem), '',200);
             } else {
                 return $this->error('Data Not found', 200);
             }
@@ -111,7 +111,7 @@ class PurchaseItemService
                 DB::beginTransaction();
                 $purchaseItem->delete();
                 DB::commit();
-                return $this->success(null, 200);
+                return $this->success(null, '',200);
             } catch (\Throwable $th) {
                 return $this->error($th->getMessage(), 422);
             }
