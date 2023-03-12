@@ -113,7 +113,7 @@ class SupplierController extends Controller
         try {
             $supplier = $this->supplierService->store($request);
             DB::commit();
-            return $this->success(new SupplierResource($supplier), '',201);
+            return $this->success(new SupplierResource($supplier), '', 201);
             //return new SupplierCollection(Supplier::paginate(10));
         } catch (\Exception $e) {
             DB::rollBack();
@@ -131,7 +131,7 @@ class SupplierController extends Controller
             try {
                 $supplier = $this->supplierService->update($request, $supplier);
                 DB::commit();
-                return $this->success(new SupplierResource($supplier), '',200);
+                return $this->success(new SupplierResource($supplier), '', 200);
             } catch (\Exception $e) {
                 DB::rollBack();
                 return $this->error($e->getMessage(), 200);
@@ -249,7 +249,7 @@ class SupplierController extends Controller
             DB::commit();
 
             $supplier = Supplier::with('PrimaryContact')->with('otherContacts')->with('shipAddress')->with('billAddress')->with('otherAddresses')->find($supplier_id);
-            return $this->success(new SupplierResource($supplier), '',201);
+            return $this->success(new SupplierResource($supplier), '', 201);
             //return $this->success($return_data);
         } catch (\Exception $e) {
             DB::rollBack();

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\V1\SupplierController;
+use Illuminate\Support\Facades\Route;
 
 Route::GET('', [SupplierController::class, 'index'])->name('suppliers.index');
 Route::POST('', [SupplierController::class, 'create'])->name('suppliers.create');

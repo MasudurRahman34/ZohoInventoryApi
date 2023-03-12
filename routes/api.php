@@ -24,6 +24,7 @@ use App\Http\Controllers\Api\V1\PurchaseController;
 use App\Http\Controllers\Api\V1\PurchaseItemController;
 use App\Http\Controllers\Api\V1\SaleController;
 use App\Http\Controllers\Api\V1\TestimonialController;
+use App\Http\Controllers\Api\V1\TransactionHeadController;
 use App\Http\Controllers\Api\V1\UserController;
 use App\Http\Controllers\Api\V1\UserPlanFeatureController;
 use App\Models\InventoryAdjustment;
@@ -132,13 +133,17 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
         // Route::PUT('bills/{bill}', [BillController::class, 'update'])->name('bills.update');
 
         //payments
-
-        //bill
         Route::GET('payments', [PaymentController::class, 'index'])->name('payments.index');
         Route::POST('payments', [PaymentController::class, 'store'])->name('payments.store');
         Route::PUT('payments/{payment}', [PaymentController::class, 'update'])->name('payments.update');
         Route::DELETE('payments/{payment}', [PaymentController::class, 'destroy'])->name('payments.delete');
         Route::GET('payments/{payment}', [PaymentController::class, 'show'])->name('payments.show');
+        //transaction
+        Route::GET('transaction-head', [TransactionHeadController::class, 'index'])->name('transaction-head.index');
+        Route::POST('transaction-head', [TransactionHeadController::class, 'store'])->name('transaction-head.store');
+        Route::PUT('transaction-head/{transactionHead}', [TransactionHeadController::class, 'update'])->name('transaction-head.update');
+        Route::DELETE('transaction-head/{transactionHead}', [TransactionHeadController::class, 'destroy'])->name('transaction-head.delete');
+        Route::GET('transaction-head/{transactionHead}', [TransactionHeadController::class, 'show'])->name('transaction-head.show');
     });
 });
 

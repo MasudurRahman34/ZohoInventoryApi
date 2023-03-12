@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Http\Controllers\Api\V1\Helper\AccountObservant;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -9,7 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Payment extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, AccountObservant;
 
     public static $paymetableType = [
         'invoice' => "App\Models\Invoice",
@@ -21,10 +22,6 @@ class Payment extends Model
         'creadted_at',
         'updated_at',
         'deleted_at'
-    ];
-    protected $casts = [
-        'order_id' => 'array',
-        'order_number' => 'array'
     ];
 
     public function serializeDate(DateTimeInterface $date)

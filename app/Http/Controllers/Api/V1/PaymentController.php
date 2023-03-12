@@ -5,10 +5,13 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Api\V1\Helper\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\v1\PaymentRequest;
+use App\Http\Resources\v1\PaymentResources;
 use App\Http\Services\V1\PaymentService;
 use App\Models\Payment;
+use Exception;
 use Illuminate\Auth\Events\Validated;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class PaymentController extends Controller
@@ -17,7 +20,7 @@ class PaymentController extends Controller
 
     public function index(Request $request)
     {
-        return $this->success(Payment::Paginate(20)->withQueryString());
+        return $this->success(PaymentResources::collection(Payment::Paginate(20)->withQueryString(), ';ldfa', 200));
     }
 
     public function store(PaymentRequest $request, PaymentService $paymentService)
@@ -39,8 +42,14 @@ class PaymentController extends Controller
     {
         try {
             $payment = Payment::find($id);
+            if ($payment) {
+                return $this->success(new PaymentResources($payment));
+            }
+            throw new Exception('Data Not Found', 404);
         } catch (\Exception $th) {
-            return $this->error($th->getMessage(), 422);
+
+            $getCode = $th->getCode() != 0 ? $th->getCode() : 422;
+            return $this->error($th->getMessage(), $getCode);
         }
     }
 
