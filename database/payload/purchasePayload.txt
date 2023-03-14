@@ -3,6 +3,8 @@ supplier_name:suplier name
 warehouse_id:2
 purchase_number:PUR-1001
 reference:/2022/06/0010
+
+//calculation based on item
 total_amount:0
 due_amount:0
 paid_amount:10
@@ -19,6 +21,8 @@ delivery_date:2023-12-30 00:00:00
 status:1
 payment_status:1
 payment_term: 1
+//
+
 purchaseItems[0][serial_number][0]:111
 purchaseItems[0][serial_number][1]:222
 purchaseItems[0][product_id]:1

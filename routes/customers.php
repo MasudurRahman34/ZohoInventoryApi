@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\V1\CustomerController;
+use Illuminate\Support\Facades\Route;
 
 Route::POST('', [CustomerController::class, 'create'])->name('customer.create');
 Route::GET('', [CustomerController::class, 'index'])->name('customers.index');
