@@ -63,7 +63,7 @@ class SaleController extends Controller
             }
             DB::commit();
             $sale = Sale::with('saleItems')->where('account_id', Auth::user()->account_id)->find($sale->id);
-            return $this->success(new SaleResource($sale), 201);
+            return $this->success(new SaleResource($sale), '',201);
         } catch (\Exception $e) {
             DB::rollBack();
             return $this->error($e->getMessage(), 200);
@@ -83,7 +83,7 @@ class SaleController extends Controller
                 $sale->saleItems()->delete();
                 $sale->delete();
                 DB::commit();
-                return $this->success(null, 200);
+                return $this->success(null, '',200);
             } catch (\Throwable $th) {
                 return $this->error($th->getMessage(), 422);
             }
@@ -97,7 +97,7 @@ class SaleController extends Controller
         $saleItem = SaleItem::find($id);
         if ($saleItem) {
             $saleItem->delete();
-            return $this->success(null, 200);
+            return $this->success(null, '',200);
         } else {
             return $this->error('Data Not Found', 404);
         };

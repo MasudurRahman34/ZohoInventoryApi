@@ -52,7 +52,7 @@ class NewPasswordController extends Controller
                 'keep_old_password' => $request['keep_old_password']
             ]);
 
-            return $this->success(null, 200, "Password Has Been Reset, Please Login");
+            return $this->success(null, "Password Has Been Reset, Please Login");
         }
 
         throw ValidationException::withMessages([

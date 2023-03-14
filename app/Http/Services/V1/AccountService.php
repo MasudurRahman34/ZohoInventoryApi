@@ -52,7 +52,7 @@ class AccountService
     public function update($request, $account)
     {
         // return $request['business_type_parent_id'];
-        if ((isset($request['first_name'])) && isset(($request['last_name']))) {
+        if ((isset($request['first_name'])) && isset($request->last_name)) {
             $accountUri = $this->generateAccountUri($request['first_name'], $request['last_name']);
         } else {
             $accountUri = $account->account_uri;

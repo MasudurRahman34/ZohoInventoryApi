@@ -61,7 +61,7 @@ class RegistrationController extends Controller
                 'token' => $token,
                 'user' => $userWithAccount
             ];
-            return $this->success($response, 200);
+            return $this->success($response);
         } catch (\Exception $e) {
             DB::rollBack();
             return $this->error($e->getMessage(), 422);

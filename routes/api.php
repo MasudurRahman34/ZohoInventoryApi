@@ -12,7 +12,7 @@ use App\Http\Controllers\Api\V1\BillController;
 use App\Http\Controllers\Api\V1\BusinessTypeController;
 use App\Http\Controllers\Api\V1\ContactController;
 use App\Http\Controllers\Api\V1\CountryController;
-use App\Http\Controllers\Api\V1\CustomerController;
+
 use App\Http\Controllers\Api\V1\GlobalAddressController;
 use App\Http\Controllers\Api\V1\InventoryAdjustmentController;
 use App\Http\Controllers\Api\V1\InvoiceController;
@@ -23,10 +23,11 @@ use App\Http\Controllers\Api\V1\PlanFeatureController;
 use App\Http\Controllers\Api\V1\PurchaseController;
 use App\Http\Controllers\Api\V1\PurchaseItemController;
 use App\Http\Controllers\Api\V1\SaleController;
-use App\Http\Controllers\Api\V1\SupplierController;
 use App\Http\Controllers\Api\V1\TestimonialController;
+use App\Http\Controllers\Api\V1\TransactionHeadController;
 use App\Http\Controllers\Api\V1\UserController;
 use App\Http\Controllers\Api\V1\UserPlanFeatureController;
+use App\Models\InventoryAdjustment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -65,23 +66,15 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
         Route::GET('user/{uuid}', [UserController::class, 'user'])->name('user');
 
         //supplier
-        Route::POST('suppliers/create', [SupplierController::class, 'create'])->name('suppliers.create');
-        Route::GET('suppliers', [SupplierController::class, 'index'])->name('suppliers.index');
-        Route::GET('suppliers/{supplier}', [SupplierController::class, 'show'])->name('suppliers.show');
-        Route::DELETE('suppliers/{supplier}', [SupplierController::class, 'delete'])->name('suppliers.delete');
-        Route::post('suppliers/store', [SupplierController::class, 'store'])->name('suppliers.store');
-        Route::PUT('suppliers/{supplier}', [SupplierController::class, 'update'])->name('suppliers.update');
-        Route::GET('suppliers/{supplier}/addresses', [SupplierController::class, 'getAddresses'])->name('suppliers.addresses');
-        Route::GET('suppliers/{supplier}/contacts', [SupplierController::class, 'getContacts'])->name('suppliers.contacts');
+        Route::prefix('suppliers')->group(
+            base_path('routes/suppliers.php')
+        );
+
         //customer
-        Route::POST('customers/create', [CustomerController::class, 'create'])->name('customer.create');
-        Route::GET('customers', [CustomerController::class, 'index'])->name('customers.index');
-        Route::GET('customers/{customer}', [CustomerController::class, 'show'])->name('customer.show');
-        Route::DELETE('customers/{customer}', [CustomerController::class, 'delete'])->name('customers.delete');
-        Route::POST('customers', [CustomerController::class, 'store'])->name('customer.store');
-        Route::PUT('customers/{customer}', [CustomerController::class, 'update'])->name('customer.update');
-        Route::GET('customers/{customer}/addresses', [CustomerController::class, 'getAddresses'])->name('customers.addresses');
-        Route::GET('customers/{customer}/contacts', [CustomerController::class, 'getContacts'])->name('customers.contacts');
+        Route::prefix('customers')->group(
+            base_path('routes/customers.php')
+        );
+
         //address
         //Route::POST('set/address', [AddressController::class,'setAddress'])->name('setaddress');
         Route::POST('addresses/create', [AddressController::class, 'create'])->name('addresses.create');
@@ -119,6 +112,7 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
 
         //inventory adjustment
         Route::POST('inventory/adjustment', [InventoryAdjustmentController::class, 'store'])->name('inventory.adjustment.store');
+        Route::put('inventory/adjustment-item/{itemId}', [InventoryAdjustmentController::class, 'itemStatusUpdate'])->name('inventory.adjustment.item.update');
 
         //Purchase
         // Route::GET('businesstypes', [BusinessTypeController::class, 'index'])->name('businesstypes.index');
@@ -139,13 +133,17 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
         // Route::PUT('bills/{bill}', [BillController::class, 'update'])->name('bills.update');
 
         //payments
-
-        //bill
         Route::GET('payments', [PaymentController::class, 'index'])->name('payments.index');
         Route::POST('payments', [PaymentController::class, 'store'])->name('payments.store');
         Route::PUT('payments/{payment}', [PaymentController::class, 'update'])->name('payments.update');
         Route::DELETE('payments/{payment}', [PaymentController::class, 'destroy'])->name('payments.delete');
         Route::GET('payments/{payment}', [PaymentController::class, 'show'])->name('payments.show');
+        //transaction
+        Route::GET('transaction-head', [TransactionHeadController::class, 'index'])->name('transaction-head.index');
+        Route::POST('transaction-head', [TransactionHeadController::class, 'store'])->name('transaction-head.store');
+        Route::PUT('transaction-head/{transactionHead}', [TransactionHeadController::class, 'update'])->name('transaction-head.update');
+        Route::DELETE('transaction-head/{transactionHead}', [TransactionHeadController::class, 'destroy'])->name('transaction-head.delete');
+        Route::GET('transaction-head/{transactionHead}', [TransactionHeadController::class, 'show'])->name('transaction-head.show');
     });
 });
 
@@ -169,7 +167,7 @@ Route::group(['prefix' => 'v1'], function () {
     Route::PUT('/invoice/{shortCode}', [InvoiceController::class, 'update'])->name('invoices.update');
     Route::get('invoices/{shortCode}', [InvoiceController::class, 'show'])->name('invoices.show');
     Route::get('invoices/{shortCode}/download', [InvoiceController::class, 'downloadInvoicePdf'])->name('invoices.download');
-    //Route::get('invoices/{shortCode}/createPdf', [InvoiceController::class, 'createInvoicePdf'])->name('invoices.pdf.create');
+    Route::get('invoices/{shortCode}/createPdf', [InvoiceController::class, 'createInvoicePdf'])->name('invoices.pdf.create');
     // Route::get('invoices/notification/{shortCode}', [InvoiceController::class, 'notification'])->name('invoice.notification');
     //location api
     Route::GET('countries', [CountryController::class, 'index'])->name('countries.index');

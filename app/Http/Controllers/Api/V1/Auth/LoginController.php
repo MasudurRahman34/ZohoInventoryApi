@@ -30,7 +30,7 @@ class LoginController extends Controller
                     'user' => $user
                 ];
 
-                return $this->success($response, 200);
+                return $this->success($response);
             } else {
                 return $this->error("Password mismatch", 404);
             }
