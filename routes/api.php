@@ -169,10 +169,11 @@ Route::group(['prefix' => 'v1'], function () {
     Route::get('invoices/{shortCode}/download', [InvoiceController::class, 'downloadInvoicePdf'])->name('invoices.download');
     Route::get('invoices/{shortCode}/createPdf', [InvoiceController::class, 'createInvoicePdf'])->name('invoices.pdf.create');
     // Route::get('invoices/notification/{shortCode}', [InvoiceController::class, 'notification'])->name('invoice.notification');
+
     //location api
-    Route::GET('countries', [CountryController::class, 'index'])->name('countries.index');
-    Route::GET('states', [LocationController::class, 'states'])->name('location.states');
-    Route::GET('districts', [LocationController::class, 'districts'])->name('location.districts');
+    Route::prefix('/')->group(
+        base_path('routes/locations.php')
+    );
 
     //media
     Route::POST('/media', [MediaController::class, 'store'])->name('media.store');

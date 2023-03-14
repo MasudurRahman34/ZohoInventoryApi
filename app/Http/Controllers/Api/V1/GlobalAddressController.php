@@ -12,16 +12,17 @@ use App\Models\GlobalAddress;
 class GlobalAddressController extends Controller
 {
     use ApiFilter, ApiResponse;
-    public function index(Request $request){
-        return $request;
+    public function index(Request $request)
+    {
+
         $this->setFilterProperty($request);
         $query = GlobalAddress::where('deleted_at', NULL);
-        if($request->has('plain_address')){
-            $query=$query->where('plain_address', 'LIKE', '%' . $request->plain_address . '%');
+        if ($request->has('plain_address')) {
+            $query = $query->where('plain_address', 'LIKE', '%' . $request->plain_address . '%');
         }
         //$query = 'GlobalAddress';
         $this->dateRangeQuery($request, $query, 'global_address.created_at');
-        $globalAddressses=$this->query->orderBy($this->column_name, $this->sort)->paginate($this->show_per_page)->withQueryString();
+        $globalAddressses = $this->query->orderBy($this->column_name, $this->sort)->paginate($this->show_per_page)->withQueryString();
         return (new GlobalAddressCollection($globalAddressses));
     }
 }
