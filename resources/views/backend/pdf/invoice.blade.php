@@ -99,7 +99,7 @@
 	<div class="container">
 		<div class="header">
 			<div class="logo">
-				<img src="{{asset($invoice['sender_address']['company_logo'])}}" alt="Your Company Logo">
+				{{-- <img src="{{asset($invoice['sender_address']['company_logo'])}}" alt="Your Company Logo"> --}}
 			</div>
 			<div>
 		
@@ -111,9 +111,9 @@
 			
 			<p><strong>Issue Date:</strong>{{$invoice['invoice_date']}}</p>
 			<p><strong>Due Date:</strong> {{$invoice['due_date']}}</p>
-			<p><strong>PO Number:</strong>@if (!is_null($invoice['order_number']))
+			<p><strong>PO Number:</strong>
 				{{json_encode($invoice['order_number'])}}
-			@endif </p>
+			</p>
 		</div>
 		<div class="information-section">
 			<div class="sender-details">
@@ -236,6 +236,6 @@
 					<p><strong>Balance: </strong>{{$invoice['invoice_currency']}} {{$invoice['balance']}}</p>
 			@endif
 			</section>
-		</div>
+		</div> 
 	</div>
 </body

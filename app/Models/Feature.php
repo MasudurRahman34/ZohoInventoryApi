@@ -10,7 +10,7 @@ class Feature extends Model
 {
 
     use HasFactory;
-    protected $hidden = ['pivot'];
+    // protected $hidden = ['pivot'];
     public function plans()
     {
         return $this->belongsToMany(Plan::class, 'plan_features', 'feature_id', 'plan_id');

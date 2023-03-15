@@ -12,3 +12,5 @@ Route::GET('thanas', [LocationController::class, 'thanas'])->name('location.than
 Route::GET('unions', [LocationController::class, 'unions'])->name('location.unions');
 Route::GET('zipcodes', [LocationController::class, 'zipcodes'])->name('location.zipcodes');
 Route::GET('street-adresses', [LocationController::class, 'streetAdress'])->name('location.streetAdress');
+
+Route::post('addnew/autocomplete', [LocationController::class, 'addNew'])->name('location.add-new');

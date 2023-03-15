@@ -141,7 +141,7 @@ class InvoiceController extends Controller
         $newInvoice = Invoice::with(['invoiceItems', 'receiverAddress', 'senderAddress'])->where('short_code', $shortCode)->withoutGlobalScope(AccountScope::class)->first();
         if ($newInvoice) {
             $renderingData = $newInvoice->toArray();
-            return view('backend.pdf.invoice', ['invoice' => $renderingData]);
+            //return view('backend.pdf.invoice', ['invoice' => $renderingData]);
             // $pdf = App::make('dompdf.wrapper');
             // $pdf =  $pdf->loadView('backend.pdf.invoice', ['invoice' => $renderingData]);
             // // ->setPaper('a4', 'portrait')
@@ -297,7 +297,7 @@ class InvoiceController extends Controller
                 $invoice->senderAddress()->delete();
                 $invoice->delete();
                 DB::commit();
-                return $this->success(null, '',200);
+                return $this->success(null, '', 200);
             } catch (\Throwable $th) {
                 return $this->error($th->getMessage(), 422);
             }

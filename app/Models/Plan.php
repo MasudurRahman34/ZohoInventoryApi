@@ -23,7 +23,7 @@ class Plan extends Model
     // protected $casts = [
     //     'full_address' => 'array'
     // ];
-    protected $hidden = ['pivot'];
+    //protected $hidden = ['pivot'];
     protected $fillable = [
         'plan_name', 'business_type', 'status', 'account_id', 'created_by', 'modified_by', 'created_at', 'updated_at',
 
