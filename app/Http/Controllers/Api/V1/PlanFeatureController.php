@@ -18,6 +18,7 @@ class PlanFeatureController extends Controller
     public function featurePlan()
     {
 
+
         // return $this->success(Feature::with('plans')->get());
         $featurePlan = Feature::with(['plans' => function ($q) {
             $q->select('plan_name', 'access', 'access_value');

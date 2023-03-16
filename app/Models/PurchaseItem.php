@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Http\Controllers\Api\V1\Helper\AccountObservant;
+use App\Models\Location\State;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -27,7 +28,7 @@ class PurchaseItem extends Model
     }
 
     protected $fillable = [
-        'purchase_id', 'warehouse_id', 'product_id', 'product_name', 'serial_number', 'group_number', 'product_qty', 'received_qty', 'sold_qty', 'unit_price', 'product_discount', 'tax_name', 'tax_rate', 'tax_amount', 'whole_price', 'subtotal', 'package_date', 'is_serialized', 'expire_date',
+        'purchase_id', 'warehouse_id', 'product_id', 'product_name', 'sku', 'serial_number', 'group_number', 'product_qty', 'received_qty', 'sold_qty', 'unit_price', 'product_discount', 'tax_name', 'tax_rate', 'tax_amount', 'whole_price', 'subtotal', 'package_date', 'is_serialized', 'expire_date',
         'description', 'account_id', 'created_by', 'modified_by', 'updated_at', 'deleted_at', 'created_at',
         'status', 'is_taxable'
     ];
@@ -40,9 +41,8 @@ class PurchaseItem extends Model
     {
         return $this->belongsTo(Warehouse::class, 'warehouse_id', 'id');
     }
-    // public function stock(){
-    //     return $this->hasOneThrough(Stock::class,PurchaseItem::class,'product_id','warehouse_id');
+    // public function stock()
+    // {
+    //     return $this->belongsTo(Stock::class, 'product_id', 'product_id');
     // }
-
-
 }

@@ -6,6 +6,7 @@ use App\Http\Resources\v1\PurchaseResource;
 use App\Models\PurchaseItem;
 use App\Http\Controllers\Api\V1\Helper\ApiResponse;
 use App\Http\Resources\v1\PurchaseItemResource;
+use App\Models\Stock;
 use Illuminate\Support\Facades\DB;
 use SebastianBergmann\Type\NullType;
 
@@ -20,6 +21,7 @@ class PurchaseItemService
             "product_id" => $purchaseItem['product_id'],
             'warehouse_id' => $purchaseItem['warehouse_id'],
             'product_name' => isset($purchaseItem['product_name']) ? $purchaseItem['product_name'] : NULL,
+            'sku' => isset($purchaseItem['sku']) ? $purchaseItem['sku'] : NULL,
             "product_qty" => isset($purchaseItem['product_qty']) ? $purchaseItem['product_qty'] : 0,
             "received_qty" => isset($purchaseItem['received_qty']) ? $purchaseItem['received_qty'] : 0,
             "unit_price" => isset($purchaseItem['unit_price']) ? $purchaseItem['unit_price'] : 0,
@@ -63,7 +65,8 @@ class PurchaseItemService
             [
                 'purchase_id' => isset($request['purchase_id']) ? $request['purchase_id'] : $item['purchase_id'],
                 "product_id" => isset($request['product_id']) ? $request['product_id'] : $item['product_id'],
-                'product_name' => isset($purchaseItem['product_name']) ? $item['product_name'] : NULL,
+                'product_name' => isset($request['product_name']) ? $request['product_name'] : $item['product_name'],
+                'sku' => isset($request['sku']) ? $request['sku'] : $item['sku'],
                 'warehouse_id' => isset($request['warehouse_id']) ? $request['warehouse_id'] : $item['warehouse_id'],
                 "product_qty" => isset($request['product_qty']) ? $request['product_qty'] : $item['product_qty'],
                 "received_qty" => isset($request['received_qty']) ? $request['received_qty'] : $item['received_qty'],
@@ -77,11 +80,11 @@ class PurchaseItemService
                 'package_date' => isset($request['package_date']) ? $request['package_date'] : $item['package_date'],
                 "sold_qty" => isset($request['sold_qty']) ? $request['sold_qty'] : $item['sold_qty'],
                 'status' => isset($request['status']) ? $request['status'] : $item['purchase_id'],
-                'tax_rate' => isset($purchaseItem['tax_rate']) ? $request['tax_rate'] : $item['tax_rate'],
-                'tax_amount' => isset($purchaseItem['tax_amount']) ? $request['tax_amount'] : $item['tax_amount'],
-                'whole_price' => isset($purchaseItem['whole_price']) ? $request['whole_price'] : $item['whole_price'],
-                'is_taxable' => isset($purchaseItem['is_taxable']) ? $item['is_taxable'] : 0,
-                'deleted_at' => isset($purchaseItem['deleted_at']) ? $item['deleted_at'] : \null,
+                'tax_rate' => isset($request['tax_rate']) ? $request['tax_rate'] : $item['tax_rate'],
+                'tax_amount' => isset($request['tax_amount']) ? $request['tax_amount'] : $item['tax_amount'],
+                'whole_price' => isset($request['whole_price']) ? $request['whole_price'] : $item['whole_price'],
+                'is_taxable' => isset($request['is_taxable']) ? $item['is_taxable'] : 0,
+                'deleted_at' => isset($request['deleted_at']) ? $item['deleted_at'] : \null,
             ]
         );
         return $item;
@@ -90,11 +93,35 @@ class PurchaseItemService
 
     public function showBySerialNumber($serialNumeber)
     {
-        //need to get all kinds of product data.
+        //need to get all kinds of product data
+        // $purchaseItem=DB::('purchase')
+
         try {
-            $purchaseItem = PurchaseItem::where('serial_number', $serialNumeber)->with(['warehouse'])->first();
+            $purchaseItem = PurchaseItem::where('serial_number', $serialNumeber)->first();
+
+            $purchaseItem['stock'] = Stock::where('product_id', $purchaseItem->product_id)->where('warehouse_id', $purchaseItem->warehouse_id)->first();
+
+
             if ($purchaseItem) {
-                return $this->success(new PurchaseItemResource($purchaseItem), '',200);
+                return $this->success(new PurchaseItemResource($purchaseItem));
+            } else {
+                return $this->error('Data Not found', 200);
+            }
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), 422);
+        }
+    }
+
+    public function getByGroupNumber($groupNumber)
+    {
+        try {
+            $purchaseItem = PurchaseItem::where('serial_number', $groupNumber)->get();
+
+            $purchaseItem->stock = Stock::where('product_id', $purchaseItem->product_id)->where('warehouse_id', $purchaseItem->warehouse_id)->first();
+
+
+            if ($purchaseItem) {
+                return $this->success(new PurchaseItemResource($purchaseItem));
             } else {
                 return $this->error('Data Not found', 200);
             }
@@ -111,7 +138,7 @@ class PurchaseItemService
                 DB::beginTransaction();
                 $purchaseItem->delete();
                 DB::commit();
-                return $this->success(null, '',200);
+                return $this->success(null, '', 200);
             } catch (\Throwable $th) {
                 return $this->error($th->getMessage(), 422);
             }

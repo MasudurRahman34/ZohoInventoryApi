@@ -7,14 +7,17 @@ use App\Models\Location\State;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Api\V1\Helper\ApiFilter;
 use App\Http\Controllers\Api\V1\Helper\ApiResponse;
+use App\Http\Requests\v1\LocationRequest;
+use App\Models\Country;
 use App\Models\Location\District;
 use App\Models\Location\StreetAddress;
 use App\Models\Location\Thana;
 use App\Models\Location\Union;
 use App\Models\Location\Zipcode;
-use GuzzleHttp\Psr7\Response;
-use Illuminate\Http\Response as HttpResponse;
-use PhpParser\Node\Stmt\TryCatch;
+use Exception;
+
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class LocationController extends Controller
 {
@@ -109,6 +112,77 @@ class LocationController extends Controller
             }
         } catch (\Throwable $th) {
             return $this->error($th->getMessage(), 422);
+        }
+    }
+
+
+    public function addNew(LocationRequest $request)
+    {
+        try {
+            DB::beginTransaction();
+            switch ($request['source']) {
+
+                case 'state':
+                    $country = Country::find($request->parent_id);
+                    $newStateRequest = [
+                        'state_name' => $request->name,
+                        'country_iso2' => $country->iso2,
+                        'country_iso3' => $country->iso3,
+                        'state_slug' => Str::slug($request->name),
+                        'state_name' => $request->name,
+                    ];
+                    $newLocation = State::create($newStateRequest);
+                    break;
+
+                case 'district':
+                    $newDistrictRequest = [
+                        'district_name' => $request->name,
+                        'district_slug' => Str::slug($request->name),
+                        'state_id' => $request->parent_id,
+                    ];
+                    $newLocation = District::create($newDistrictRequest);
+                    break;
+
+                case 'thana':
+                    $newthanaRequest = [
+                        'thana_name' => $request->name,
+                        'thana_slug' => Str::slug($request->name),
+                        'district_id' => $request->parent_id,
+                    ];
+                    $newLocation = Thana::create($newthanaRequest);
+                    break;
+
+                case 'union':
+                    $newUnionRequest = [
+                        'union_name' => $request->name,
+                        'union_slug' => Str::slug($request->name),
+                        'thana_id' => $request->parent_id,
+                    ];
+                    $newLocation = Union::create($newUnionRequest);
+                    break;
+
+                case 'zipcode':
+                    $newZipcodeRequest = [
+                        'zip_code' => $request->name,
+                        'union_id' => $request->parent_id,
+                    ];
+                    $newLocation = Zipcode::create($newZipcodeRequest);
+                    break;
+                case 'street-address':
+                    $newStreetRequest = [
+                        'street_address_value' => $request->name,
+                        'union_id' => $request->parent_id,
+                    ];
+                    $newLocation = StreetAddress::create($newStreetRequest);
+                    break;
+                default:
+                    throw new Exception('invalid source');
+                    break;
+            }
+            DB::commit();
+            return $this->success($newLocation, "New Location Created Successfully", 201);
+        } catch (\Throwable $th) {
+            return $th;
         }
     }
 }

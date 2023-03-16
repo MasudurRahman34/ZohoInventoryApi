@@ -18,7 +18,7 @@ class AddressRequest extends FormRequest
      */
     public function authorize()
     {
-       return Auth::check();
+        return Auth::check();
         //return false;
     }
 
@@ -29,40 +29,41 @@ class AddressRequest extends FormRequest
      */
     public function rules()
     {
-        $rule= [
+        $rule = [
             //'attention'=>'required|string',
-            'ref_id' => ['required','integer'],
+            'ref_id' => ['required', 'integer'],
             'source' => 'required|string|in:customer,supplier,user', //customer, supplier, user
-            'country_id'=>'integer|exists:countries,id|nullable',
-            'state_id'=>'integer|exists:states,id|nullable',
-            'district_id'=>'integer|exists:districts,id|nullable',
-            'thana_id'=>'integer|exists:thanas,id|nullable',
-            'union_id'=>'integer|exists:unions,id|nullable',
-            'zipcode'=>'integer|exists:zipcodes,id|nullable',
-            'street_address_id'=>'integer|exists:street_addresses,id|nullable',
-            'is_bill_address'=>'integer|in:0,1|nullable', //1=yes, 0=no
-            'is_ship_address'=>'integer|in:0|nullable', //1=yes, 0=no
-            'status'=>'integer|in:0,1|nullable', //0=invalid, 1=valid
-            'house'=>'string|between:5,255|nullable',
+            'country_id' => 'integer|exists:countries,id|nullable',
+            'state_id' => 'integer|exists:states,id|nullable',
+            'district_id' => 'integer|exists:districts,id|nullable',
+            'thana_id' => 'integer|exists:thanas,id|nullable',
+            'union_id' => 'integer|exists:unions,id|nullable',
+            'zipcode' => 'integer|exists:zipcodes,id|nullable',
+            'street_address_id' => 'integer|exists:street_addresses,id|nullable',
+            'is_bill_address' => 'integer|in:0,1|nullable', //1=yes, 0=no
+            'is_ship_address' => 'integer|in:0|nullable', //1=yes, 0=no
+            'status' => 'integer|in:0,1|nullable', //0=invalid, 1=valid
+            'house' => 'string|between:5,255|nullable',
             'phone' => 'digits_between:7,11|nullable',
             'fax' => 'string|between:5,20|nullable',
             'status' => 'integer|in:0,1|nullable',
         ];
         if ($this->request->get('source') === 'supplier') {
-            $rule['ref_id'] = ['required','integer','exists:portal_suppliers,id'];
+            $rule['ref_id'] = ['required', 'integer', 'exists:portal_suppliers,id'];
         } elseif ($this->request->get('source') === 'customer') {
-            $rule['ref_id'] = ['required','integer','exists:portal_customers,id'];
+            $rule['ref_id'] = ['required', 'integer', 'exists:portal_customers,id'];
         } elseif ($this->request->get('source') === 'user') {
-            $rule['ref_id'] = ['required','integer','exists:users,id'];
+            $rule['ref_id'] = ['required', 'integer', 'exists:users,id'];
         }
         return $rule;
     }
-    public function failedValidation(Validator $validator){
-       
+    public function failedValidation(Validator $validator)
+    {
+
         throw new HttpResponseException(
-           
-               $this->error($validator->errors(),422)
-            
+
+            $this->error($validator->errors(), 422)
+
         );
     }
 }

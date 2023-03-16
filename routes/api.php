@@ -100,7 +100,7 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
         Route::GET('purchases/{purchase}', [PurchaseController::class, 'show'])->name('purchases.show');
         Route::DELETE('purchases/{purchase}', [PurchaseController::class, 'delete'])->name('purchases.delete');
         //purchase item
-        Route::get('purchaseitems/serialnumber/{serialNumber}', [PurchaseItemController::class, 'showBySerialNumber'])->name('purchasesItems.serialNumber');
+        Route::get('items/{serialNumber}', [PurchaseItemController::class, 'showBySerialNumber'])->name('purchasesItems.serialNumber');
         Route::DELETE('purchaseitems/{purchaseitem}', [PurchaseItemController::class, 'delete'])->name('purchasesItems.delete');
         //sales
         Route::GET('sales', [SaleController::class, 'index'])->name('sales.index');

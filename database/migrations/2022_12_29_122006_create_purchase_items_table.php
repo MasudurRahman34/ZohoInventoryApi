@@ -20,6 +20,7 @@ return new class extends Migration
             $table->unsignedBigInteger('warehouse_id')->comment('id value warhouses table')->index('warehouse_id');
             $table->unsignedBigInteger('product_id')->comment('id value product table')->index('product_id');
             $table->string('product_name')->nullable()->default(NULL)->index('product_name');
+            $table->string('sku', 20)->nullable()->default(NULL)->index('sku');
             $table->string('serial_number')->nullable()->default(NULL)->index('serial_number')->comment('formate Ymd-string');
             $table->string('group_number', 100)->default(NULL)->nullable()->comment('generate when product is serialized')->index('group_number')->comment('formate Ymd-string');
             $table->integer('product_qty')->default(0);

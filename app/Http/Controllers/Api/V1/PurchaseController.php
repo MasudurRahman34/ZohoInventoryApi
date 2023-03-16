@@ -154,7 +154,7 @@ class PurchaseController extends Controller
 
             $purchase = Purchase::with('purchaseItems')->with('inventoryAdjustment')->find($purchase->id);
 
-            return $this->success(new PurchaseResource($purchase), '',201);
+            return $this->success(new PurchaseResource($purchase), 'Purchase Created Successfully', 201);
         } catch (\Exception $e) {
             DB::rollBack();
             return $this->error(throw $e, 200);
@@ -316,7 +316,7 @@ class PurchaseController extends Controller
                 $purchase->purchaseItems()->delete();
                 $purchase->delete();
                 DB::commit();
-                return $this->success(null, '',200);
+                return $this->success(null, '', 200);
             } catch (\Throwable $th) {
                 return $this->error($th->getMessage(), 422);
             }
