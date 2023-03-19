@@ -27,12 +27,13 @@ class WarehouseResource extends JsonResource
             'address' => $this->address,
             'description' => $this->description,
             'current_balance' => $this->current_balance,
+            'default' => $this->default,
             'created_by' => $this->created_by,
             'modified_by' => $this->modified_by,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'deleted_at' => $this->deleted_at,
-        
+
         ];
     }
 }
