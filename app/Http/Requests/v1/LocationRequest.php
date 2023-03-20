@@ -4,6 +4,7 @@ namespace App\Http\Requests\v1;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 class LocationRequest extends FormRequest
 {
@@ -28,7 +29,7 @@ class LocationRequest extends FormRequest
         //     //
         // ];
         $rule = [
-            'source' => ['required', 'string', 'in:state, district, thana, union, zipcode,street-address'],
+            'source' => ['required', 'string', Rule::in(['state', 'district', 'thana', 'union', 'zipcode', 'street-address'])],
         ];
         switch ($this->request->get('source')) {
             case 'state':

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\V1\WarehouseEnum;
 use App\Http\Controllers\Api\V1\Helper\AccountObservant;
 use App\Models\Scopes\ScopeUuid;
 use DateTimeInterface;
@@ -23,12 +24,15 @@ class Warehouse extends Model
         'updated_at',
         'deleted_at'
     ];
+    protected $casts = [
+        "default" => WarehouseEnum::class,
+    ];
     public function serializeDate(DateTimeInterface $date)
     {
         return $date->format('Y-m-d H:i:s');
     }
     protected $fillable = [
-        'uuid', 'name', 'code', 'phone_country_code', 'mobile_country_code', 'phone', 'mobile', 'email', 'description', 'address', 'current_balance', 'account_id', 'created_by', 'modified_by'
+        'uuid', 'name', 'code', 'phone_country_code', 'mobile_country_code', 'phone', 'mobile', 'email', 'description', 'address', 'current_balance', 'account_id', 'created_by', 'modified_by', 'default'
     ];
 
     public function stocks()

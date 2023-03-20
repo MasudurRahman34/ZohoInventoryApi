@@ -20,6 +20,7 @@ use App\Http\Controllers\Api\V1\LocationController;
 use App\Http\Controllers\Api\V1\MediaController;
 use App\Http\Controllers\Api\V1\PaymentController;
 use App\Http\Controllers\Api\V1\PlanFeatureController;
+use App\Http\Controllers\Api\V1\ProductController;
 use App\Http\Controllers\Api\V1\PurchaseController;
 use App\Http\Controllers\Api\V1\PurchaseItemController;
 use App\Http\Controllers\Api\V1\SaleController;
@@ -27,6 +28,7 @@ use App\Http\Controllers\Api\V1\TestimonialController;
 use App\Http\Controllers\Api\V1\TransactionHeadController;
 use App\Http\Controllers\Api\V1\UserController;
 use App\Http\Controllers\Api\V1\UserPlanFeatureController;
+use App\Http\Controllers\Api\V1\WarehouseController;
 use App\Models\InventoryAdjustment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -138,12 +140,28 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
         Route::PUT('payments/{payment}', [PaymentController::class, 'update'])->name('payments.update');
         Route::DELETE('payments/{payment}', [PaymentController::class, 'destroy'])->name('payments.delete');
         Route::GET('payments/{payment}', [PaymentController::class, 'show'])->name('payments.show');
+
         //transaction
         Route::GET('transaction-head', [TransactionHeadController::class, 'index'])->name('transaction-head.index');
         Route::POST('transaction-head', [TransactionHeadController::class, 'store'])->name('transaction-head.store');
         Route::PUT('transaction-head/{transactionHead}', [TransactionHeadController::class, 'update'])->name('transaction-head.update');
         Route::DELETE('transaction-head/{transactionHead}', [TransactionHeadController::class, 'destroy'])->name('transaction-head.delete');
         Route::GET('transaction-head/{transactionHead}', [TransactionHeadController::class, 'show'])->name('transaction-head.show');
+
+        //warehouse
+
+        Route::GET('warehouses', [WarehouseController::class, 'index'])->name('warehouses.index');
+        Route::POST('warehouses', [WarehouseController::class, 'store'])->name('warehouses.store');
+        Route::PUT('warehouses/{uuid}', [WarehouseController::class, 'update'])->name('warehouses.update');
+        Route::DELETE('warehouses/{uuid}', [WarehouseController::class, 'destroy'])->name('warehouses.delete');
+        Route::GET('warehouses/{uuid}', [WarehouseController::class, 'show'])->name('warehouses.show');
+
+        //products
+        Route::GET('products', [ProductController::class, 'index'])->name('products.index');
+        // Route::POST('products', [ProductController::class, 'store'])->name('products.store');
+        // Route::PUT('products/{uuid}', [ProductController::class, 'update'])->name('products.update');
+        // Route::DELETE('products/{uuid}', [ProductController::class, 'destroy'])->name('products.delete');
+        Route::GET('products/{uuid}', [ProductController::class, 'show'])->name('products.show');
     });
 });
 
