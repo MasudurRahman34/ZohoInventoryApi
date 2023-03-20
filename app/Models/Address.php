@@ -46,6 +46,4 @@ class Address extends Model
     protected $fillable = [
         'ref_object_key', 'ref_id', 'attention', 'country_id', 'state_id', 'district_id', 'thana_id', 'union_id', 'zipcode_id', 'street_address_id', 'house', 'phone', 'fax', 'is_bill_address', 'is_ship_address', 'full_address', 'status', 'created_by', 'modified_by', 'account_id'
     ];
-
-   
 }

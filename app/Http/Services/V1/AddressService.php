@@ -81,7 +81,7 @@ class AddressService
         //return print_r($add);
 
         $address['country'] = Country::where('id', $request['country_id'])->select('id', 'country_name')->first();
-        $address['state_id'] = State::where('id', $request['state_id'])->select('id', 'state_name')->first();
+        $address['state'] = State::where('id', $request['state_id'])->select('id', 'state_name')->first();
         $address['district'] = District::where('id', $request['district_id'])->select('id', 'district_name')->first();
         $address['thana'] = Thana::where('id', $request['thana_id'])->select('id', 'thana_name')->first();
         $address['union'] = Union::where('id', $request['union_id'])->select('id', 'union_name')->first();

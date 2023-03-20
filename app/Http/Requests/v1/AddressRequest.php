@@ -44,7 +44,7 @@ class AddressRequest extends FormRequest
             'is_ship_address' => 'integer|in:0|nullable', //1=yes, 0=no
             'status' => 'integer|in:0,1|nullable', //0=invalid, 1=valid
             'house' => 'string|between:5,255|nullable',
-            'phone' => 'digits_between:7,11|nullable',
+            'phone' => 'digits_between:7,15|nullable',
             'fax' => 'string|between:5,20|nullable',
             'status' => 'integer|in:0,1|nullable',
         ];

@@ -79,7 +79,7 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
 
         //address
         //Route::POST('set/address', [AddressController::class,'setAddress'])->name('setaddress');
-        Route::POST('addresses/create', [AddressController::class, 'create'])->name('addresses.create');
+        Route::POST('addresses', [AddressController::class, 'store'])->name('addresses.store');
         Route::PUT('addresses/{address}', [AddressController::class, 'update'])->name('addresses.update');
         Route::GET('addresses', [AddressController::class, 'index'])->name('addresses.index');
         Route::GET('addresses/{address}', [AddressController::class, 'show'])->name('addresses.show');
@@ -94,6 +94,7 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
 
         //global Address
         Route::GET('global/addresses', [GlobalAddressController::class, 'index'])->name('global.addresses.index');
+        Route::GET('global/addresses/{id}', [GlobalAddressController::class, 'show'])->name('global.addresses.show');
 
         //Purchase
         Route::GET('purchases', [PurchaseController::class, 'index'])->name('purchases.index');

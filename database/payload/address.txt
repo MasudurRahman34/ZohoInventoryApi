@@ -1,0 +1,30 @@
+{
+    "thana": {
+        "id": 3,
+        "thana_name": "Adabor Thana"
+    },
+    "union": {
+        "id": 2,
+        "union_name": "Baisari Para"
+    },
+    "country": {
+        "id": 3,
+        "country_name": "Afghanistan"
+    },
+    "zipcode": {
+        "id": 1,
+        "zip_code": "9221"
+    },
+    "district": {
+        "id": 1,
+        "district_name": "Narayanganj"
+    },
+    "state_id": {
+        "id": 2,
+        "state_name": "Khulna"
+    },
+    "street_address": {
+        "id": 1,
+        "street_address_value": "Block # L, Road # 13, House # 34"
+    }
+}

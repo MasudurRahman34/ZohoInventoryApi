@@ -19,7 +19,8 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('purchase_id')->comment('purchase table id')->index();
             $table->morphs('addressable');
-            $table->tinyInteger('deliver_to')->default(0)->nullable()->comment("0=warehouse, 1=customer");
+            $table->enum('deliver_to', ['warehouse', 'customer'])->default('warehouse')->nullable()->comment("warehouse, customer");
+            $table->enum('type', ['billing', 'shipping'])->default('billing')->nullable()->comment("billing, shipping");
             $table->string('company_name')->comment('company/reciever name')->default(NULL)->nullable();
             $table->string('display_name')->default(NULL)->nullable();
             $table->text('company_info')->default(NUll)->nullable()->comment('company/sender info');

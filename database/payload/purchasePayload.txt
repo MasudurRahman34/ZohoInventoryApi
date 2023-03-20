@@ -100,7 +100,9 @@ purchaseItems[3][is_taxable]:0
 purchaseItems[3][status]:1
 purchaseItems[3][sold_qty]:1
 
-supplierBillAddressId:1
+supplierAddress['billing']:1
+supplierAddress['shipping']:1
+
 wareHouseBillAddressId:1
 customerBillAddressId:1
 cusotmerShipAddressId:1

@@ -20,6 +20,7 @@ use App\Models\Contact;
 use App\Models\InventoryAdjustment;
 use App\Models\Purchase;
 use App\Models\PurchaseItem;
+use App\Models\Supplier;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use PhpParser\Node\Stmt\Foreach_;
@@ -65,9 +66,12 @@ class PurchaseController extends Controller
 
     public function store(PurchaseRequest $request)
     {
-        //return $request;
-        //$request = $this->calculateProductPriceService->purchasePrice($request->all());
-        //return $request;
+        // return Supplier::class;
+        // return $request;
+
+
+        $request = $this->calculateProductPriceService->purchasePrice($request->all());
+
 
         // if ($request['deliverTo'] == 1) { //customer
         //     if (isset($request['customerBillAddressId'])) {
@@ -101,7 +105,7 @@ class PurchaseController extends Controller
         try {
 
             $purchase = $this->purchaseService->store($request);
-            // return $purchase;
+
 
             if ($purchase) {
                 $inventoryAdjustment = [];
@@ -160,6 +164,9 @@ class PurchaseController extends Controller
             return $this->error(throw $e, 200);
         }
     }
+
+
+
     public function update(PurchaseRequest $request, $uuid)
     {   //overriding and calculating purchase data
         // return $request['deleteSerilized'];
