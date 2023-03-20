@@ -23,8 +23,8 @@ return new class extends Migration
             $table->unsignedBigInteger("brand")->default(0)->nullable();
             $table->unsignedBigInteger("model")->default(0)->nullable();
             $table->string("item_name");
-            $table->string("item_slug")->default(NULL)->nullable()->comment('unique');
-            $table->string("sku")->default(NULL)->nullable()->comment('Unique');
+            $table->string("item_slug")->default(NULL)->nullable()->comment('Per account wise unique');
+            $table->string("sku")->default(NULL)->nullable()->comment('Per account wise  Unique');
             $table->string("model_name")->default(NULL)->nullable();
             $table->string("measurment")->default(NULL)->nullable();
             $table->string("unit")->default(NULL)->nullable();
