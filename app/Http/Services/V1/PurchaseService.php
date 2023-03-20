@@ -4,13 +4,21 @@ namespace App\Http\Services\V1;
 
 use App\Models\Address;
 use App\Models\Contact;
+use App\Models\Customer;
 use App\Models\Purchase;
 use App\Models\PurchaseAddress;
+use App\Models\Supplier;
+use App\Models\Warehouse;
 
 use function PHPUnit\Framework\throwException;
 
 class PurchaseService
 {
+    protected $addressService;
+    public function __construct(AddressService $addressService)
+    {
+        $this->addressService = $addressService;
+    }
 
 
     public function store($request)
@@ -55,39 +63,99 @@ class PurchaseService
             // 'payment_status' => isset($request['payment_status']) ? $request['payment_status'] : '0',
 
         ];
-        // $billingAddressId=isset($request['bill_address']) ? $request['bill_address'] : NULL;
-        // $shippingAddressId=isset($request['ship_address']) ? $request['bill_address'] : NULL;
-        // $billingAddress=Address::where('id',$billingAddressId)->first();
-        // $shippingAddress=Address::where('id',$shippingAddressId)->first();
-        // return $billingAddress->full_address;
+
         $purchase = Purchase::create($purchaseData);
 
         if ($purchase) {
-            $billingAddressId = isset($request['bill_address']) ? $request['bill_address'] : NULL;
-            $shippingAddressId = isset($request['ship_address']) ? $request['ship_address'] : NULL;
-            $billingAddress = Address::where('id', $billingAddressId)->where('ref_id', $request['supplier_id'])->where('ref_object_key', Address::$ref_supplier_key)->first();
-            $shippingAddress = Address::where('id', $shippingAddressId)->where('ref_id', $request['supplier_id'])->where('ref_object_key', Address::$ref_supplier_key)->first();
-            if ($billingAddress || $shippingAddress) {
-                $contactDetails = Contact::where('ref_id', $request['supplier_id'])->where('ref_object_key', Address::$ref_supplier_key)->where('is_primary_contact', 1)->first();
-                $billingAddress = $billingAddress ? $billingAddress->full_address : NULL;
-                $shippingAddress = $shippingAddress ? $shippingAddress->full_address : NULL;
-                $display_name = isset($contactDetails->display_name) ? $contactDetails->display_name : NULL;
-                $company_name = isset($contactDetails->company_name) ? $contactDetails->company_name : NULL;
+            // $billingAddressId = isset($request['bill_address']) ? $request['bill_address'] : NULL;
+            // $shippingAddressId = isset($request['ship_address']) ? $request['ship_address'] : NULL;
+            // $billingAddress = Address::where('id', $billingAddressId)->where('ref_id', $request['supplier_id'])->where('ref_object_key', Address::$ref_supplier_key)->first();
+            // $shippingAddress = Address::where('id', $shippingAddressId)->where('ref_id', $request['supplier_id'])->where('ref_object_key', Address::$ref_supplier_key)->first();
+            // if ($billingAddress || $shippingAddress) {
+            //     $contactDetails = Contact::where('ref_id', $request['supplier_id'])->where('ref_object_key', Address::$ref_supplier_key)->where('is_primary_contact', 1)->first();
+            //     $billingAddress = $billingAddress ? $billingAddress->full_address : NULL;
+            //     $shippingAddress = $shippingAddress ? $shippingAddress->full_address : NULL;
+            //     $display_name = isset($contactDetails->display_name) ? $contactDetails->display_name : NULL;
+            //     $company_name = isset($contactDetails->company_name) ? $contactDetails->company_name : NULL;
 
-                $purchaseAddressData = [
-                    'supplier_id' => $request['supplier_id'],
-                    'purchase_id' => $purchase->id,
-                    'display_name' => $display_name,
-                    'company_name' => $company_name,
-                    'billing_address' => $billingAddress,
-                    'shipping_address' => $shippingAddress,
-                ];
+            //     $purchaseAddressData = [
+            //         'supplier_id' => $request['supplier_id'],
+            //         'purchase_id' => $purchase->id,
+            //         'display_name' => $display_name,
+            //         'company_name' => $company_name,
+            //         'billing_address' => $billingAddress,
+            //         'shipping_address' => $shippingAddress,
+            //     ];
 
-                $createPurchaseAddress = PurchaseAddress::create($purchaseAddressData);
+            //     $createPurchaseAddress = PurchaseAddress::create($purchaseAddressData);
+            // }
+
+            if (isset($request['supplierAddress'])) {
+                if (\is_array($request['supplierAddress'])) {
+
+                    foreach ($request['supplierAddress'] as $key => $addressId) {
+                        // $address = Address::find($addressId);
+                        // if ($address) {
+                        //     $purchaseAddressData = $this->makeAddressValueFromFullAddress($address);
+                        //     $purchaseAddressData['addressable_id'] = $request['supplier_id'];
+                        //     $purchaseAddressData['purchase_id'] = $purchase->id;
+                        //     $purchaseAddressData['addressable_type'] = Supplier::class;
+                        //     $purchaseAddressData['attention'] = $address->attention;
+                        //     $purchaseAddressData['full_address'] = $address->full_address;
+                        //     $purchaseAddressData['plain_address'] = $this->addressService->setPlainAddress($address->full_address);
+                        //     $purchaseAddressData['deliver_to'] = $request['deliver_to'];
+                        //     $purchaseAddressData['type'] = $key;
+
+                        //     $newPurchaseAddress = PurchaseAddress::create($purchaseAddressData);
+                        // }
+                        $this->storePurchaseAddressById($addressId, $key, $purchase, Supplier::class, $request['supplier_id'], $request['deliver_to']);
+                    }
+                }
+            }
+
+            if (isset($request['warehouseAddress'])) {
+                if (\is_array($request['warehouseAddress'])) {
+                    foreach ($request['warehouseAddress'] as $key => $addressId) {
+                        $this->storePurchaseAddressById($addressId, $key, $purchase, Warehouse::class, $request['warehouse_id'], $request['deliver_to']);
+                    }
+                }
+            }
+
+            if (isset($request['customerAddress'])) {
+                if (\is_array($request['customerAddress'])) {
+                    foreach ($request['customerAddress'] as $key => $addressId) {
+                        $this->storePurchaseAddressById($addressId, $key, $purchase, Customer::class, $request['customer_id'], $request['deliver_to']);
+                    }
+                }
             }
         }
         return $purchase;
     }
+
+
+    public function storePurchaseAddressById($addressId, $type, $purchase, $addressableType, $addressableId, $deliverTo)
+    {
+
+        $address = Address::find($addressId);
+        if ($address) {
+            $purchaseAddressData = $this->makeAddressValueFromFullAddress($address);
+            $purchaseAddressData['addressable_id'] = $addressableId;
+            $purchaseAddressData['purchase_id'] = $purchase->id;
+            $purchaseAddressData['addressable_type'] = $addressableType;
+            $purchaseAddressData['attention'] = $address->attention;
+            $purchaseAddressData['full_address'] = $address->full_address;
+            $purchaseAddressData['plain_address'] = $this->addressService->setPlainAddress($address->full_address);
+            $purchaseAddressData['deliver_to'] = $deliverTo;
+            $purchaseAddressData['type'] = $type;
+
+            $newPurchaseAddress = PurchaseAddress::create($purchaseAddressData);
+        }
+        return $newPurchaseAddress;
+    }
+
+
+
+
 
     public function update($request, $purchase)
     {
@@ -166,5 +234,23 @@ class PurchaseService
         } catch (\Throwable $th) {
             return $th->getMessage();
         }
+    }
+
+
+    public function makeAddressValueFromFullAddress($address)
+    {
+        $addressData = [];
+        if (!is_null($address->full_address)) {
+            $addressData['country_name'] = isset($address->full_address['country']['country_name']) ? $address->full_address['country']['country_name'] : \null;
+            $addressData['country_id'] = isset($address->full_address['country']['id']) ? $address->full_address['country']['id'] : \null;
+            $addressData['state_name'] = isset($address->full_address['state']['state_name']) ? $address->full_address['state']['state_name'] : \null;
+            $addressData['district_name'] = isset($address->full_address['district']['district_name']) ? $address->full_address['district']['district_name'] : \null;
+            $addressData['thana_name'] = isset($address->full_address['thana']['thana_name']) ? $address->full_address['thana']['thana_name'] : \null;
+            $addressData['union_name'] = isset($address->full_address['union']['union_name']) ? $address->full_address['union']['union_name'] : \null;
+            $addressData['zipcode'] = isset($address->full_address['zipcode']['zip_code']) ? $address->full_address['zipcode']['zip_code'] : \null;
+            $addressData['street_address_line_1'] = isset($address->full_address['street_address']['street_address_value']) ? $address->full_address['street_address']['street_address_value'] : \null;
+        }
+
+        return $addressData;
     }
 }

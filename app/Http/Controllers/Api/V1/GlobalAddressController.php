@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\V1\Helper\ApiResponse;
 use App\Http\Controllers\Api\V1\Helper\ApiFilter;
 use App\Http\Resources\v1\Collections\GlobalAddressCollection;
 use App\Models\GlobalAddress;
+use Illuminate\Http\Response;
 
 class GlobalAddressController extends Controller
 {
@@ -24,5 +25,14 @@ class GlobalAddressController extends Controller
         $this->dateRangeQuery($request, $query, 'global_address.created_at');
         $globalAddressses = $this->query->orderBy($this->column_name, $this->sort)->paginate($this->show_per_page)->withQueryString();
         return (new GlobalAddressCollection($globalAddressses));
+    }
+
+    public function show($id)
+    {
+        $globalAddresss = GlobalAddress::find($id);
+        if ($globalAddresss) {
+            return $this->success($globalAddresss, "Global Address Found", 200);
+        }
+        return $this->error("Data Not Found", Response::HTTP_FOUND);
     }
 }
