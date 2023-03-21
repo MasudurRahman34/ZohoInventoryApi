@@ -15,6 +15,7 @@ use App\Http\Services\V1\AddressService;
 use App\Http\Services\V1\ContactService;
 use App\Http\Services\V1\SupplierService;
 use App\Models\Address;
+use App\Models\Bill;
 use App\Models\Contact;
 use App\Models\Supplier;
 
@@ -39,26 +40,36 @@ class SupplierController extends Controller
 
         //return $request->filter['display_name'];
         $this->setFilterProperty($request);
-        $query = Supplier::
-            //withoutGlobalScopes();
-            // ->with(['primaryContact'=>fn($query)=>$query
-            //     ->where('display_name', 'LIKE', '%' . $request->filter['display_name'] . '%')
-            //    ])
-            with((['primaryContact' => function ($query) {
-                //$query->where('display_name', 'LIKE', '%' . 'chonchol chowdhuri' . '%');
-                //$filter['display_name']='chonchol chowdhuri'
-                //$this->filterBy($request,$query);
-            }]))
+        $query = Supplier::query();
+
+        //withoutGlobalScopes();
+        // ->with(['primaryContact'=>fn($query)=>$query
+        //     ->where('display_name', 'LIKE', '%' . $request->filter['display_name'] . '%')
+        //    ])
+
+
+        $query = $query->with((['primaryContact' => function ($query) {
+            //$query->where('display_name', 'LIKE', '%' . 'chonchol chowdhuri' . '%');
+            //$filter['display_name']='chonchol chowdhuri'
+            //$this->filterBy($request,$query);
+        }]))
             ->with('otherContacts')->with('shipAddress')->with('billAddress')->with('otherAddresses')->with('purchases');
         $this->dateRangeQuery($request, $query, 'portal_suppliers.created_at');
         $this->filterBy($request, $this->query);
         $suppliers = $this->query->orderBy($this->column_name, $this->sort)->paginate($this->show_per_page)->withQueryString();
-        return $this->success(new SupplierCollection($suppliers));
+        return new SupplierCollection($suppliers);
     }
 
     //get single supplier
-    public function show($uuid)
+    public function show(Request $request, $uuid)
     {
+        // if ($request->has('filter_with')) {
+        //     if ($request->filter_with == 'bill') {
+        //         return  $supplier = DB::table('purchases')
+        //             ->join('bills', DB::raw('order_number'), DB::raw(' select JSON_PRETTY(purchases.purchase_number)'))
+        //             ->get();
+        //     }
+        // }
         // $supplier = Supplier::with('PrimaryContact')->with('otherContacts')->with('shipAddress')->with('billAddress')->with('otherAddresses')->find($id);
         $supplier = Supplier::Uuid($uuid)->with('PrimaryContact')->with('otherContacts')->with('shipAddress')->with('billAddress')->with('otherAddresses')->first();
         if ($supplier) {

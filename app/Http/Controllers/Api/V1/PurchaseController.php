@@ -66,41 +66,8 @@ class PurchaseController extends Controller
 
     public function store(PurchaseRequest $request)
     {
-        // return Supplier::class;
-        // return $request;
-
 
         $request = $this->calculateProductPriceService->purchasePrice($request->all());
-
-
-        // if ($request['deliverTo'] == 1) { //customer
-        //     if (isset($request['customerBillAddressId'])) {
-        //     } elseif (isset($request['customerBillAddressId'])) {
-        //     }
-        // }
-        // $billingAddressId = isset($request['bill_address']) ? $request['bill_address'] : NULL;
-        // $shippingAddressId = isset($request['ship_address']) ? $request['ship_address'] : NULL;
-        // $billingAddress = Address::where('id', $billingAddressId)->where('ref_id', $request['supplier_id'])->where('ref_object_key', Address::$ref_supplier_key)->first();
-        // $shippingAddress = Address::where('id', $shippingAddressId)->where('ref_id', $request['supplier_id'])->where('ref_object_key', Address::$ref_supplier_key)->first();
-        // if ($billingAddress || $shippingAddress) {
-        //     $contactDetails = Contact::where('ref_id', $request['supplier_id'])->where('ref_object_key', Address::$ref_supplier_key)->where('is_primary_contact', 1)->first();
-        //     $billingAddress = $billingAddress ? $billingAddress->full_address : NULL;
-        //     $shippingAddress = $shippingAddress ? $shippingAddress->full_address : NULL;
-        //     $display_name = isset($contactDetails->display_name) ? $contactDetails->display_name : NULL;
-        //     $company_name = isset($contactDetails->company_name) ? $contactDetails->company_name : NULL;
-
-        //     $purchaseAddressData = [
-        //         'supplier_id' => $request['supplier_id'],
-        //         'purchase_id' => 1,
-        //         'display_name' => $display_name,
-        //         'company_name' => $company_name,
-        //         'billing_address' => $billingAddress,
-        //         'shipping_address' => $shippingAddress,
-        //     ];
-
-        // $createPurchaseAddress = PurchaseAddress::create($purchaseAddressData);
-
-
         DB::beginTransaction();
         try {
 
@@ -125,6 +92,7 @@ class PurchaseController extends Controller
                             }
                         } else {
                             //$item['serial_number'] = isset($item['serial_number'][0]) ? ($item['serial_number'][0] != null ? $item['serial_number'][0] : $this->generateKey('purchase_items', 'serial_number', 4)) : $this->generateKey('purchase_items', 'serial_number', 4);
+                            // $item['group_number'] = $this->generateKey('purchase_items', 'group_number', 6);
                             $item['serial_number'] = isset($item['serial_number'][0]) ? null : null;
                             $this->purchaseItemService->store($item);
                         }

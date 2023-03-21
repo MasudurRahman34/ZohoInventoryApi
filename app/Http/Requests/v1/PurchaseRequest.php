@@ -7,6 +7,7 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 class PurchaseRequest extends FormRequest
 {
@@ -30,6 +31,18 @@ class PurchaseRequest extends FormRequest
     {
         $rules = [
             'supplier_id' => 'required|integer|exists:portal_suppliers,id',
+
+            'supplierAddress.shipping' => ['filled', 'integer', 'exists:portal_address,id'],
+            'supplierAddress.billing' => ['filled', 'integer', 'exists:portal_address,id'],
+
+            'warehouseAddress.shipping' => ['filled', 'integer', 'exists:portal_address,id'],
+            'warehouseAddress.billing' => ['filled', 'integer', 'exists:portal_address,id'],
+
+            'customerAddress.shipping' => ['filled', 'integer', 'exists:portal_address,id'],
+            'customerAddress.billing' => ['filled', 'integer', 'exists:portal_address,id'],
+
+            'deliver_to' => ['required', Rule::in(['warehouse', 'customer'])],
+
             'warehouse_id' => 'required|integer|exists:warehouses,id', //need to check with wareshouses table
             'invoice_no' => 'string|between:3,50|nullable',
             'reference' => 'string|between:3,50|nullable',

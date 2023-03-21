@@ -93,4 +93,9 @@ class Supplier extends Model
     {
         return $this->hasMany(Purchase::class, 'supplier_id', 'id');
     }
+
+    public function bills()
+    {
+        return $this->hasMany(Bill::class, 'supplier_id', 'id');
+    }
 }

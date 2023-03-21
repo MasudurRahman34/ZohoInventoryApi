@@ -29,7 +29,7 @@ class LocationRequest extends FormRequest
         //     //
         // ];
         $rule = [
-            'source' => ['required', 'string', Rule::in(['state', 'district', 'thana', 'union', 'zipcode', 'street-address'])],
+            'source' => ['required', 'string', Rule::in(['state', 'district', 'thana', 'union', 'zipcode', 'streetAddress'])],
         ];
         switch ($this->request->get('source')) {
             case 'state':
@@ -54,7 +54,7 @@ class LocationRequest extends FormRequest
                 $rule['parent_id'] = ['required', 'integer', 'exists:unions,id'];
                 $rule['name'] = ['required', 'integer', 'digits_between:2,10'];
                 break;
-            case 'street-address':
+            case 'streetAddress':
                 $rule['parent_id'] = ['required', 'integer', 'exists:unions,id'];
                 $rule['name'] = ['required', 'string', 'between:3,255'];
                 break;
