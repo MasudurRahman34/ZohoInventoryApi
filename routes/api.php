@@ -19,6 +19,7 @@ use App\Http\Controllers\Api\V1\InvoiceController;
 use App\Http\Controllers\Api\V1\LocationController;
 use App\Http\Controllers\Api\V1\MediaController;
 use App\Http\Controllers\Api\V1\PaymentController;
+use App\Http\Controllers\Api\V1\PaymentTermController;
 use App\Http\Controllers\Api\V1\PlanFeatureController;
 use App\Http\Controllers\Api\V1\ProductController;
 use App\Http\Controllers\Api\V1\PurchaseController;
@@ -141,6 +142,15 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
         Route::PUT('payments/{payment}', [PaymentController::class, 'update'])->name('payments.update');
         Route::DELETE('payments/{payment}', [PaymentController::class, 'destroy'])->name('payments.delete');
         Route::GET('payments/{payment}', [PaymentController::class, 'show'])->name('payments.show');
+
+        //payment-terms
+
+        //payments
+        Route::GET('payment-term', [PaymentTermController::class, 'index'])->name('payment-term.index');
+        Route::POST('payment-term', [PaymentTermController::class, 'store'])->name('payment-term.store');
+        Route::PUT('payment-term/{payment}', [PaymentTermController::class, 'update'])->name('payment-term.update');
+        Route::DELETE('payment-term/{payment}', [PaymentTermController::class, 'destroy'])->name('payment-term.delete');
+        Route::GET('payment-term/{payment}', [PaymentTermController::class, 'show'])->name('payment-term.show');
 
         //transaction
         Route::GET('transaction-head', [TransactionHeadController::class, 'index'])->name('transaction-head.index');

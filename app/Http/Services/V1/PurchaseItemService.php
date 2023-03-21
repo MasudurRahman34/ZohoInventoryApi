@@ -49,6 +49,7 @@ class PurchaseItemService
             $insertData['product_qty'] = 1;
         } else if ($purchaseItem['is_serialized'] == 0) {
             $insertData['serial_number'] = $purchaseItem['serial_number'];
+            $insertData['group_number'] = $purchaseItem['group_number'];
         }
 
         $response = PurchaseItem::create($insertData);

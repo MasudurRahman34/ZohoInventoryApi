@@ -168,7 +168,7 @@ class LocationController extends Controller
                     ];
                     $newLocation = Zipcode::create($newZipcodeRequest);
                     break;
-                case 'street-address':
+                case 'streetAddress':
                     $newStreetRequest = [
                         'street_address_value' => $request->name,
                         'union_id' => $request->parent_id,
@@ -182,7 +182,7 @@ class LocationController extends Controller
             DB::commit();
             return $this->success($newLocation, "New Location Created Successfully", 201);
         } catch (\Throwable $th) {
-            return $th;
+            return $this->error($th, 422);
         }
     }
 }

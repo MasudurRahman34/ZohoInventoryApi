@@ -94,20 +94,6 @@ class PurchaseService
                 if (\is_array($request['supplierAddress'])) {
 
                     foreach ($request['supplierAddress'] as $key => $addressId) {
-                        // $address = Address::find($addressId);
-                        // if ($address) {
-                        //     $purchaseAddressData = $this->makeAddressValueFromFullAddress($address);
-                        //     $purchaseAddressData['addressable_id'] = $request['supplier_id'];
-                        //     $purchaseAddressData['purchase_id'] = $purchase->id;
-                        //     $purchaseAddressData['addressable_type'] = Supplier::class;
-                        //     $purchaseAddressData['attention'] = $address->attention;
-                        //     $purchaseAddressData['full_address'] = $address->full_address;
-                        //     $purchaseAddressData['plain_address'] = $this->addressService->setPlainAddress($address->full_address);
-                        //     $purchaseAddressData['deliver_to'] = $request['deliver_to'];
-                        //     $purchaseAddressData['type'] = $key;
-
-                        //     $newPurchaseAddress = PurchaseAddress::create($purchaseAddressData);
-                        // }
                         $this->storePurchaseAddressById($addressId, $key, $purchase, Supplier::class, $request['supplier_id'], $request['deliver_to']);
                     }
                 }
@@ -135,7 +121,6 @@ class PurchaseService
 
     public function storePurchaseAddressById($addressId, $type, $purchase, $addressableType, $addressableId, $deliverTo)
     {
-
         $address = Address::find($addressId);
         if ($address) {
             $purchaseAddressData = $this->makeAddressValueFromFullAddress($address);
@@ -150,7 +135,6 @@ class PurchaseService
 
             $newPurchaseAddress = PurchaseAddress::create($purchaseAddressData);
         }
-        return $newPurchaseAddress;
     }
 
 
