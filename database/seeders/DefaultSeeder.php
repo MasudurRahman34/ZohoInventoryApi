@@ -21,23 +21,23 @@ class DefaultSeeder extends Seeder
     {
         $taxData =
             array(
-                array('name' => 'Govt Tax', 'rate' => '15', 'default' => 'Yes'),
+                array('name' => 'Govt Tax', 'rate' => '15', 'status' => 'active', 'default' => 'yes'),
 
             );
         $currencies =
             array(
-                array('name' => 'BDT', 'Code' => 'BDT', 'symbol' => 'TK', 'default' => 'Yes'),
-
+                array('name' => 'BDT', 'Code' => 'BDT', 'symbol' => 'TK', 'status' => 'active', 'default' => 'yes'),
+                array('name' => 'USD', 'Code' => 'US', 'symbol' => '$', 'status' => 'active', 'default' => 'yes'),
             );
 
         $department =
             array(
-                array('name' => 'HR Department', 'default' => 'Yes'),
-
+                array('name' => 'HR', 'status' => 'active', 'default' => 'yes'),
+                array('name' => 'Accounts', 'status' => 'active', 'default' => 'yes'),
             );
         $degisnation =
             array(
-                array('name' => 'CEO', 'default' => 'Yes'),
+                array('name' => 'CEO', 'status' => 'active', 'default' => 'yes'),
 
             );
 
