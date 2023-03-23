@@ -173,6 +173,7 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
         // Route::PUT('products/{uuid}', [ProductController::class, 'update'])->name('products.update');
         // Route::DELETE('products/{uuid}', [ProductController::class, 'destroy'])->name('products.delete');
         Route::GET('products/{uuid}', [ProductController::class, 'show'])->name('products.show');
+        Route::GET('products/search/{text}', [ProductController::class, 'searchBytext'])->name('products.search');
     });
 });
 

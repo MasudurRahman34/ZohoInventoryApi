@@ -86,7 +86,7 @@ class publicInvoiceRequest extends FormRequest
 
             //sender address 
             'sender.display_name' => 'string|nullable',
-            'sender.company_name' => 'nullable|required_without:sender.first_name| regex:/^[a-zA-Z0-9@ ]+$/, between:3,255',
+            'sender.company_name' => 'nullable|required_without:sender.first_name| regex:/^[a-zA-Z0-9@ ]+$/| between:3,255',
             'sender.company_info' => 'string|nullable',
             'sender.company_logo' => 'image|mimes:jpg,png,jpeg,gif,svg|max:2048|nullable',
             'sender.attention' => 'string|nullable',

@@ -137,10 +137,6 @@ class PurchaseService
         }
     }
 
-
-
-
-
     public function update($request, $purchase)
     {
 

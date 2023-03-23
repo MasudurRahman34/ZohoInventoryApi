@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
@@ -27,6 +28,15 @@ class ProductController extends Controller
         } else {
             return $this->error("Data Not Found", Response::HTTP_NOT_FOUND);
         }
+    }
+
+    public function searchBytext(Request $request, $text)
+    {
+        $product = DB::table('products')
+            ->leftJoin('stocks', 'product_id', 'products.id')
+            ->where("products.sku", 'LIKE', '%' . $text . '%')->orWhere("products.item_name", 'LIKE', '%' . $text . '%')->get(['products.id as id', 'item_name', 'sku', 'quantity_on_hand as current_stock', 'is_serialized']);
+
+        return $product;
     }
 
     /**

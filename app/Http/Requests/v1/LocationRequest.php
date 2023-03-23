@@ -29,7 +29,7 @@ class LocationRequest extends FormRequest
         //     //
         // ];
         $rule = [
-            'source' => ['required', 'string', Rule::in(['state', 'district', 'thana', 'union', 'zipcode', 'streetAddress', 'designation', 'department', 'tax', 'currency'])],
+            'source' => ['required', 'string', Rule::in(['state', 'district', 'thana', 'union', 'zipcode', 'streetAddress', 'designation', 'department', 'tax', 'currency', 'companyCategory', 'company', 'model'])],
         ];
         switch ($this->request->get('source')) {
             case 'state':
@@ -73,6 +73,23 @@ class LocationRequest extends FormRequest
             case 'tax':
                 $rule['name'] = ['required', 'string', 'between:2,50'];
                 $rule['rate'] = ['required', 'integer', 'min:1', 'max:100'];
+                break;
+            case 'companyCategory':
+                $rule['name'] = ['required', 'string', 'between:2,255'];
+                $rule['status'] = ['required', Rule::in(['active', 'inactive'])];
+                break;
+            case 'company':
+
+                $rule['name'] = ['required', 'string', 'between:2,255'];
+                $rule['company_category_id'] = ['nullable', 'integer', 'exists:company_categories,id'];
+                $rule['status'] = ['required', Rule::in(['active', 'inactive'])];
+                break;
+
+            case 'model':
+
+                $rule['name'] = ['required', 'string', 'between:2,255'];
+                $rule['company_id'] = ['nullable', 'integer', 'exists:companies,id'];
+                $rule['status'] = ['required', Rule::in(['active', 'inactive'])];
                 break;
 
             default:

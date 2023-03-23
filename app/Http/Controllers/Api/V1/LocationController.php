@@ -8,10 +8,13 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Api\V1\Helper\ApiFilter;
 use App\Http\Controllers\Api\V1\Helper\ApiResponse;
 use App\Http\Requests\v1\LocationRequest;
+use App\Models\Company;
+use App\Models\CompanyCategory;
 use App\Models\Country;
 use App\Models\Currency;
 use App\Models\Department;
 use App\Models\Designation;
+use App\Models\ItemModel;
 use App\Models\Location\District;
 use App\Models\Location\StreetAddress;
 use App\Models\Location\Thana;
@@ -156,20 +159,20 @@ class  LocationController extends Controller
                 case 'designation':
 
                     if (Auth::guard('api')->check()) {
-                        $accountData = DB::table('designations')->where('account_id', Auth::guard('api')->user()->account_id);
-                        $data = DB::table('designations')->where('default', 'Yes')->union($accountData)->get();
+                        $accountData = DB::table('designations')->where('account_id', Auth::guard('api')->user()->account_id)->where('status', 'active');
+                        $data = DB::table('designations')->where('default', 'yes')->where('status', 'active')->union($accountData)->get();
                     } else {
-                        $data = DB::table('designations')->where('default', 'Yes')->get();
+                        $data = DB::table('designations')->where('default', 'yes')->where('status', 'active')->get();
                     }
                     break;
 
                 case 'department':
 
                     if (Auth::guard('api')->check()) {
-                        $accountData = DB::table('departments')->where('account_id', Auth::guard('api')->user()->account_id);
-                        $data = DB::table('departments')->where('default', 'Yes')->union($accountData)->get();
+                        $accountData = DB::table('departments')->where('account_id', Auth::guard('api')->user()->account_id)->where('status', 'active');
+                        $data = DB::table('departments')->where('default', 'yes')->where('status', 'active')->union($accountData)->get();
                     } else {
-                        $data = DB::table('departments')->where('default', 'Yes')->get();
+                        $data = DB::table('departments')->where('default', 'yes')->where('status', 'active')->get();
                     }
 
                     break;
@@ -177,20 +180,47 @@ class  LocationController extends Controller
                 case 'tax':
 
                     if (Auth::guard('api')->check()) {
-                        $accountData = DB::table('taxes')->where('account_id', Auth::guard('api')->user()->account_id);
-                        $data = DB::table('taxes')->where('default', 'Yes')->union($accountData)->get();
+                        $accountData = DB::table('taxes')->where('account_id', Auth::guard('api')->user()->account_id)->where('status', 'active');
+                        $data = DB::table('taxes')->where('default', 'yes')->where('status', 'active')->union($accountData)->get();
                     } else {
-                        $data = DB::table('taxes')->where('default', 'Yes')->get();
+                        $data = DB::table('taxes')->where('default', 'yes')->where('status', 'active')->get();
                     }
 
                     break;
 
                 case 'currency':
                     if (Auth::guard('api')->check()) {
-                        $accountData = DB::table('currencies')->where('account_id', Auth::guard('api')->user()->account_id);
-                        $data = DB::table('currencies')->where('default', 'Yes')->union($accountData)->get();
+                        $accountData = DB::table('currencies')->where('account_id', Auth::guard('api')->user()->account_id)->where('status', 'active');
+                        $data = DB::table('currencies')->where('default', 'yes')->where('status', 'active')->union($accountData)->get();
                     } else {
-                        $data = DB::table('currencies')->where('default', 'Yes')->get();
+                        $data = DB::table('currencies')->where('default', 'yes')->where('status', 'active')->get();
+                    }
+
+                    break;
+                case 'companyCategory':
+                    if (Auth::guard('api')->check()) {
+                        $accountData = DB::table('company_categories')->where('account_id', Auth::guard('api')->user()->account_id)->where('status', 'active');
+                        $data = DB::table('company_categories')->where('default', 'yes')->where('status', 'active')->union($accountData)->get();
+                    } else {
+                        $data = DB::table('company_categories')->where('default', 'yes')->where('status', 'active')->get();
+                    }
+                    break;
+
+                case 'company':
+                    if (Auth::guard('api')->check()) {
+                        $accountData = DB::table('companies')->where('account_id', Auth::guard('api')->user()->account_id)->where('status', 'active');
+                        $data = DB::table('companies')->where('default', 'yes')->where('status', 'active')->union($accountData)->get();
+                    } else {
+                        $data = DB::table('companies')->where('default', 'yes')->where('status', 'active')->get();
+                    }
+                    break;
+
+                case 'model':
+                    if (Auth::guard('api')->check()) {
+                        $accountData = DB::table('companies')->where('account_id', Auth::guard('api')->user()->account_id)->where('status', 'active');
+                        $data = DB::table('companies')->where('default', 'yes')->where('status', 'active')->union($accountData)->get();
+                    } else {
+                        $data = DB::table('companies')->where('default', 'yes')->where('status', 'active')->get();
                     }
                     break;
 
@@ -301,6 +331,35 @@ class  LocationController extends Controller
                         'code' => $request->code,
                     ];
                     $newLocation = Currency::create($newDepartment);
+                    break;
+
+                case 'companyCategory':
+                    $newCompanyCategory = [
+                        'name' => $request->name,
+                        'status' => $request->status,
+
+                    ];
+                    $newLocation = CompanyCategory::create($newCompanyCategory);
+                    break;
+
+                case 'company':
+                    $newCompanyRequest = [
+                        'name' => $request->name,
+                        'slug' => Str::slug($request->name),
+                        'company_category_id' => $request->company_category_id,
+                        'status' => $request->status,
+
+                    ];
+
+                case 'model':
+                    $newItemModel = [
+                        'name' => $request->name,
+                        'slug' => Str::slug($request->name),
+                        'company_id' => $request->company_id,
+                        'status' => $request->status,
+
+                    ];
+                    $newLocation = ItemModel::create($newItemModel);
                     break;
 
                 default:
