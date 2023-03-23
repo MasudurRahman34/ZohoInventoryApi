@@ -14,3 +14,5 @@ Route::GET('zipcodes', [LocationController::class, 'zipcodes'])->name('location.
 Route::GET('street-adresses', [LocationController::class, 'streetAdress'])->name('location.streetAdress');
 
 Route::post('addnew/autocomplete', [LocationController::class, 'addNew'])->name('location.add-new');
+
+Route::get('addnew/autocomplete', [LocationController::class, 'show'])->name('location.add-new');

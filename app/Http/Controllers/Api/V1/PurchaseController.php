@@ -92,7 +92,7 @@ class PurchaseController extends Controller
                             }
                         } else {
                             //$item['serial_number'] = isset($item['serial_number'][0]) ? ($item['serial_number'][0] != null ? $item['serial_number'][0] : $this->generateKey('purchase_items', 'serial_number', 4)) : $this->generateKey('purchase_items', 'serial_number', 4);
-                            // $item['group_number'] = $this->generateKey('purchase_items', 'group_number', 6);
+                            $item['group_number'] = $this->generateKey('purchase_items', 'group_number', 6);
                             $item['serial_number'] = isset($item['serial_number'][0]) ? null : null;
                             $this->purchaseItemService->store($item);
                         }

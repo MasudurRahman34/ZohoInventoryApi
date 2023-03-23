@@ -9,17 +9,21 @@ use App\Http\Controllers\Api\V1\Helper\ApiFilter;
 use App\Http\Controllers\Api\V1\Helper\ApiResponse;
 use App\Http\Requests\v1\LocationRequest;
 use App\Models\Country;
+use App\Models\Currency;
+use App\Models\Department;
+use App\Models\Designation;
 use App\Models\Location\District;
 use App\Models\Location\StreetAddress;
 use App\Models\Location\Thana;
 use App\Models\Location\Union;
 use App\Models\Location\Zipcode;
+use App\Models\Tax;
 use Exception;
-
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
-class LocationController extends Controller
+class  LocationController extends Controller
 {
     use ApiResponse, ApiFilter;
     public function states(Request $request)
@@ -115,6 +119,94 @@ class LocationController extends Controller
         }
     }
 
+    public function show(Request $request)
+    {
+        try {
+            switch ($request['source']) {
+
+                case 'state':
+                    $data = State::get();
+                    break;
+
+                case 'district':
+
+                    $data = District::get();
+                    break;
+
+                case 'thana':
+
+                    $data = Thana::get();
+                    break;
+
+                case 'union':
+
+                    $data = Union::get();
+                    break;
+
+                case 'zipcode':
+
+                    $data = Zipcode::get();
+                    break;
+                case 'streetAddress':
+
+
+                    $data = StreetAddress::get();
+                    break;
+
+                case 'designation':
+
+                    if (Auth::guard('api')->check()) {
+                        $accountData = DB::table('designations')->where('account_id', Auth::guard('api')->user()->account_id);
+                        $data = DB::table('designations')->where('default', 'Yes')->union($accountData)->get();
+                    } else {
+                        $data = DB::table('designations')->where('default', 'Yes')->get();
+                    }
+                    break;
+
+                case 'department':
+
+                    if (Auth::guard('api')->check()) {
+                        $accountData = DB::table('departments')->where('account_id', Auth::guard('api')->user()->account_id);
+                        $data = DB::table('departments')->where('default', 'Yes')->union($accountData)->get();
+                    } else {
+                        $data = DB::table('departments')->where('default', 'Yes')->get();
+                    }
+
+                    break;
+
+                case 'tax':
+
+                    if (Auth::guard('api')->check()) {
+                        $accountData = DB::table('taxes')->where('account_id', Auth::guard('api')->user()->account_id);
+                        $data = DB::table('taxes')->where('default', 'Yes')->union($accountData)->get();
+                    } else {
+                        $data = DB::table('taxes')->where('default', 'Yes')->get();
+                    }
+
+                    break;
+
+                case 'currency':
+                    if (Auth::guard('api')->check()) {
+                        $accountData = DB::table('currencies')->where('account_id', Auth::guard('api')->user()->account_id);
+                        $data = DB::table('currencies')->where('default', 'Yes')->union($accountData)->get();
+                    } else {
+                        $data = DB::table('currencies')->where('default', 'Yes')->get();
+                    }
+                    break;
+
+                default:
+                    throw new Exception('invalid source');
+                    break;
+            }
+            if (count($data) > 0) {
+                return $this->success($data, "Data Found !", 200);
+            }
+            return $this->error("data Not Found", 404);
+        } catch (\Throwable $th) {
+            return $this->error($th->getMessage(), 422);
+        }
+    }
+
 
     public function addNew(LocationRequest $request)
     {
@@ -175,12 +267,48 @@ class LocationController extends Controller
                     ];
                     $newLocation = StreetAddress::create($newStreetRequest);
                     break;
+
+                case 'designation':
+                    $newDesignation = [
+                        'name' => $request->name,
+                        'description' => $request->description,
+                    ];
+                    $newLocation = Designation::create($newDesignation);
+                    break;
+
+                case 'department':
+                    $newDepartment = [
+                        'name' => $request->name,
+                        'description' => $request->description,
+                    ];
+                    $newLocation = Department::create($newDepartment);
+                    break;
+
+                case 'tax':
+                    $newDepartment = [
+                        'name' => $request->name,
+                        'description' => $request->description,
+                        'rate' => $request->rate,
+                    ];
+                    $newLocation = Tax::create($newDepartment);
+                    break;
+
+                case 'currency':
+                    $newDepartment = [
+                        'name' => $request->name,
+                        'description' => $request->description,
+                        'symbol' => $request->symbol,
+                        'code' => $request->code,
+                    ];
+                    $newLocation = Currency::create($newDepartment);
+                    break;
+
                 default:
                     throw new Exception('invalid source');
                     break;
             }
             DB::commit();
-            return $this->success($newLocation, "New Location Created Successfully", 201);
+            return $this->success($newLocation, "New Data Created Successfully", 201);
         } catch (\Throwable $th) {
             return $this->error($th, 422);
         }
