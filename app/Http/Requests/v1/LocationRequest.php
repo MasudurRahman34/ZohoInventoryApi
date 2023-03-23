@@ -60,19 +60,23 @@ class LocationRequest extends FormRequest
                 break;
             case 'currency':
                 $rule['name'] = ['required', 'string', 'between:2,50'];
+                $rule['status'] = ['required', Rule::in(['active', 'inactive'])];
                 break;
 
             case 'designation':
                 $rule['name'] = ['required', 'string', 'between:2,50'];
+                $rule['status'] = ['required', Rule::in(['active', 'inactive'])];
                 break;
 
             case 'department':
                 $rule['name'] = ['required', 'string', 'between:2,50'];
+                $rule['status'] = ['required', Rule::in(['active', 'inactive'])];
                 break;
 
             case 'tax':
                 $rule['name'] = ['required', 'string', 'between:2,50'];
                 $rule['rate'] = ['required', 'integer', 'min:1', 'max:100'];
+                $rule['status'] = ['required', Rule::in(['active', 'inactive'])];
                 break;
             case 'companyCategory':
                 $rule['name'] = ['required', 'string', 'between:2,255'];

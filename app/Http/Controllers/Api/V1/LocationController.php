@@ -217,10 +217,10 @@ class  LocationController extends Controller
 
                 case 'model':
                     if (Auth::guard('api')->check()) {
-                        $accountData = DB::table('companies')->where('account_id', Auth::guard('api')->user()->account_id)->where('status', 'active');
-                        $data = DB::table('companies')->where('default', 'yes')->where('status', 'active')->union($accountData)->get();
+                        $accountData = DB::table('item_models')->where('account_id', Auth::guard('api')->user()->account_id)->where('status', 'active');
+                        $data = DB::table('item_models')->where('default', 'yes')->where('status', 'active')->union($accountData)->get();
                     } else {
-                        $data = DB::table('companies')->where('default', 'yes')->where('status', 'active')->get();
+                        $data = DB::table('item_models')->where('default', 'yes')->where('status', 'active')->get();
                     }
                     break;
 
@@ -302,6 +302,7 @@ class  LocationController extends Controller
                     $newDesignation = [
                         'name' => $request->name,
                         'description' => $request->description,
+                        'status' => $request->status,
                     ];
                     $newLocation = Designation::create($newDesignation);
                     break;
@@ -310,6 +311,7 @@ class  LocationController extends Controller
                     $newDepartment = [
                         'name' => $request->name,
                         'description' => $request->description,
+                        'status' => $request->status,
                     ];
                     $newLocation = Department::create($newDepartment);
                     break;
@@ -319,6 +321,7 @@ class  LocationController extends Controller
                         'name' => $request->name,
                         'description' => $request->description,
                         'rate' => $request->rate,
+                        'status' => $request->status,
                     ];
                     $newLocation = Tax::create($newDepartment);
                     break;
@@ -329,6 +332,7 @@ class  LocationController extends Controller
                         'description' => $request->description,
                         'symbol' => $request->symbol,
                         'code' => $request->code,
+                        'status' => $request->status,
                     ];
                     $newLocation = Currency::create($newDepartment);
                     break;

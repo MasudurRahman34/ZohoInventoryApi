@@ -25,6 +25,6 @@ class Tax extends Model
         return $date->format('Y-m-d H:i:s');
     }
     protected $fillable = [
-        'name', 'rate', 'sort', 'description', 'default', 'account_id', 'created_by', 'modified_id', 'created_at', 'deleted_at', 'updated_at',
+        'name', 'rate', 'status', 'sort', 'description', 'default', 'account_id', 'created_by', 'modified_id', 'created_at', 'deleted_at', 'updated_at',
     ];
 }
