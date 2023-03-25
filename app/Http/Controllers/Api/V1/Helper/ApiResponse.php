@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Api\V1\Helper;
 
+use Illuminate\Http\Response;
+
 trait ApiResponse
 {
 
@@ -54,6 +56,14 @@ trait ApiResponse
     {
         return response()->json([
             'status' => 'Error',
+            'message' => $message,
+            'data' => null
+        ], $code);
+    }
+
+    protected function dataNotFound($message = 'No data found!', $code = Response::HTTP_FORBIDDEN){
+        return response()->json([
+            'status' => 'false',
             'message' => $message,
             'data' => null
         ], $code);

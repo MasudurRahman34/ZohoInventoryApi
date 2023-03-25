@@ -23,4 +23,6 @@ class State extends Model
     protected $fillable = [
         'country_iso2', 'country_iso3', 'state_name', 'state_slug', 'status', 'sort', 'created_at', 'deleted_at', 'updated_at'
     ];
+
+    public $filterable = ['country_iso2'];
 }

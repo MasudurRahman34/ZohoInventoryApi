@@ -29,12 +29,28 @@ use Illuminate\Support\Str;
 class  LocationController extends Controller
 {
     use ApiResponse, ApiFilter;
-    public function states(Request $request)
+
+    /**
+     * Get state list filter by country_iso2
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function states(Request $request, $Iso2)
     {
         try {
+
+            //Check weather filter param is correct
+            if ($request->has('filter')) {
+                $filters = $request->filter;
+                if(!array_key_exists('country_iso2', $filters)){
+                    return $this->dataNotFound();
+                }
+            }
+
             $query = State::select('id', 'country_iso2', 'country_iso3', 'state_name', 'state_slug');
-            $query = $this->filterBy($request, $query);
+            $this->filterBy($request, $query);
             $states = $this->query->get();
+
             if (count($states) > 0) {
                 return $this->success($states);
             } else {
@@ -48,6 +64,14 @@ class  LocationController extends Controller
     public function districts(Request $request)
     {
         try {
+            //Check weather filter param is correct
+            if ($request->has('filter')) {
+                $filters = $request->filter;
+                if(!array_key_exists('country_iso2', $filters)){
+                    return $this->dataNotFound();
+                }
+            }
+
             $query = District::select('id', 'state_id', 'district_name', 'district_slug');
             $query = $this->filterBy($request, $query);
             $districts = $this->query->get();

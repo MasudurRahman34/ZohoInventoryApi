@@ -13,7 +13,7 @@ class CountryController extends Controller
     use ApiResponse;
     public function index(Request $request)
     {
-        $countries = Country::select('id', 'iso2', 'iso3', 'calling_code', 'country_name')->get();
+        $countries = Country::select('id', 'iso2', 'iso3', 'calling_code', 'country_name')->orderBy('country_name', 'ASC')->get();
         return $this->success(new CountryCollection($countries));
     }
 }
