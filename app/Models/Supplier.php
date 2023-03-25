@@ -16,6 +16,7 @@ class Supplier extends Model
 
     use HasFactory, SoftDeletes, AccountObservant, HasUuids, ScopeUuid;
     protected $table = 'portal_suppliers';
+    protected $appends = ['all_addresses'];
     protected $hidden = [
         'account_id'
     ];
@@ -97,5 +98,17 @@ class Supplier extends Model
     public function bills()
     {
         return $this->hasMany(Bill::class, 'supplier_id', 'id');
+    }
+
+    public function getAllAddressesAttribute()
+    {
+        $shipAddress = $this->shipAddress;
+        $billAddress = $this->billAddress;
+        $other_Addresses = $this->otherAddresses;
+
+
+        // Merge collections and return single collection.
+        $allAddress = $other_Addresses->push($billAddress, $shipAddress);
+        return $allAddress;
     }
 }
