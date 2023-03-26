@@ -63,14 +63,24 @@ class SupplierController extends Controller
     //get single supplier
     public function show(Request $request, $uuid)
     {
-        // if ($request->has('filter_with')) {
-        //     if ($request->filter_with == 'bill') {
-        //         return  $supplier = DB::table('purchases')
-        //             ->join('bills', DB::raw('order_number'), DB::raw(' select JSON_PRETTY(purchases.purchase_number)'))
-        //             ->get();
-        //     }
-        // }
-        // $supplier = Supplier::with('PrimaryContact')->with('otherContacts')->with('shipAddress')->with('billAddress')->with('otherAddresses')->find($id);
+        if ($request->has('filter_with')) {
+            if ($request->filter_with == 'bill') {
+                // return  $supplier = Supplier::Uuid($uuid)->with(['bills' => function ($query) {
+                //     $query->where('status', 'draft')->select('id', 'supplier_id', 'order_number');
+                // }])->first('id', 'bills.order_number as order_number')->setAppends([]);\
+                $order_number = DB::table('portal_suppliers')
+                    ->join('bills', 'supplier_id', 'portal_suppliers.id')
+                    ->where('portal_suppliers.uuid', $uuid)
+                    ->where('bills.status', 'draft')
+                    ->get('order_number');
+                if (count($order_number) > 0) {
+                    return $this->success($order_number);
+                }
+                return $this->dataNotFound();
+            }
+        }
+
+        // $supplier = Supplier::with('PrimaryContact')->with('otherContacts')->with('shipAddress')->with('billAddress')->with('otherAddresses');
         $supplier = Supplier::Uuid($uuid)->with('PrimaryContact')->with('otherContacts')->with('shipAddress')->with('billAddress')->with('otherAddresses')->first();
         if ($supplier) {
             return $this->success(new SupplierResource($supplier));

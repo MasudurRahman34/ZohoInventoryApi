@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers\Api\v1;
 
+use App\Http\Controllers\Api\V1\Helper\ApiFilter;
+use App\Http\Controllers\Api\V1\Helper\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Models\Location\State;
 use Illuminate\Http\Request;
 
 class StateController extends Controller
 {
+    use ApiFilter, ApiResponse;
     public function getStatesBycountry(Request $request, $Iso2)
     {
         try {
@@ -15,7 +18,7 @@ class StateController extends Controller
             //Check weather filter param is correct
             if ($request->has('filter')) {
                 $filters = $request->filter;
-                if(!array_key_exists('country_iso2', $filters)){
+                if (!array_key_exists('country_iso2', $filters)) {
                     return $this->dataNotFound();
                 }
             }

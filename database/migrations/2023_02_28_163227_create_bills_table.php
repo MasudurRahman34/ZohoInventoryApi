@@ -53,14 +53,14 @@ return new class extends Migration
             $table->string('adjustment_text')->default(NULL)->nullable();
             $table->text('bill_terms')->default(NULL)->nullable();
             $table->text('bill_description')->default(NULL)->nullable();
-            $table->string('bill_type')->default(NULL)->nullable();
+            $table->unsignedBigInteger('bill_type')->default(NULL)->nullable();
             $table->string('bill_currency')->default(NULL)->nullable();
             $table->string('payment_term', 100)->default(NULL)->nullable()->comment('calculating due date eg: 7day due date with +7 from today');
             $table->integer('download')->default(0)->nullable();
             $table->string('pdf_link', 255)->default(NULL)->nullable();
 
+            $table->enum('status', ['draft', 'sent', 'partially_paid', 'overdue', 'paid', 'confirmed', 'cancelled'])->nullable()->default('draft')->comment('draft, sent, partially_paid, overdue, paid, confirmed, cancelled');
 
-            $table->tinyInteger('status')->nullable()->default(1)->comment('0 = Draft, 1 = Sent, 2 = Partially Paid, 3 = Overdue, 4 = Paid, 5 = Confirmed, 6 = Cancelled');
             $table->unsignedBigInteger('account_id')->default(1);
             $table->unsignedBigInteger('created_by')->default(0);
             $table->unsignedBigInteger('modified_by')->default(0);

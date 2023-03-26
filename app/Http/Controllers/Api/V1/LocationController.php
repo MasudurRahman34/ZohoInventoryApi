@@ -42,7 +42,7 @@ class  LocationController extends Controller
             //Check weather filter param is correct
             if ($request->has('filter')) {
                 $filters = $request->filter;
-                if(!array_key_exists('country_iso2', $filters)){
+                if (!array_key_exists('country_iso2', $filters)) {
                     return $this->dataNotFound();
                 }
             }
@@ -67,7 +67,7 @@ class  LocationController extends Controller
             //Check weather filter param is correct
             if ($request->has('filter')) {
                 $filters = $request->filter;
-                if(!array_key_exists('country_iso2', $filters)){
+                if (!array_key_exists('country_iso2', $filters)) {
                     return $this->dataNotFound();
                 }
             }

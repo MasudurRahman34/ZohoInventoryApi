@@ -61,7 +61,8 @@ trait ApiResponse
         ], $code);
     }
 
-    protected function dataNotFound($message = 'No data found!', $code = Response::HTTP_FORBIDDEN){
+    protected function dataNotFound($message = 'No data found!', $code = Response::HTTP_NOT_FOUND)
+    {
         return response()->json([
             'status' => 'false',
             'message' => $message,

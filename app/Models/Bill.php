@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\V1\BillEnum;
 use App\Http\Controllers\Api\V1\Helper\AccountObservant;
 use App\Http\Controllers\Api\V1\Helper\HasUuids;
 use App\Models\Scopes\ScopeUuid;
@@ -20,8 +21,9 @@ class Bill extends Model
         'deleted_at'
     ];
     protected $casts = [
-        'order_id' => 'array',
-        'order_number' => 'array'
+        'order_id' => 'json',
+        'order_number' => 'json',
+        'status' => BillEnum::class
     ];
 
     public function serializeDate(DateTimeInterface $date)

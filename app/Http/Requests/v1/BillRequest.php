@@ -2,10 +2,13 @@
 
 namespace App\Http\Requests\v1;
 
+use App\Enums\V1\BillEnum;
 use App\Http\Controllers\Api\V1\Helper\ApiResponse;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Enum;
 
 class BillRequest extends FormRequest
 {
@@ -57,9 +60,9 @@ class BillRequest extends FormRequest
             "adjustment_text" => 'string|between:3,255|nullable',
             "bill_terms" => 'string|min:3|nullable',
             "bill_description" => 'string|min:3|nullable',
-            "bill_type" => 'string|min:3|nullable',
+            "bill_type" => 'integer|nullable',
             "bill_currency" => 'string|min:3|nullable',
-            "status" => 'in:0,1,2,3,4,5,6|nullable',
+            "status" => ['required', new Enum(BillEnum::class)],
 
 
             'billItems.*.bill_id' => 'bill_id|integer|exists:bills,id|nullable',
