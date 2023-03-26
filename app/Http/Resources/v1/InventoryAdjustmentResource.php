@@ -33,9 +33,11 @@ class InventoryAdjustmentResource extends JsonResource
             'deleted_at' => $this->deleted_at,
             // 'account_id ' => $this->account_id,
             'modified_by' => $this->modified_by,
-           
+            'itemAdjustmentReason' => $this->whenLoaded('itemAdjustmentReason'),
+
             // 'adjustmentItems' => new SupplierResource($this->whenLoaded('supplier')),
             'adjustmentItems' => new AdjustmentItemCollection($this->whenLoaded('adjustmentItems')),
+
 
 
         ];

@@ -115,8 +115,10 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
         Route::DELETE('saleitems/{sale}', [SaleController::class, 'deleteSaleItem'])->name('saleitems.delete');
 
         //inventory adjustment
-        Route::POST('inventory/adjustment', [InventoryAdjustmentController::class, 'store'])->name('inventory.adjustment.store');
-        Route::put('inventory/adjustment-item/{itemId}', [InventoryAdjustmentController::class, 'itemStatusUpdate'])->name('inventory.adjustment.item.update');
+        Route::POST('inventory-adjustment', [InventoryAdjustmentController::class, 'store'])->name('inventory.adjustment.store');
+        Route::GET('inventory-adjustment', [InventoryAdjustmentController::class, 'index'])->name('inventory.adjustment.index');
+        Route::GET('inventory-adjustment/{uuid}', [InventoryAdjustmentController::class, 'show'])->name('inventory.adjustment.show');
+        Route::put('inventory-adjustment-item/{itemId}', [InventoryAdjustmentController::class, 'itemStatusUpdate'])->name('inventory.adjustment.item.update');
 
         //Purchase
         // Route::GET('businesstypes', [BusinessTypeController::class, 'index'])->name('businesstypes.index');
@@ -184,6 +186,7 @@ Route::group(['prefix' => 'v1'], function () {
     Route::GET('features/plan', [PlanFeatureController::class, 'featurePlan'])->name('feature.plan');
     Route::GET('plans/feature', [PlanFeatureController::class, 'planFeature'])->name('plan.feature');
     Route::GET('plans', [PlanFeatureController::class, 'plans'])->name('plans');
+    Route::GET('features', [PlanFeatureController::class, 'features'])->name('features.index');
     Route::GET('prices/plan', [PlanFeatureController::class, 'pricePlan'])->name('price.plan');
     Route::GET('plans/pricetype', [PlanFeatureController::class, 'planPrice'])->name('plan.price');
 

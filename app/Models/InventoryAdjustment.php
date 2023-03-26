@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\V1\Helper\AccountObservant;
 use App\Models\Scopes\ScopeUuid;
 use DateTimeInterface;
 use App\Http\Controllers\Api\V1\Helper\HasUuids;
+use App\Models\Scopes\AccountScope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -45,7 +46,7 @@ class InventoryAdjustment extends Model
     }
     public function itemAdjustmentReason()
     {
-        return $this->belongsTo(ItemAdjustmentReason::class, 'reason_id', 'id');
+        return $this->belongsTo(ItemAdjustmentReason::class, 'reason_id', 'id')->withoutGlobalScope(AccountScope::class);
     }
 
     public function adjustmentItems()
