@@ -170,12 +170,15 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
         Route::GET('warehouses/{uuid}', [WarehouseController::class, 'show'])->name('warehouses.show');
 
         //products
-        Route::GET('products', [ProductController::class, 'index'])->name('products.index');
+
+        Route::prefix('products')->group(
+            base_path('routes/products.php')
+        );
+
         // Route::POST('products', [ProductController::class, 'store'])->name('products.store');
         // Route::PUT('products/{uuid}', [ProductController::class, 'update'])->name('products.update');
         // Route::DELETE('products/{uuid}', [ProductController::class, 'destroy'])->name('products.delete');
-        Route::GET('products/{uuid}', [ProductController::class, 'show'])->name('products.show');
-        Route::GET('products/search/{text}', [ProductController::class, 'searchBytext'])->name('products.search');
+
     });
 });
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Api\V1\Helper\ApiFilter;
 use App\Http\Controllers\Api\V1\Helper\ApiResponse;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\v1\ProductResource;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -24,7 +25,7 @@ class ProductController extends Controller
         $query = $this->filterBy($request, $query);
         $product = $this->query->get();
         if (count($product) > 0) {
-            return $this->success($product);
+            return ProductResource::collection($product);
         } else {
             return $this->error("Data Not Found", Response::HTTP_NOT_FOUND);
         }
@@ -35,8 +36,11 @@ class ProductController extends Controller
         $product = DB::table('products')
             ->leftJoin('stocks', 'product_id', 'products.id')
             ->where("products.sku", 'LIKE', '%' . $text . '%')->orWhere("products.item_name", 'LIKE', '%' . $text . '%')->get(['products.id as id', 'item_name', 'sku', 'quantity_on_hand as current_stock', 'is_serialized']);
-
-        return $product;
+        if (count($product) > 0) {
+            return $this->success($product);
+        } else {
+            return $this->error('Data Not Found', 404);
+        }
     }
 
     /**
@@ -70,7 +74,7 @@ class ProductController extends Controller
     {
         $product = Product::Uuid($uuid)->first();
         if ($product) {
-            return $this->success($product, 'product found', Response::HTTP_FOUND);
+            return $this->success(new ProductResource($product), 'product found', Response::HTTP_FOUND);
         }
         return $this->error("Data Not Found", Response::HTTP_NOT_FOUND);
     }
