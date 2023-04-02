@@ -20,6 +20,6 @@ class Zipcode extends Model
         return $date->format('Y-m-d H:i:s');
     }
     protected $fillable = [
-        'union_id', 'zip_code', 'sort', 'status', 'created_at', 'deleted_at', 'updated_at'
+        'thana_id', 'zip_code', 'sort', 'status', 'created_at', 'deleted_at', 'updated_at'
     ];
 }

@@ -3,29 +3,39 @@
 namespace App\Http\Controllers\Api\v1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\v1\DistrictResource;
+use App\Http\Resources\v1\StateResource;
+use App\Models\Location\District;
 use App\Models\Location\State;
 use Illuminate\Http\Request;
 
-class StateController extends Controller
+class StateController extends BaseController
 {
-    public function getStatesBycountry(Request $request, $Iso2)
+    public function index()
+    {
+        try {
+            $states = State::where('status', 'active')->get();
+
+            if (count($states) > 0) {
+                $stateResource = StateResource::collection($states);
+                return $this->success($stateResource);
+            } else {
+                return $this->error("Data Not Found", 404);
+            }
+        } catch (\Throwable $th) {
+            return $this->error($th->getMessage(), 422);
+        }
+    }
+
+    public function getDistictByState(Request $request, $stateID)
     {
         try {
 
-            //Check weather filter param is correct
-            if ($request->has('filter')) {
-                $filters = $request->filter;
-                if(!array_key_exists('country_iso2', $filters)){
-                    return $this->dataNotFound();
-                }
-            }
+            $districts = District::where(['state_id' => $stateID, 'status' => 'active'])->get();
 
-            $query = State::select('id', 'country_iso2', 'country_iso3', 'state_name', 'state_slug');
-            $this->filterBy($request, $query);
-            $states = $this->query->get();
-
-            if (count($states) > 0) {
-                return $this->success($states);
+            if (count($districts) > 0) {
+                $districtResource = DistrictResource::collection($districts);
+                return $this->success($districtResource);
             } else {
                 return $this->error("Data Not Found", 404);
             }

@@ -265,129 +265,183 @@ class  LocationController extends Controller
     public function addNew(LocationRequest $request)
     {
         try {
-            DB::beginTransaction();
-            switch ($request['source']) {
+            $source = $request->source;
 
+            DB::beginTransaction();
+            switch ($source) {
                 case 'state':
-                    $country = Country::find($request->parent_id);
+                    $country = Country::where('iso2', $request->parent['value'])->first();
+
                     $newStateRequest = [
-                        'state_name' => $request->name,
+                        'state_name' => $request->value,
                         'country_iso2' => $country->iso2,
                         'country_iso3' => $country->iso3,
-                        'state_slug' => Str::slug($request->name),
-                        'state_name' => $request->name,
+                        'state_slug' => Str::slug($request->value),
                     ];
-                    $newLocation = State::create($newStateRequest);
+                    $newAddedValue = State::create($newStateRequest);
+
+                    $responseData = [
+                        'id' => $newAddedValue->id,
+                        'value' => $newAddedValue->state_name,
+                    ];
+
                     break;
 
                 case 'district':
                     $newDistrictRequest = [
-                        'district_name' => $request->name,
-                        'district_slug' => Str::slug($request->name),
+                        'district_name' => $request->value,
+                        'district_slug' => Str::slug($request->value),
                         'state_id' => $request->parent_id,
                     ];
-                    $newLocation = District::create($newDistrictRequest);
+                    $newAddedValue = District::create($newDistrictRequest);
+
+                    $responseData = [
+                        'id' => $newAddedValue->id,
+                        'value' => $newAddedValue->district_name,
+                    ];
                     break;
 
                 case 'thana':
                     $newthanaRequest = [
-                        'thana_name' => $request->name,
-                        'thana_slug' => Str::slug($request->name),
+                        'thana_name' => $request->value,
+                        'thana_slug' => Str::slug($request->value),
                         'district_id' => $request->parent_id,
                     ];
-                    $newLocation = Thana::create($newthanaRequest);
+                    $newAddedValue = Thana::create($newthanaRequest);
+                    $responseData = [
+                        'id' => $newAddedValue->id,
+                        'value' => $newAddedValue->thana_name,
+                    ];
                     break;
 
                 case 'union':
                     $newUnionRequest = [
-                        'union_name' => $request->name,
-                        'union_slug' => Str::slug($request->name),
+                        'union_name' => $request->value,
+                        'union_slug' => Str::slug($request->value),
                         'thana_id' => $request->parent_id,
                     ];
-                    $newLocation = Union::create($newUnionRequest);
+                    $newAddedValue = Union::create($newUnionRequest);
+
+                    $responseData = [
+                        'id' => $newAddedValue->id,
+                        'value' => $newAddedValue->union_name,
+                    ];
                     break;
 
                 case 'zipcode':
                     $newZipcodeRequest = [
-                        'zip_code' => $request->name,
-                        'union_id' => $request->parent_id,
+                        'zip_code' => $request->value,
+                        'thana_id' => $request->parent_id,
                     ];
-                    $newLocation = Zipcode::create($newZipcodeRequest);
+
+                    $newAddedValue = Zipcode::create($newZipcodeRequest);
+                    $responseData = [
+                        'id' => $newAddedValue->id,
+                        'value' => $newAddedValue->zip_code,
+                    ];
+
                     break;
-                case 'streetAddress':
+                case 'street-address':
                     $newStreetRequest = [
-                        'street_address_value' => $request->name,
+                        'street_address_value' => $request->value,
                         'union_id' => $request->parent_id,
                     ];
-                    $newLocation = StreetAddress::create($newStreetRequest);
+                    $newAddedValue = StreetAddress::create($newStreetRequest);
+
+                    $responseData = [
+                        'id' => $newAddedValue->id,
+                        'value' => $newAddedValue->street_address_value,
+                    ];
                     break;
 
                 case 'designation':
                     $newDesignation = [
-                        'name' => $request->name,
-                        'description' => $request->description,
-                        'status' => $request->status,
+                        'name' => $request->value,
                     ];
-                    $newLocation = Designation::create($newDesignation);
+                    $newAddedValue = Designation::create($newDesignation);
+
+                    $responseData = [
+                        'id' => $newAddedValue->id,
+                        'value' => $newAddedValue->name,
+                    ];
                     break;
 
                 case 'department':
                     $newDepartment = [
-                        'name' => $request->name,
-                        'description' => $request->description,
-                        'status' => $request->status,
+                        'name' => $request->value,
                     ];
-                    $newLocation = Department::create($newDepartment);
+                    $newAddedValue = Department::create($newDepartment);
+                    $responseData = [
+                        'id' => $newAddedValue->id,
+                        'value' => $newAddedValue->name,
+                    ];
+
                     break;
 
                 case 'tax':
                     $newDepartment = [
-                        'name' => $request->name,
-                        'description' => $request->description,
+                        'name' => $request->value,
                         'rate' => $request->rate,
-                        'status' => $request->status,
+                        'description' => $request->description,
                     ];
-                    $newLocation = Tax::create($newDepartment);
+                    $newAddedValue = Tax::create($newDepartment);
+                    $responseData = [
+                        'id' => $newAddedValue->id,
+                        'value' => $newAddedValue->name,
+                    ];
                     break;
 
                 case 'currency':
                     $newDepartment = [
-                        'name' => $request->name,
-                        'description' => $request->description,
+                        'name' => $request->value,
                         'symbol' => $request->symbol,
                         'code' => $request->code,
-                        'status' => $request->status,
+                        'description' => $request->description
                     ];
-                    $newLocation = Currency::create($newDepartment);
+                    $newAddedValue = Currency::create($newDepartment);
+                    $responseData = [
+                        'id' => $newAddedValue->id,
+                        'value' => $newAddedValue->name,
+                    ];
                     break;
 
                 case 'companyCategory':
                     $newCompanyCategory = [
-                        'name' => $request->name,
+                        'name' => $request->value,
                         'status' => $request->status,
 
                     ];
-                    $newLocation = CompanyCategory::create($newCompanyCategory);
+                    $newAddedValue = CompanyCategory::create($newCompanyCategory);
+                    $responseData = [
+                        'id' => $newAddedValue->id,
+                        'value' => $newAddedValue->name,
+                    ];
                     break;
 
                 case 'company':
                     $newCompanyRequest = [
-                        'name' => $request->name,
-                        'slug' => Str::slug($request->name),
-                        'company_category_id' => $request->company_category_id,
-                        'status' => $request->status,
-
+                        'name' => $request->value,
+                        'slug' => Str::slug($request->value),
+                        'company_category_id' => $request->company_category_id
                     ];
+                    $newAddedValue = Company::create($newCompanyRequest);
+                    $responseData = [
+                        'id' => $newAddedValue->id,
+                        'value' => $newAddedValue->name,
+                    ];
+                    break;
 
                 case 'model':
                     $newItemModel = [
-                        'name' => $request->name,
-                        'slug' => Str::slug($request->name),
-                        'company_id' => $request->company_id,
-                        'status' => $request->status,
-
+                        'name' => $request->value,
+                        'slug' => Str::slug($request->value),
+                        'company_id' => $request->company_id
                     ];
-                    $newLocation = ItemModel::create($newItemModel);
+                    $newAddedValue = ItemModel::create($newItemModel);
+                    $responseData = [
+                        'id' => $newAddedValue->id,
+                        'value' => $newAddedValue->name,
+                    ];
                     break;
 
                 default:
@@ -395,7 +449,7 @@ class  LocationController extends Controller
                     break;
             }
             DB::commit();
-            return $this->success($newLocation, "New Data Created Successfully", 201);
+            return $this->success($responseData, "New Data Created Successfully", 201);
         } catch (\Throwable $th) {
             return $this->error($th, 422);
         }

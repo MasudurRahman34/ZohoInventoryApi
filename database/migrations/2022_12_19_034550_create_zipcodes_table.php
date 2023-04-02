@@ -15,20 +15,19 @@ return new class extends Migration
     {
         Schema::create('zipcodes', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger("union_id")->index();
+            $table->unsignedBigInteger("thana_id")->index();
             $table->string("zip_code",150)->index();
-          
-            
-            /* Common fields for all table*/
-            
+            $table->enum("status", ['active', 'inactive'])->default('inactive');
+            $table->integer('approved_by')->nullable()->default(null)->comment('Id of super admin who approved this zipcode.');
+            $table->dateTime('approved_at', 6)->nullable()->default(null)->comment('Date time when approved this zipcode.');
+
             $table->integer("sort")->default(0)->nullable();
-            $table->tinyInteger("status")->default(1);
             $table->unsignedBigInteger('created_by')->default(1);
             $table->unsignedBigInteger('modified_by')->default(0);
             $table->unsignedBigInteger('account_id')->default(0);
             $table->timestamps();
             $table->softDeletes();
-           
+
         });
     }
 
