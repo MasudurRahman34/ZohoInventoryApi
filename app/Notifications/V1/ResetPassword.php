@@ -101,7 +101,7 @@ class ResetPassword extends Notification
         //     'email' => $notifiable->getEmailForPasswordReset(),
         // ], false));
 
-        return \env("APP_FRONTEND_URL") . '/reset-password?token=' . $this->token . '?email=' . $notifiable->getEmailForPasswordReset();
+        return \env("APP_FRONTEND_URL") . '/reset-password?token=' . $this->token . '&email=' . $notifiable->getEmailForPasswordReset();
     }
 
     /**
