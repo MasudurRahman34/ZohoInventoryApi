@@ -16,11 +16,11 @@ use App\Notifications\V1\ResetPasswordNotification;
 use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Support\Facades\DB;
-
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
-    use HasApiTokens, HasFactory, Notifiable, SoftDeletes, IdIncreamentable, HasUuids;
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes, IdIncreamentable, HasUuids, HasRoles;
 
     /**
      * The attributes that are mass assignable.
