@@ -47,7 +47,7 @@ class CustomerController extends Controller
     //get single customer
     public function show($uuid)
     {
-        $customer = Customer::Uuid($uuid)->with('PrimaryContact')->with('otherContacts')->with('shipAddress')->with('billAddress')->with('otherAddresses')->where('account_id', Auth::user()->account_id)->find($id);
+        $customer = Customer::Uuid($uuid)->with('PrimaryContact')->with('otherContacts')->with('shipAddress')->with('billAddress')->with('otherAddresses')->where('account_id', Auth::user()->account_id)->first();
         if ($customer) {
             return $this->success(new CustomerResource($customer));
         } else {
@@ -104,7 +104,7 @@ class CustomerController extends Controller
         try {
             $customer = $this->customerService->store($request);
             DB::commit();
-            return $this->success(new CustomerResource($customer), '',201);
+            return $this->success(new CustomerResource($customer), 'New Customer Has Been Created Successfully', 201);
         } catch (\Exception $e) {
             DB::rollBack();
             return $this->error($e->getMessage(), 200);
@@ -121,7 +121,7 @@ class CustomerController extends Controller
             try {
                 $customer = $this->customerService->update($request, $customer);
                 DB::commit();
-                return $this->success(new CustomerResource($customer), '',200);
+                return $this->success(new CustomerResource($customer), 'New Customer Has Been Created Successfully', 200);
             } catch (\Exception $e) {
                 DB::rollBack();
                 return $this->error($e->getMessage(), 200);
@@ -133,6 +133,7 @@ class CustomerController extends Controller
     //store customer with address and contact
     public function store(CustomerRequest $request)
     {
+
         $return_data = [];
         DB::beginTransaction();
 
@@ -231,7 +232,7 @@ class CustomerController extends Controller
             }
             DB::commit();
             $customer = Customer::with('PrimaryContact')->with('otherContacts')->with('shipAddress')->with('billAddress')->with('otherAddresses')->find($customer_id);
-            return $this->success(new CustomerResource($customer), '', 201);
+            return $this->success(new CustomerResource($customer), 'New Customer Has Been Created Successfully', 201);
         } catch (\Exception $e) {
             DB::rollBack();
             return $this->error($e->getMessage(), 200);
@@ -246,7 +247,7 @@ class CustomerController extends Controller
         $customer = Customer::Uuid($uuid)->first();
         if ($customer) {
             $customer->destroy($uuid);
-            return $this->success(null, '',200);
+            return $this->success(null, 'Customer Has Been Deleted', 200);
         } else {
             return $this->error('Data Not Found', 201);
         };

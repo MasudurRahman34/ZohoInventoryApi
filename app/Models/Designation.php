@@ -25,6 +25,6 @@ class Designation extends Model
         return $date->format('Y-m-d H:i:s');
     }
     protected $fillable = [
-        'name', 'sort', 'description', 'default', 'account_id', 'created_by', 'modified_id', 'created_at', 'deleted_at', 'updated_at',
+        'name', 'sort', 'status', 'description', 'default', 'account_id', 'created_by', 'modified_id', 'created_at', 'deleted_at', 'updated_at',
     ];
 }

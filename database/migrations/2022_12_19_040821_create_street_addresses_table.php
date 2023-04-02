@@ -20,7 +20,10 @@ return new class extends Migration
                 $table->string('street_address_value');
                 $table->string('street_address_slug')->nullable()->default(NULL);
                 $table->integer("sort")->default(0);
-                $table->tinyInteger('status')->default(0);
+                $table->enum("status", ['active', 'inactive'])->default('inactive');
+                $table->integer('approved_by')->nullable()->default(null)->comment('Id of super admin who approved this street address.');
+                $table->dateTime('approved_at', 6)->nullable()->default(null)->comment('Date time when approved this street address.');
+
                 $table->unsignedBigInteger('account_id')->default(1)->index();
                 $table->unsignedBigInteger('created_by')->default(0);
                 $table->unsignedBigInteger('modified_by')->default(0);

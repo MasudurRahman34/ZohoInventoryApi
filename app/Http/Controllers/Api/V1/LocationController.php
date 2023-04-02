@@ -8,10 +8,13 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Api\V1\Helper\ApiFilter;
 use App\Http\Controllers\Api\V1\Helper\ApiResponse;
 use App\Http\Requests\v1\LocationRequest;
+use App\Models\Company;
+use App\Models\CompanyCategory;
 use App\Models\Country;
 use App\Models\Currency;
 use App\Models\Department;
 use App\Models\Designation;
+use App\Models\ItemModel;
 use App\Models\Location\District;
 use App\Models\Location\StreetAddress;
 use App\Models\Location\Thana;
@@ -26,12 +29,28 @@ use Illuminate\Support\Str;
 class  LocationController extends Controller
 {
     use ApiResponse, ApiFilter;
-    public function states(Request $request)
+
+    /**
+     * Get state list filter by country_iso2
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function states(Request $request, $Iso2)
     {
         try {
+
+            //Check weather filter param is correct
+            if ($request->has('filter')) {
+                $filters = $request->filter;
+                if (!array_key_exists('country_iso2', $filters)) {
+                    return $this->dataNotFound();
+                }
+            }
+
             $query = State::select('id', 'country_iso2', 'country_iso3', 'state_name', 'state_slug');
-            $query = $this->filterBy($request, $query);
+            $this->filterBy($request, $query);
             $states = $this->query->get();
+
             if (count($states) > 0) {
                 return $this->success($states);
             } else {
@@ -45,6 +64,14 @@ class  LocationController extends Controller
     public function districts(Request $request)
     {
         try {
+            //Check weather filter param is correct
+            if ($request->has('filter')) {
+                $filters = $request->filter;
+                if (!array_key_exists('country_iso2', $filters)) {
+                    return $this->dataNotFound();
+                }
+            }
+
             $query = District::select('id', 'state_id', 'district_name', 'district_slug');
             $query = $this->filterBy($request, $query);
             $districts = $this->query->get();
@@ -156,20 +183,20 @@ class  LocationController extends Controller
                 case 'designation':
 
                     if (Auth::guard('api')->check()) {
-                        $accountData = DB::table('designations')->where('account_id', Auth::guard('api')->user()->account_id);
-                        $data = DB::table('designations')->where('default', 'Yes')->union($accountData)->get();
+                        $accountData = DB::table('designations')->where('account_id', Auth::guard('api')->user()->account_id)->where('status', 'active');
+                        $data = DB::table('designations')->where('default', 'yes')->where('status', 'active')->union($accountData)->get();
                     } else {
-                        $data = DB::table('designations')->where('default', 'Yes')->get();
+                        $data = DB::table('designations')->where('default', 'yes')->where('status', 'active')->get();
                     }
                     break;
 
                 case 'department':
 
                     if (Auth::guard('api')->check()) {
-                        $accountData = DB::table('departments')->where('account_id', Auth::guard('api')->user()->account_id);
-                        $data = DB::table('departments')->where('default', 'Yes')->union($accountData)->get();
+                        $accountData = DB::table('departments')->where('account_id', Auth::guard('api')->user()->account_id)->where('status', 'active');
+                        $data = DB::table('departments')->where('default', 'yes')->where('status', 'active')->union($accountData)->get();
                     } else {
-                        $data = DB::table('departments')->where('default', 'Yes')->get();
+                        $data = DB::table('departments')->where('default', 'yes')->where('status', 'active')->get();
                     }
 
                     break;
@@ -177,20 +204,47 @@ class  LocationController extends Controller
                 case 'tax':
 
                     if (Auth::guard('api')->check()) {
-                        $accountData = DB::table('taxes')->where('account_id', Auth::guard('api')->user()->account_id);
-                        $data = DB::table('taxes')->where('default', 'Yes')->union($accountData)->get();
+                        $accountData = DB::table('taxes')->where('account_id', Auth::guard('api')->user()->account_id)->where('status', 'active');
+                        $data = DB::table('taxes')->where('default', 'yes')->where('status', 'active')->union($accountData)->get();
                     } else {
-                        $data = DB::table('taxes')->where('default', 'Yes')->get();
+                        $data = DB::table('taxes')->where('default', 'yes')->where('status', 'active')->get();
                     }
 
                     break;
 
                 case 'currency':
                     if (Auth::guard('api')->check()) {
-                        $accountData = DB::table('currencies')->where('account_id', Auth::guard('api')->user()->account_id);
-                        $data = DB::table('currencies')->where('default', 'Yes')->union($accountData)->get();
+                        $accountData = DB::table('currencies')->where('account_id', Auth::guard('api')->user()->account_id)->where('status', 'active');
+                        $data = DB::table('currencies')->where('default', 'yes')->where('status', 'active')->union($accountData)->get();
                     } else {
-                        $data = DB::table('currencies')->where('default', 'Yes')->get();
+                        $data = DB::table('currencies')->where('default', 'yes')->where('status', 'active')->get();
+                    }
+
+                    break;
+                case 'companyCategory':
+                    if (Auth::guard('api')->check()) {
+                        $accountData = DB::table('company_categories')->where('account_id', Auth::guard('api')->user()->account_id)->where('status', 'active');
+                        $data = DB::table('company_categories')->where('default', 'yes')->where('status', 'active')->union($accountData)->get();
+                    } else {
+                        $data = DB::table('company_categories')->where('default', 'yes')->where('status', 'active')->get();
+                    }
+                    break;
+
+                case 'company':
+                    if (Auth::guard('api')->check()) {
+                        $accountData = DB::table('companies')->where('account_id', Auth::guard('api')->user()->account_id)->where('status', 'active');
+                        $data = DB::table('companies')->where('default', 'yes')->where('status', 'active')->union($accountData)->get();
+                    } else {
+                        $data = DB::table('companies')->where('default', 'yes')->where('status', 'active')->get();
+                    }
+                    break;
+
+                case 'model':
+                    if (Auth::guard('api')->check()) {
+                        $accountData = DB::table('item_models')->where('account_id', Auth::guard('api')->user()->account_id)->where('status', 'active');
+                        $data = DB::table('item_models')->where('default', 'yes')->where('status', 'active')->union($accountData)->get();
+                    } else {
+                        $data = DB::table('item_models')->where('default', 'yes')->where('status', 'active')->get();
                     }
                     break;
 
@@ -211,96 +265,183 @@ class  LocationController extends Controller
     public function addNew(LocationRequest $request)
     {
         try {
-            DB::beginTransaction();
-            switch ($request['source']) {
+            $source = $request->source;
 
+            DB::beginTransaction();
+            switch ($source) {
                 case 'state':
-                    $country = Country::find($request->parent_id);
+                    $country = Country::where('iso2', $request->parent['value'])->first();
+
                     $newStateRequest = [
-                        'state_name' => $request->name,
+                        'state_name' => $request->value,
                         'country_iso2' => $country->iso2,
                         'country_iso3' => $country->iso3,
-                        'state_slug' => Str::slug($request->name),
-                        'state_name' => $request->name,
+                        'state_slug' => Str::slug($request->value),
                     ];
-                    $newLocation = State::create($newStateRequest);
+                    $newAddedValue = State::create($newStateRequest);
+
+                    $responseData = [
+                        'id' => $newAddedValue->id,
+                        'value' => $newAddedValue->state_name,
+                    ];
+
                     break;
 
                 case 'district':
                     $newDistrictRequest = [
-                        'district_name' => $request->name,
-                        'district_slug' => Str::slug($request->name),
+                        'district_name' => $request->value,
+                        'district_slug' => Str::slug($request->value),
                         'state_id' => $request->parent_id,
                     ];
-                    $newLocation = District::create($newDistrictRequest);
+                    $newAddedValue = District::create($newDistrictRequest);
+
+                    $responseData = [
+                        'id' => $newAddedValue->id,
+                        'value' => $newAddedValue->district_name,
+                    ];
                     break;
 
                 case 'thana':
                     $newthanaRequest = [
-                        'thana_name' => $request->name,
-                        'thana_slug' => Str::slug($request->name),
+                        'thana_name' => $request->value,
+                        'thana_slug' => Str::slug($request->value),
                         'district_id' => $request->parent_id,
                     ];
-                    $newLocation = Thana::create($newthanaRequest);
+                    $newAddedValue = Thana::create($newthanaRequest);
+                    $responseData = [
+                        'id' => $newAddedValue->id,
+                        'value' => $newAddedValue->thana_name,
+                    ];
                     break;
 
                 case 'union':
                     $newUnionRequest = [
-                        'union_name' => $request->name,
-                        'union_slug' => Str::slug($request->name),
+                        'union_name' => $request->value,
+                        'union_slug' => Str::slug($request->value),
                         'thana_id' => $request->parent_id,
                     ];
-                    $newLocation = Union::create($newUnionRequest);
+                    $newAddedValue = Union::create($newUnionRequest);
+
+                    $responseData = [
+                        'id' => $newAddedValue->id,
+                        'value' => $newAddedValue->union_name,
+                    ];
                     break;
 
                 case 'zipcode':
                     $newZipcodeRequest = [
-                        'zip_code' => $request->name,
-                        'union_id' => $request->parent_id,
+                        'zip_code' => $request->value,
+                        'thana_id' => $request->parent_id,
                     ];
-                    $newLocation = Zipcode::create($newZipcodeRequest);
+
+                    $newAddedValue = Zipcode::create($newZipcodeRequest);
+                    $responseData = [
+                        'id' => $newAddedValue->id,
+                        'value' => $newAddedValue->zip_code,
+                    ];
+
                     break;
-                case 'streetAddress':
+                case 'street-address':
                     $newStreetRequest = [
-                        'street_address_value' => $request->name,
+                        'street_address_value' => $request->value,
                         'union_id' => $request->parent_id,
                     ];
-                    $newLocation = StreetAddress::create($newStreetRequest);
+                    $newAddedValue = StreetAddress::create($newStreetRequest);
+
+                    $responseData = [
+                        'id' => $newAddedValue->id,
+                        'value' => $newAddedValue->street_address_value,
+                    ];
                     break;
 
                 case 'designation':
                     $newDesignation = [
-                        'name' => $request->name,
-                        'description' => $request->description,
+                        'name' => $request->value,
                     ];
-                    $newLocation = Designation::create($newDesignation);
+                    $newAddedValue = Designation::create($newDesignation);
+
+                    $responseData = [
+                        'id' => $newAddedValue->id,
+                        'value' => $newAddedValue->name,
+                    ];
                     break;
 
                 case 'department':
                     $newDepartment = [
-                        'name' => $request->name,
-                        'description' => $request->description,
+                        'name' => $request->value,
                     ];
-                    $newLocation = Department::create($newDepartment);
+                    $newAddedValue = Department::create($newDepartment);
+                    $responseData = [
+                        'id' => $newAddedValue->id,
+                        'value' => $newAddedValue->name,
+                    ];
+
                     break;
 
                 case 'tax':
                     $newDepartment = [
-                        'name' => $request->name,
-                        'description' => $request->description,
+                        'name' => $request->value,
                         'rate' => $request->rate,
+                        'description' => $request->description,
                     ];
-                    $newLocation = Tax::create($newDepartment);
+                    $newAddedValue = Tax::create($newDepartment);
+                    $responseData = [
+                        'id' => $newAddedValue->id,
+                        'value' => $newAddedValue->name,
+                    ];
                     break;
 
                 case 'currency':
                     $newDepartment = [
-                        'name' => $request->name,
-                        'description' => $request->description,
+                        'name' => $request->value,
                         'symbol' => $request->symbol,
                         'code' => $request->code,
+                        'description' => $request->description
                     ];
-                    $newLocation = Currency::create($newDepartment);
+                    $newAddedValue = Currency::create($newDepartment);
+                    $responseData = [
+                        'id' => $newAddedValue->id,
+                        'value' => $newAddedValue->name,
+                    ];
+                    break;
+
+                case 'companyCategory':
+                    $newCompanyCategory = [
+                        'name' => $request->value,
+                        'status' => $request->status,
+
+                    ];
+                    $newAddedValue = CompanyCategory::create($newCompanyCategory);
+                    $responseData = [
+                        'id' => $newAddedValue->id,
+                        'value' => $newAddedValue->name,
+                    ];
+                    break;
+
+                case 'company':
+                    $newCompanyRequest = [
+                        'name' => $request->value,
+                        'slug' => Str::slug($request->value),
+                        'company_category_id' => $request->company_category_id
+                    ];
+                    $newAddedValue = Company::create($newCompanyRequest);
+                    $responseData = [
+                        'id' => $newAddedValue->id,
+                        'value' => $newAddedValue->name,
+                    ];
+                    break;
+
+                case 'model':
+                    $newItemModel = [
+                        'name' => $request->value,
+                        'slug' => Str::slug($request->value),
+                        'company_id' => $request->company_id
+                    ];
+                    $newAddedValue = ItemModel::create($newItemModel);
+                    $responseData = [
+                        'id' => $newAddedValue->id,
+                        'value' => $newAddedValue->name,
+                    ];
                     break;
 
                 default:
@@ -308,7 +449,7 @@ class  LocationController extends Controller
                     break;
             }
             DB::commit();
-            return $this->success($newLocation, "New Data Created Successfully", 201);
+            return $this->success($responseData, "New Data Created Successfully", 201);
         } catch (\Throwable $th) {
             return $this->error($th, 422);
         }

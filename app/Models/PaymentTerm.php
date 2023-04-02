@@ -21,6 +21,6 @@ class PaymentTerm extends Model
         return $date->format('Y-m-d H:i:s');
     }
     protected $fillable = [
-        'name', 'number_of_date', 'status', 'account_id', 'created_by', 'created_at', 'updated_at', 'deleted_at'
+        'name', 'status', 'number_of_date', 'status', 'account_id', 'created_by', 'created_at', 'updated_at', 'deleted_at'
     ];
 }

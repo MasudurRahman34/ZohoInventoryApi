@@ -7,6 +7,7 @@ use App\Models\PurchaseItem;
 use App\Http\Controllers\Api\V1\Helper\ApiResponse;
 use App\Http\Resources\v1\PurchaseItemResource;
 use App\Models\Stock;
+use GuzzleHttp\Psr7\Request;
 use Illuminate\Support\Facades\DB;
 use SebastianBergmann\Type\NullType;
 
@@ -91,6 +92,14 @@ class PurchaseItemService
         return $item;
     }
 
+    // public function showByProductId(Request $request, $product_id)
+    // { ///?? how can get warehouse id ...? same product can be multiple warehoise in purchase item table
+    //     $purchaseItem = PurchaseItem::where('product_id', $product_id)->first();
+
+
+    //     $stock = Stock::where('product_id', $purchaseItem->product_id)->where('warehouse_id', $purchaseItem->warehouse_id)->first();
+    // }
+
 
     public function showBySerialNumber($serialNumeber)
     {
@@ -116,9 +125,12 @@ class PurchaseItemService
     public function getByGroupNumber($groupNumber)
     {
         try {
-            $purchaseItem = PurchaseItem::where('serial_number', $groupNumber)->get();
+            $purchaseItem = PurchaseItem::where('group_number', $groupNumber)->get();
 
-            $purchaseItem->stock = Stock::where('product_id', $purchaseItem->product_id)->where('warehouse_id', $purchaseItem->warehouse_id)->first();
+            $stock = Stock::where('product_id', $purchaseItem->product_id)->where('warehouse_id', $purchaseItem->warehouse_id)->first();
+
+            $purchaseItem['avilable_product'] = $purchaseItem->product_qty - $purchaseItem->sold_qty;
+            $purchaseItem['total_stock'] = $stock->stock_on_hand;
 
 
             if ($purchaseItem) {

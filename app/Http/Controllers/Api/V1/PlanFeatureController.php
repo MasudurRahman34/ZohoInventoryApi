@@ -31,6 +31,12 @@ class PlanFeatureController extends Controller
         return $this->success(Plan::select('id', 'plan_name', 'business_type')->get());
     }
 
+    public function features()
+    {
+        // return Plan::with('features')->get();
+        return $this->success(Feature::select('id', 'name', 'unique_key', 'status')->get());
+    }
+
     public function planFeature()
     {
         // return Plan::with('features')->get();

@@ -18,9 +18,10 @@ return new class extends Migration
             $table->unsignedBigInteger("state_id")->index();
             $table->string("district_name",150)->index();
             $table->string("district_slug",150)->default(NULL)->nullable();
-            $table->tinyInteger("status")->default(0)->nullable();
-            
-            /* Common fields for all table*/
+            $table->enum("status", ['active', 'inactive'])->default('inactive');
+            $table->integer('approved_by')->nullable()->default(null)->comment('Id of super admin who approved this district.');
+            $table->dateTime('approved_at', 6)->nullable()->default(null)->comment('Date time when approved this district.');
+
             $table->integer("sort")->default(0)->nullable();
             $table->unsignedBigInteger('account_id')->default(1)->index();
             $table->unsignedBigInteger('created_by')->default(0);

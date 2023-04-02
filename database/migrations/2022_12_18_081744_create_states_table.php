@@ -19,11 +19,11 @@ return new class extends Migration
             $table->char("country_iso2")->index();
             $table->char("country_iso3")->index();
             $table->string("state_name", 100)->index();
-            $table->string("state_slug", 150)->default(NULL)->nullable();
-            $table->tinyInteger("status")->default(0)->nullable();
+            $table->string("state_slug", 150)->default(null)->nullable();
+            $table->enum("status", ['active', 'inactive'])->default('inactive');
+            $table->integer('approved_by')->nullable()->default(null)->comment('Id of super admin who approved this state.');
+            $table->dateTime('approved_at', 6)->nullable()->default(null)->comment('Date time when approved this state.');
 
-            /* Common fields for all table*/
-            $table->integer("sort")->default(0)->nullable();
             $table->unsignedBigInteger('account_id')->default(1)->index();
             $table->unsignedBigInteger('created_by')->default(0);
             $table->unsignedBigInteger('modified_by')->default(0);
