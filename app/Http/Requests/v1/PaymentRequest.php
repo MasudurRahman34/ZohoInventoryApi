@@ -2,10 +2,16 @@
 
 namespace App\Http\Requests\v1;
 
+use App\Enums\V1\PaymentMethodEnum;
+use App\Enums\V1\PaymentPaidByEnum;
+use App\Enums\V1\PaymentStatusEnum;
+use App\Enums\V1\PaymentThankYouEnum;
+use App\Enums\V1\PaymentTypeEnum;
 use App\Http\Controllers\Api\V1\Helper\ApiResponse;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Validation\Rules\Enum;
 
 class PaymentRequest extends FormRequest
 {
@@ -32,13 +38,14 @@ class PaymentRequest extends FormRequest
             'payment_date' => 'date|nullable',
             "total_amount" => 'required|numeric|between:0,9999999999.9999',
             'reference' => 'string|between:3,20',
-            'paid_by' => 'required|integer|in:1,2,3,4,5,6,7',
-            'payment_method' => 'required|integer|in:1,2,3,4,5',
+
             'payment_method_number' => 'string|between:2-4',
-            'type' => 'required|integer|in:1,2',
-            'status' => 'required|integer|in:1,2',
+            'paid_by' => ['required', new Enum(PaymentPaidByEnum::class)],
+            'payment_method' => ['required', new Enum(PaymentMethodEnum::class)],
+            'type' => ['required', new Enum(PaymentTypeEnum::class)],
+            'status' => ['required', new Enum(PaymentStatusEnum::class)],
             'note' => 'nullable|string',
-            'is_thankyou' => 'nullable|integer|in:0,1',
+            'is_thankyou' => ['required', new Enum(PaymentThankYouEnum::class)],
         ];
         if ($this->request->get('source') === 'invoice') {
             $rule['paymentable_id'] = ['required', 'integer', 'exists:invoices,id'];

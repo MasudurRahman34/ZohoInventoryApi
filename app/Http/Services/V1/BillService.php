@@ -63,7 +63,7 @@ class BillService
 
             'bill_type' => isset($request['bill_type']) ? $request['bill_type'] : NULL,
             'bill_currency' => isset($request['bill_currency']) ? $request['bill_currency'] : NULL,
-            'status' => isset($request['status']) ? $request['status'] : 0,
+            'status' => isset($request['status']) ? $request['status'] : 'draft',
             'user_ip' => isset($request['user_ip']) ? $request['user_ip'] : NULL,
             'payment_term' => isset($request['payment_term']) ? $request['payment_term'] : NULL,
             // 'payment_status' => isset($request['payment_status']) ? $request['payment_status'] : '0',
@@ -306,6 +306,7 @@ class BillService
             'is_serialized' => isset($item['is_serialized']) ? $item['is_serialized'] : $existItem->is_serialized,
             'deleted_at' => NULL,
             'updated_at' => Carbon::now(),
+
 
         ];
         $updateInvoiceItem = $existItem->update($invoiceItem);

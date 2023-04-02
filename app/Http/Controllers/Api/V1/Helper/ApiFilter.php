@@ -75,8 +75,13 @@ trait ApiFilter
     {
         if ($request->has('filter')) {
             foreach ($request->filter as $columnName => $value) {
-                $query = $query->where($columnName, 'LIKE', '%' . $value . '%');
-                $this->query = $query;
+                if ($columnName == 'id' || strpos($columnName, 'id')) {
+                    $query = $query->where($columnName, $value);
+                    $this->query = $query;
+                } else {
+                    $query = $query->where($columnName, 'LIKE', '%' . $value . '%');
+                    $this->query = $query;
+                }
             }
         }
         $this->query = $query;

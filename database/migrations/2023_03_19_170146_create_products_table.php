@@ -17,11 +17,11 @@ return new class extends Migration
             $table->id();
             $table->uuid('uuid')->unique()->index()->default(NULL);
             $table->unsignedBigInteger("group_id")->default(0)->nullable();
-            $table->unsignedBigInteger("item_category")->default(0)->nullable();
+            $table->unsignedBigInteger("item_category_id")->default(0)->nullable();
             $table->unsignedBigInteger("item_subcategory")->default(0)->nullable();
-            $table->unsignedBigInteger("item_company")->default(0)->nullable();
+            $table->unsignedBigInteger("item_company_id")->default(0)->nullable();
             $table->unsignedBigInteger("brand")->default(0)->nullable();
-            $table->unsignedBigInteger("model")->default(0)->nullable();
+            $table->unsignedBigInteger("item_model_id")->default(0)->nullable();
             $table->string("item_name");
             $table->string("item_slug")->default(NULL)->nullable()->comment('Per account wise unique');
             $table->string("sku")->default(NULL)->nullable()->comment('Per account wise  Unique');
