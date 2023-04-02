@@ -9,6 +9,7 @@ use App\Http\Requests\v1\RegistrationRequest;
 use App\Http\Services\V1\AccountService;
 use App\Models\OldPassword;
 use App\Models\User;
+use App\Models\Warehouse;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -70,6 +71,7 @@ class RegistrationController extends Controller
 
     public function setAccount($request)
     {
+
         $account = 1; //default account
         if ($request->has('company_name') && !empty($request['company_name'])) {
 
@@ -78,6 +80,9 @@ class RegistrationController extends Controller
             $accountData['company_name'] = $request['company_name'];
             $newAccount = $this->accountService->store($accountData); //create new account if exsist company name
             $account = $newAccount;
+            if ($newAccount) {
+                $this->createWarehouse($newAccount->company_name, $newAccount->id);
+            }
         }
         return $account;
     }
@@ -85,5 +90,19 @@ class RegistrationController extends Controller
     public function sendVerificationMail($user): void
     {
         event(new Registered($user));
+    }
+
+    public function createWarehouse($name, $account_id)
+    {
+        $checkexsistSlug = DB::table('warehouses')
+            ->select('slug')
+            ->where('slug', 'LIKE', Str::slug($name) . '%')
+            ->get();
+        if (count($checkexsistSlug) > 0) {
+            $slug = Str::slug($name) . '-' . count($checkexsistSlug) + 1;
+        } else {
+            $slug = Str::slug($name);
+        }
+        Warehouse::create(['name' => $name, 'slug' => $slug, 'account_id' => $account_id, 'default' => 'true']);
     }
 }

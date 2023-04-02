@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->uuid('uuid')->unique()->index()->default(NULL);
             $table->string('name', 255);
+            $table->enum('type', ['warehouse', 'physical_showroom', 'online_shop'])->default('warehouse');
             $table->string('code', 50)->default(NULL)->nullable();
             $table->string('phone_country_code', 10)->default(NULL)->nullable();
             $table->string('mobile_country_code', 10)->default(NULL)->nullable();

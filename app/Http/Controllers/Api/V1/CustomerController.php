@@ -37,9 +37,11 @@ class CustomerController extends Controller
     //get customer list
     public function index(Request $request)
     {
+
         $this->setFilterProperty($request);
         $query = Customer::where('account_id', $this->account_id)->with('primaryContact')->with('otherContacts')->with('shipAddress')->with('billAddress')->with('otherAddresses');
         $this->dateRangeQuery($request, $query, 'portal_customers.created_at');
+        $this->filterBy($request, $this->query);
         $customers = $this->query->orderBy($this->column_name, $this->sort)->paginate($this->show_per_page)->withQueryString();
         return (new CustomerCollection($customers));
     }

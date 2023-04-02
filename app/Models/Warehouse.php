@@ -32,7 +32,7 @@ class Warehouse extends Model
         return $date->format('Y-m-d H:i:s');
     }
     protected $fillable = [
-        'uuid', 'name', 'code', 'phone_country_code', 'mobile_country_code', 'phone', 'mobile', 'email', 'description', 'address', 'current_balance', 'account_id', 'created_by', 'modified_by', 'default'
+        'uuid', 'name', 'slug', 'type', 'code', 'phone_country_code', 'mobile_country_code', 'phone', 'mobile', 'email', 'description', 'address', 'current_balance', 'account_id', 'created_by', 'modified_by', 'default'
     ];
 
     public function stocks()

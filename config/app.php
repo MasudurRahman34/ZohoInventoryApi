@@ -199,6 +199,9 @@ return [
         //dompdf
         Barryvdh\DomPDF\ServiceProvider::class,
 
+        //spatie Permission
+        Spatie\Permission\PermissionServiceProvider::class,
+
 
     ],
 
