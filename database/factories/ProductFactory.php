@@ -36,6 +36,7 @@ class ProductFactory extends Factory
             "sku" => $this->faker->word(),
             'universal_product_barcode' => $this->faker->isbn10(),
             'is_serialized' => $this->faker->randomElement(['1', '0']),
+            'account_id' => random_int(1, 10),
 
         ];
     }
