@@ -27,10 +27,19 @@ class CreatePermissionTables extends Migration
 
         Schema::create($tableNames['permissions'], function (Blueprint $table) {
             $table->bigIncrements('id'); // permission id
+
             $table->string('name');       // For MySQL 8.0 use string('name', 125);
             $table->string('guard_name'); // For MySQL 8.0 use string('guard_name', 125);
+            $table->unsignedBigInteger('permission_groups_id')->default(NULL)->comment('Reference of Group of Permission, used to grouping permission');
+            $table->text('description')->nullable()->default(NULL);
+            $table->unsignedTinyInteger('sort')->default(0);
+            $table->enum('default', ['yes', 'no'])->default('no');
+            $table->enum('status', ['active', 'inactive'])->default('inactive');
+            $table->unsignedBigInteger('account_id')->default(1)->comment('Reference of account table.');
+            $table->unsignedBigInteger('created_by')->default(0);
+            $table->unsignedBigInteger('modified_by')->default(0);
             $table->timestamps();
-
+            $table->softDeletes();
             $table->unique(['name', 'guard_name']);
         });
 
@@ -42,7 +51,17 @@ class CreatePermissionTables extends Migration
             }
             $table->string('name');       // For MySQL 8.0 use string('name', 125);
             $table->string('guard_name'); // For MySQL 8.0 use string('guard_name', 125);
+
+            $table->text('description')->nullable()->default(NULL);
+            $table->unsignedTinyInteger('sort')->default(0);
+            $table->enum('default', ['yes', 'no'])->default('no');
+            $table->enum('status', ['active', 'inactive'])->default('inactive');
+            $table->unsignedBigInteger('account_id')->default(1)->comment('Reference of account table.');
+            $table->unsignedBigInteger('created_by')->default(0);
+            $table->unsignedBigInteger('modified_by')->default(0);
             $table->timestamps();
+            $table->softDeletes();
+
             if ($teams || config('permission.testing')) {
                 $table->unique([$columnNames['team_foreign_key'], 'name', 'guard_name']);
             } else {
