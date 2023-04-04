@@ -78,6 +78,11 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
             base_path('routes/customers.php')
         );
 
+        //permission
+        Route::prefix('/')->group(
+            base_path('routes/role-permission.php')
+        );
+
         //address
         //Route::POST('set/address', [AddressController::class,'setAddress'])->name('setaddress');
         Route::POST('addresses', [AddressController::class, 'store'])->name('addresses.store');
@@ -98,7 +103,13 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
         Route::GET('global/addresses/{id}', [GlobalAddressController::class, 'show'])->name('global.addresses.show');
 
         //Purchase
-        Route::GET('purchases', [PurchaseController::class, 'index'])->name('purchases.index');
+        // Route::group(['middleware' => ['permission_in_role:purchase_create']], function () {
+        //     Route::GET('purchases', [PurchaseController::class, 'index'])->name('purchases.index');
+        // });
+        Route::GET(
+            'purchases',
+            [PurchaseController::class, 'index']
+        )->name('purchases.index')->middleware('permission_in_role:purchase_create');
         Route::POST('purchases', [PurchaseController::class, 'store'])->name('purchases.store');
         Route::PUT('purchases/{purchase}', [PurchaseController::class, 'update'])->name('purchases.update');
         Route::GET('purchases/{purchase}', [PurchaseController::class, 'show'])->name('purchases.show');

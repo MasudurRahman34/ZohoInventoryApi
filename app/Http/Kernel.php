@@ -2,6 +2,7 @@
 
 namespace App\Http;
 
+use App\Http\Middleware\V1\CheckPermissionInRole;
 use App\Http\Middleware\V1\CustomEnsureEmailIsVerified;
 use App\Http\Middleware\V1\guestApi;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
@@ -74,5 +75,6 @@ class Kernel extends HttpKernel
         'role' => \Spatie\Permission\Middlewares\RoleMiddleware::class,
         'permission' => \Spatie\Permission\Middlewares\PermissionMiddleware::class,
         'role_or_permission' => \Spatie\Permission\Middlewares\RoleOrPermissionMiddleware::class,
+        'permission_in_role' => CheckPermissionInRole::class,
     ];
 }

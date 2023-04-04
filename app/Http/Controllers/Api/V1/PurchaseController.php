@@ -38,6 +38,7 @@ class PurchaseController extends Controller
 
     public function __construct(PurchaseItemService $purchaseItemService, PurchaseService $purchaseService, InventoryAdjustmentService $inventoryAdjustment, AdjustmentItemService $adjustmentItemService, CalculateProductPriceService $calculateProductPriceService)
     {
+        // $this->middleware('permission_in_role:purchase_view')->only('index');
         $this->purchaseItemService = $purchaseItemService;
         $this->purchaseService = $purchaseService;
         $this->inventoryAdjustment = $inventoryAdjustment;
@@ -46,6 +47,14 @@ class PurchaseController extends Controller
     }
     public function index(Request $request)
     {
+
+
+        // if (auth()->user()->hasAnyPermission('edit-passwords')) {
+        //     return 'woking';
+        // } else {
+        //     "not working";
+        // }
+
         $this->setFilterProperty($request);
         $query = Purchase::with('supplier')->with('purchaseItems')->with('inventoryAdjustment');
         $this->dateRangeQuery($request, $query, 'purchase_date');
