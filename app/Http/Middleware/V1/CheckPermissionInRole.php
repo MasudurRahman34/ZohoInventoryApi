@@ -20,7 +20,7 @@ class CheckPermissionInRole
     {
         // return $permissionName;
         $user = Auth::user();
-        $permission = Permission::where('name', $permissionName)->first();
+        // $permission = Permission::where('name', $permissionName)->first();
         if ($user->hasPermissionTo($permissionName)) {
             return $next($request);
         }

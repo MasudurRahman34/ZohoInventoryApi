@@ -2,15 +2,13 @@
 
 namespace App\Http\Requests\v1;
 
-use App\Http\Controllers\Api\V1\Helper\ApiResponse;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Password;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
-use Illuminate\Validation\Rules\Password;
 
-class RegistrationRequest extends FormRequest
+class RegisterByInvitationRequest extends FormRequest
 {
-    use ApiResponse;
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -18,7 +16,7 @@ class RegistrationRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        return \true;
     }
 
     /**
@@ -29,11 +27,10 @@ class RegistrationRequest extends FormRequest
     public function rules()
     {
         return [
-            'first_name' => ['required', 'regex:/^[\pL\s]+$/u', 'between:3,100'], //alpha space
-            'last_name' => ['required', 'regex:/^[\pL\s]+$/u', 'between:3,100'], //alpha space
+            // 'first_name' => ['required', 'regex:/^[\pL\s]+$/u', 'between:3,100'], //alpha space
+            // 'last_name' => ['required', 'regex:/^[\pL\s]+$/u', 'between:3,100'], //alpha space
             'email' => ['required', 'email:rfc,filter,dns', 'max:255', 'unique:users'],
-            'country' => ['required', 'integer', 'exists:countries,id'],
-            'company_name' => ['regex:/^[a-zA-Z0-9@ ]+$/', 'between:3,255'],
+            'token' => ['required', 'exists:user_invites,token'],
             'password' => [
                 'required', 'confirmed', Password::min(8)
                     ->letters()
@@ -43,11 +40,9 @@ class RegistrationRequest extends FormRequest
                     ->uncompromised()
             ],
             'privacy_aggrement' => ['required', 'integer', 'in:1'],
-            // 'g-recaptcha-response' => ['required', 'recaptcha'],
         ];
     }
-
-    public function failedValidation(Validator $validator)
+    public function failedValidatio(Validator $validator)
     {
 
         throw new HttpResponseException(
@@ -55,11 +50,5 @@ class RegistrationRequest extends FormRequest
             $this->error($validator->errors(), 422)
 
         );
-    }
-    public function messages()
-    {
-        return [
-            'g-recaptcha-response' => 'invalid recaptcha'
-        ];
     }
 }

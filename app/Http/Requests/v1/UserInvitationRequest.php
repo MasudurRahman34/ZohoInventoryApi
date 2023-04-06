@@ -4,9 +4,8 @@ namespace App\Http\Requests\v1;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\Rule;
 
-class RolePermissionRequest extends FormRequest
+class UserInvitationRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,12 +25,10 @@ class RolePermissionRequest extends FormRequest
     public function rules()
     {
         return [
-            "name" => ['string', "regex:/^[\p{L} ,.'-_]+$/u", 'between:2,50', 'required'],
-            'permissions' => ['array', 'required'],
-            'permissions.*' => ['integer', 'exists:permissions,id'],
-            'status' => [Rule::in(['active', 'inative'])],
-            'default' => ['nullable', Rule::in(['no'])],
-            'description' => ['string', 'nullable'],
+            'first_name' => ['required', 'regex:/^[\pL\s]+$/u', 'between:3,100'], //alpha space
+            // 'last_name' => ['required', 'required_with:first_name', 'regex:/^[\pL\s]+$/u', 'between:3,100'],
+            'email' => ['required', 'email:rfc,filter,dns', 'max:255', 'unique:users'],
+            'role' => ['string', 'required'],
         ];
     }
 }

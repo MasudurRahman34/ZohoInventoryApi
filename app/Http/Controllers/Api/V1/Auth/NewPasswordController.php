@@ -31,6 +31,7 @@ class NewPasswordController extends Controller
 
     public function store(NewPasswordResetRequest $request)
     {
+        return $request;
         $status = Password::reset(
             $request->only('email', 'password', 'password_confirmation', 'token'),
             function ($user) use ($request) {

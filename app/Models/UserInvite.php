@@ -2,13 +2,15 @@
 
 namespace App\Models;
 
+use App\Http\Controllers\Api\V1\Helper\AccountObservant;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
-class PermissionGroup extends Model
+class UserInvite extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes, AccountObservant;
     protected $dates = [
         'creadted_at',
         'updated_at',
@@ -19,11 +21,6 @@ class PermissionGroup extends Model
         return $date->format('Y-m-d H:i:s');
     }
     protected $fillable = [
-        'id', 'group', 'description', 'sort', 'default', 'status', 'account_id', 'created_by', 'modified_by', 'created_at', 'updated_at', 'deleted_at'
+        'first_name', 'last_name', 'email', 'registared_at', 'role', 'token', 'token', 'account_id', 'created_at', 'deleted_at', 'updated_at'
     ];
-
-    public function permissions()
-    {
-        return $this->hasMany(Permission::class, 'permission_groups_id', 'id');
-    }
 }

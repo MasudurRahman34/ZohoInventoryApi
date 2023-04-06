@@ -68,6 +68,9 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
         Route::GET('users', [UserController::class, 'users'])->name('users');
         Route::GET('user/{uuid}', [UserController::class, 'user'])->name('user');
 
+        Route::POST('user-invitation', [UserController::class, 'invite'])->name('user.invite');
+        Route::GET('user-invitation', [UserController::class, 'invite'])->name('user.invite');
+
         //supplier
         Route::prefix('suppliers')->group(
             base_path('routes/suppliers.php')
@@ -109,7 +112,7 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
         Route::GET(
             'purchases',
             [PurchaseController::class, 'index']
-        )->name('purchases.index')->middleware('permission_in_role:purchase_create');
+        )->name('purchases.index')->middleware('permission:purchase_view');
         Route::POST('purchases', [PurchaseController::class, 'store'])->name('purchases.store');
         Route::PUT('purchases/{purchase}', [PurchaseController::class, 'update'])->name('purchases.update');
         Route::GET('purchases/{purchase}', [PurchaseController::class, 'show'])->name('purchases.show');
@@ -237,6 +240,8 @@ Route::middleware(['guestApi'])->group(function () {
         Route::get('reset-password/{token}', [NewPasswordController::class, 'create'])->name('password.reset')->middleware(['guestApi']);
 
         Route::post('reset-password', [NewPasswordController::class, 'store'])->name('password.store')->middleware(['guestApi']);
+
+        Route::POST('invitation/register', [RegistrationController::class, 'registerByInvitation'])->name('invitation.register');
     });
     Route::POST('login', [LoginController::class, 'login'])->name('login.api');
     Route::POST('register', [RegistrationController::class, 'register'])->name('register.api');

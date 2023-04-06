@@ -5,16 +5,23 @@ namespace App\Http\Controllers\Api\V1\Auth;
 use App\Http\Controllers\Api\V1\Helper\ApiFilter;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Api\V1\Helper\ApiResponse;
+use App\Http\Requests\v1\RegisterByInvitationRequest;
 use App\Http\Requests\v1\RegistrationRequest;
 use App\Http\Services\V1\AccountService;
 use App\Models\OldPassword;
+use App\Models\Role;
+use App\Models\Scopes\AccountScope;
 use App\Models\User;
+use App\Models\UserInvite;
 use App\Models\Warehouse;
+use App\Notifications\V1\InviteUserRegistration;
+use GuzzleHttp\Psr7\Request;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Http\Response as HttpResponse;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
-
+use Illuminate\Support\Facades\Response;
 
 class RegistrationController extends Controller
 {
@@ -54,6 +61,11 @@ class RegistrationController extends Controller
                 'email' => $request['email'],
                 'old_password' => $request['password']
             ]);
+            $role = DB::table('roles')->where('name', 'Admin')->where('default', 'yes')->where('status', 'active')->first();
+            if ($role) {
+                DB::table('model_has_roles')->insert(['role_id' => $role->id, 'model_type' => User::class, 'model_id' => $user->id]);
+                app()->make(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
+            }
             DB::commit();
             $userWithAccount = User::with('account')->find($user->id);
             $response = [];
@@ -104,5 +116,54 @@ class RegistrationController extends Controller
             $slug = Str::slug($name);
         }
         Warehouse::create(['name' => $name, 'slug' => $slug, 'account_id' => $account_id, 'default' => 'true']);
+    }
+
+    public function registerByInvitation(RegisterByInvitationRequest $request)
+    {
+        try {
+            DB::beginTransaction();
+            $registerRequest = $request->validated();
+
+            $findInvitation = DB::table('user_invites')->where('token', $registerRequest['token'])->where('email', $registerRequest['email'])->first();
+            if ($findInvitation) {
+                $registerRequest['first_name'] = $findInvitation->first_name;
+                $registerRequest['user_role'] = $findInvitation->role;
+                $registerRequest['email_verified_at'] = \now();
+                $registerRequest['account_id'] = $findInvitation->account_id;
+                $registerRequest['password'] = Hash::make($registerRequest['password']);
+                $registerRequest['remember_token'] = Str::random(10);
+                $user = User::create($registerRequest);
+                $role = DB::table('roles')->where('account_id', $findInvitation->account_id)->where('name', $findInvitation->role)->first();
+                if (!$role) {
+                    return $this->error('There Is No Role', HttpResponse::HTTP_FORBIDDEN);
+                }
+                DB::table('model_has_roles')->insert(['role_id' => $role->id, 'model_type' => User::class, 'model_id' => $user->id]);
+                app()->make(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
+
+                $authToken = $user->createToken('Laravel Password Grant Client')->accessToken;
+
+                OldPassword::create([
+                    'email' => $user->email,
+                    'old_password' => $user->password
+                ]);
+                DB::table('user_invites')->where('id', $findInvitation->id)->update(['registared_at' => now(), 'status' => 'accepted']);
+                DB::commit();
+                $userWithAccount = User::with('account')->find($user->id);
+                $response = [];
+
+                $response = [
+                    'tokenType' => 'Bearer',
+                    'token' => $authToken,
+                    'user' => $userWithAccount
+                ];
+                return $this->success($response);
+            } else {
+                return $this->error('Invalid Invitation', HttpResponse::HTTP_FORBIDDEN);
+            }
+        } catch (\Throwable $th) {
+            //throw $th;
+            DB::rollBack();
+            return $this->error($th->getMessage(), 500);
+        }
     }
 }

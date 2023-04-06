@@ -13,13 +13,15 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('permission_groups', function (Blueprint $table) {
+        Schema::create('user_invites', function (Blueprint $table) {
             $table->id();
-            $table->string('group', 100);
-            $table->text('description')->nullable()->default(NULL);
-            $table->unsignedTinyInteger('sort')->default(0);
-            $table->enum('default', ['yes', 'no'])->default('no');
-            $table->enum('status', ['active', 'inactive'])->default('inactive');
+            $table->string('first_name');
+            $table->string('last_name')->default(NULL)->nullable();
+            $table->string('role');
+            $table->string('email')->unique()->index('email');
+            $table->string('token')->unique();
+            $table->timestamp('registared_at')->nullable();
+            $table->enum('status', ['pending', 'accepted'])->default('pending')->nullable();
             $table->unsignedBigInteger('account_id')->default(1)->comment('Reference of account table.');
             $table->unsignedBigInteger('created_by')->default(0);
             $table->unsignedBigInteger('modified_by')->default(0);
@@ -35,6 +37,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('permission_groups');
+        Schema::dropIfExists('user_invites');
     }
 };

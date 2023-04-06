@@ -5,10 +5,13 @@ namespace App\Models;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Permission\Models\Permission as SpatiePermission;
 
-class PermissionGroup extends Model
+class Permission extends SpatiePermission
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
+
     protected $dates = [
         'creadted_at',
         'updated_at',
@@ -19,11 +22,6 @@ class PermissionGroup extends Model
         return $date->format('Y-m-d H:i:s');
     }
     protected $fillable = [
-        'id', 'group', 'description', 'sort', 'default', 'status', 'account_id', 'created_by', 'modified_by', 'created_at', 'updated_at', 'deleted_at'
+        'id', 'name', 'permission_groups_id', 'guard_name', 'description', 'sort', 'default', 'status', 'type', 'account_id', 'created_by', 'modified_by', 'created_at', 'updated_at', 'deleted_at'
     ];
-
-    public function permissions()
-    {
-        return $this->hasMany(Permission::class, 'permission_groups_id', 'id');
-    }
 }
