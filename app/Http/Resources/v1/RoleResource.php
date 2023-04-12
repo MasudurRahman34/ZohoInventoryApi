@@ -21,7 +21,7 @@ class RoleResource extends JsonResource
             'default' => $this->default,
             'status' => $this->status,
             'create_at' => $this->created_at,
-            // 'permissions' => $this->whenLoaded('permissions'),
+            'permissions' => $this->whenLoaded('permissions'),
         ];
     }
 }

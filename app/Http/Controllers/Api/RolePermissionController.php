@@ -69,32 +69,18 @@ class RolePermissionController extends BaseController
         return $this->success(PermissionGroup::with('permissions')->get());
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    // public function assignRole()
-    // {
-    //     Auth::guard('api')->user()->assignRole('Purchase Manager');
-    // }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function storeRoleWithPermissions(RolePermissionRequest $request)
     {
 
         try {
             DB::beginTransaction();
             $roleRequest = $request->validated();
+
             $newRole = Role::create($roleRequest);
             //$newRole = DB::table('roles')->insert(["name" => $roleRequest['name'], 'guard_name' => 'api', 'default' => 'no', 'status' => 'active', 'account_id' => Auth::user()->account_id, 'created_at' => \now(), 'created_by' => Auth::user()->id]);
 
-            //$newRole->syncPermissions($request->permissions);
+            $newRole->syncPermissions($request->permissions);
             DB::commit();
             return $this->success($newRole);
         } catch (\Throwable $th) {
