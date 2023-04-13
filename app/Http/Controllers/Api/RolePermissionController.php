@@ -33,10 +33,13 @@ class RolePermissionController extends BaseController
     {
 
         $accountData = DB::table('roles')->where('account_id', Auth::guard('api')->user()->account_id);
-        $role = DB::table('roles')->where('default', 'yes')->where('status', 'active')->union($accountData)->get();
+        $role = DB::table('roles')->where('default', 'yes')->where('status', 'active')->select('id','name','status','created_at')->union($accountData->select('id','name','status','created_at'))->get();
 
-        return RoleResource::collection($role);
+        //return RoleResource::collection($role);
+        return $this->success($role);
     }
+
+
 
     public function showRole($roleid)
     {

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Http\Controllers\Api\V1\Helper\AccountObservant;
+use App\Observers\AccountObserver;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -14,12 +15,13 @@ use Spatie\Permission\Guard;
 
 class Role extends SpatieRole
 {
-    use HasFactory, SoftDeletes, AccountObservant;
+    use HasFactory, SoftDeletes;
     protected $dates = [
         'creadted_at',
         'updated_at',
         'deleted_at'
     ];
+    protected $hidden = ['pivot'];
     public function serializeDate(DateTimeInterface $date)
     {
         return $date->format('Y-m-d H:i:s');
@@ -52,4 +54,11 @@ class Role extends SpatieRole
 
     //     return $query->first();
     // }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::observe(AccountObserver::class);
+    }
 }

@@ -53,12 +53,17 @@ class UserController extends Controller
     public function users(Request $request)
     {
 
+
         $this->setFilterProperty($request);
         //$accounts=Accounts::with('user')->get();
-
-        $users = User::where('account_id', Auth::user()->account_id)->orderBy($this->column_name, $this->sort)->paginate($this->show_per_page)->withQueryString();
+        $users = User::with(['roles'=>function($q){
+            $q->select('id', 'name', 'status');
+        }])->where('account_id', Auth::user()->account_id)->orderBy($this->column_name, $this->sort)->select('id','uuid','user_number','first_name','last_name','email','user_role','created_at')->paginate($this->show_per_page)->withQueryString();
         return $this->success(new UserResource($users));
     }
+
+
+
 
     public function user($user_id)
     {

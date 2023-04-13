@@ -27,7 +27,7 @@ class User extends Authenticatable implements MustVerifyEmail
      *
      * @var array<int, string>
      */
-
+    protected $appends = ['full_name'];
     protected $dates = [
         'creadted_at',
         'updated_at',
@@ -88,6 +88,10 @@ class User extends Authenticatable implements MustVerifyEmail
             'attribute' => 'user_number',
         ];
     }
+    public function getFullNameAttribute()
+{
+    return $this->first_name . ' ' . $this->last_name;
+}
 
     public function account()
     {
