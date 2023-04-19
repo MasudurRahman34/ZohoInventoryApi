@@ -33,10 +33,29 @@ class RolePermissionController extends BaseController
     {
 
         $accountData = DB::table('roles')->where('account_id', Auth::guard('api')->user()->account_id);
-        $role = DB::table('roles')->where('default', 'yes')->where('status', 'active')->select('id','name','status','created_at')->union($accountData->select('id','name','status','created_at'))->get();
+        $roles = DB::table('roles')->where('default', 'yes')->where('status', 'active')->select('id','name','status','created_at')->union($accountData->select('id','name','status','created_at'))->get()->toArray();
+        $roles=Role::hydrate($roles);
+
+        $data=[];
+        foreach ($roles as $role) {
+            $numberOfUsers = $role->users()->count();
+            $data[] = [
+                'name' => $role->name,
+                'status'=>$role->status,
+                'created_at'=>$role->created_at,
+                'total_user' => $numberOfUsers,
+                'users'=>  $role->users->map(function ($user) {
+                    return [
+                      'name' => $user->full_name,
+                      'uuid'=>$user->uuid
+                    ];
+                })->all(),
+            ];
+        }
+
 
         //return RoleResource::collection($role);
-        return $this->success($role);
+        return $this->success($data);
     }
 
 
