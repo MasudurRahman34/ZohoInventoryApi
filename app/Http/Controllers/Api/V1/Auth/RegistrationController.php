@@ -2,26 +2,30 @@
 
 namespace App\Http\Controllers\Api\V1\Auth;
 
-use App\Http\Controllers\Api\V1\Helper\ApiFilter;
+use App\Models\Role;
+use App\Models\User;
+use App\Models\Accounts;
+use App\Models\Warehouse;
+use App\Models\Permission;
+use App\Models\UserInvite;
+use App\Models\OldPassword;
+use Illuminate\Support\Str;
+use Illuminate\Http\Request;
+use App\Models\AccountPermission;
+use Illuminate\Support\Facades\DB;
+use App\Models\Scopes\AccountScope;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Auth\Events\Registered;
+use App\Http\Services\V1\AccountService;
+
+use Illuminate\Support\Facades\Response;
+use App\Http\Requests\v1\RegistrationRequest;
+use Illuminate\Http\Response as HttpResponse;
+use App\Notifications\V1\InviteUserRegistration;
+use App\Http\Controllers\Api\V1\Helper\ApiFilter;
 use App\Http\Controllers\Api\V1\Helper\ApiResponse;
 use App\Http\Requests\v1\RegisterByInvitationRequest;
-use App\Http\Requests\v1\RegistrationRequest;
-use App\Http\Services\V1\AccountService;
-use App\Models\OldPassword;
-use App\Models\Role;
-use App\Models\Scopes\AccountScope;
-use App\Models\User;
-use App\Models\UserInvite;
-use App\Models\Warehouse;
-use App\Notifications\V1\InviteUserRegistration;
-use GuzzleHttp\Psr7\Request;
-use Illuminate\Auth\Events\Registered;
-use Illuminate\Http\Response as HttpResponse;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Response;
 
 class RegistrationController extends Controller
 {
@@ -33,9 +37,8 @@ class RegistrationController extends Controller
         $this->accountService = $accountService;
     }
 
-    public function register(RegistrationRequest $request)
+    public function register(Request $request)
     {
-
         DB::beginTransaction();
         try {
             $accountData = $this->setAccount($request);
@@ -61,11 +64,17 @@ class RegistrationController extends Controller
                 'email' => $request['email'],
                 'old_password' => $request['password']
             ]);
-            $role = DB::table('roles')->where('name', 'Admin')->where('default', 'yes')->where('status', 'active')->first();
-            if ($role) {
-                DB::table('model_has_roles')->insert(['role_id' => $role->id, 'model_type' => User::class, 'model_id' => $user->id]);
-                app()->make(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
+
+            if($request['account_id'] > 1){
+                $role = DB::table('roles')->where('name', 'Admin')->where('default', 'yes')->where('status', 'active')->first();
+                if ($role) {
+                    DB::table('model_has_roles')->insert(['role_id' => $role->id, 'model_type' => User::class, 'model_id' => $user->id]);
+                    app()->make(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
+                }
+                $user->update(['user_role'=>'Admin']);
+
             }
+
             DB::commit();
             $userWithAccount = User::with('account')->find($user->id);
             $response = [];
@@ -94,6 +103,7 @@ class RegistrationController extends Controller
             $account = $newAccount;
             if ($newAccount) {
                 $this->createWarehouse($newAccount->company_name, $newAccount->id);
+                $this->createAccountPermission($newAccount->id);
             }
         }
         return $account;
@@ -116,6 +126,14 @@ class RegistrationController extends Controller
             $slug = Str::slug($name);
         }
         Warehouse::create(['name' => $name, 'slug' => $slug, 'account_id' => $account_id, 'default' => 'true']);
+    }
+
+    public function createAccountPermission($accountId){
+
+            $permission = Permission::selectRaw('id as permission_id, title, description, status, ? as account_id', [$accountId])
+            ->get()
+            ->toArray();
+            $accountPermission= AccountPermission::insert($permission);
     }
 
     public function registerByInvitation(RegisterByInvitationRequest $request)

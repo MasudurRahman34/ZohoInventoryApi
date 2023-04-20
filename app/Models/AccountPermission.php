@@ -2,16 +2,15 @@
 
 namespace App\Models;
 
+use App\Http\Controllers\Api\V1\Helper\AccountObservant;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Spatie\Permission\Models\Permission as SpatiePermission;
 
-class Permission extends SpatiePermission
+class AccountPermission extends Model
 {
-    use HasFactory, SoftDeletes;
-
+    use HasFactory , SoftDeletes, AccountObservant;
     protected $dates = [
         'creadted_at',
         'updated_at',
@@ -22,6 +21,6 @@ class Permission extends SpatiePermission
         return $date->format('Y-m-d H:i:s');
     }
     protected $fillable = [
-        'id', 'name', 'permission_groups_id', 'guard_name','title', 'description', 'sort', 'is_global', 'status', 'created_at', 'updated_at', 'deleted_at'
+        'permission_id', 'title', 'description', 'account_id', 'created_at','created_by','modified_by', 'deleted_at', 'updated_at'
     ];
 }

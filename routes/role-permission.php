@@ -3,7 +3,7 @@
 use App\Http\Controllers\Api\RolePermissionController;
 use Illuminate\Support\Facades\Route;
 
-Route::GET('/roles', [RolePermissionController::class, 'indexRole'])->name('roles.index')->middleware('permission:view role');
+Route::GET('/roles', [RolePermissionController::class, 'indexRole'])->name('roles.index');
 Route::GET('/roles/{roleId}', [RolePermissionController::class, 'showRole'])->name('roles.show')->middleware('permission:view role');;
 Route::POST('/roles', [RolePermissionController::class, 'storeRoleWithPermissions'])->name('store.roles-with-permissions')->middleware('permission:create role');
 Route::PUT('/roles/{roleId}', [RolePermissionController::class, 'updateRoleWithPermissions'])->name('update.roles-with-permissions')->middleware('permission:edit role');
