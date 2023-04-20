@@ -11,7 +11,7 @@ Route::PUT('/roles/{roleId}', [RolePermissionController::class, 'updateRoleWithP
 Route::POST('/assign-role', [RolePermissionController::class, 'assignRole'])->name('assign.roles');
 
 Route::POST('/permissions', [RolePermissionController::class, 'storePermission'])->name('store.permissions')->middleware('permission:create permission');
-Route::GET('/permissions', [RolePermissionController::class, 'indexPermission'])->name('index.permissions')->middleware('permission:view permission');
+Route::GET('/permissions', [RolePermissionController::class, 'indexPermission'])->name('index.permissions');
 
 Route::POST('/permissions-group', [RolePermissionController::class, 'storePermissionGroup'])->name('store.permissions-group');
 Route::GET('/permissions-group', [RolePermissionController::class, 'indexPermissionGroup'])->name('store.permissions-group');

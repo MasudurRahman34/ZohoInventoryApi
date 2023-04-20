@@ -82,7 +82,7 @@ class RolePermissionController extends BaseController
     public function indexPermission(Request $request)
     {
 
-        return $this->success(Permission::get());
+        return $this->success(Permission::with(['accountPermission','roles','users'])->get());
     }
 
     public function indexPermissionGroup(Request $request)

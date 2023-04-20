@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\AccountPermission;
 use App\Models\Permission;
 use App\Models\PermissionGroup;
 use App\Models\Role;
@@ -86,6 +87,11 @@ class RolePermissionSeeder extends Seeder
         Permission::insert($permission);
 
         $getAllPermissionsName= Permission::all()->pluck('name');
+        $permission = Permission::selectRaw('id as permission_id, title, description, status, ? as account_id', [55])
+        ->get()
+        ->toArray();
+        AccountPermission::truncate();
+        $accountPermission= AccountPermission::insert($permission);
         Role::create(['name' => 'Admin', 'guard_name' => 'api', 'default' => 'yes', 'status' => 'active'])
         ->givePermissionTo($getAllPermissionsName);
     }
